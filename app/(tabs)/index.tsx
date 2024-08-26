@@ -1,70 +1,161 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { FunctionComponent } from "react";
+import { TouchableOpacity, View } from "react-native";
+import { useTheme } from "styled-components";
+import { WorkoutGroupCardProps } from "../../src/app_components/Cards/types";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import FilterGrid from "../../src/app_components/Grids/FilterGrid";
+import { WorkoutGroupSquares } from "../../src/app_components/Grids/GymClasses/WorkoutGroupSquares";
+import {
+  useGetProfileViewQuery,
+  useGetProfileWorkoutGroupsQuery,
+} from "../../src/redux/api/apiSlice";
+import {
+  LargeText,
+  TSParagrapghText,
+  TSCaptionText,
+} from "../../src/app_components/Text/Text";
+import { RegularButton } from "../../src/app_components/Buttons/buttons";
+// import * as RootNavigation from "../../src/navigators/RootNavigation";
+import { Props as CreateWorkoutGroupScreenProps } from "../../src/app_pages/input_pages/gyms/CreateWorkoutGroupScreen";
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+import Icon from "react-native-vector-icons/Ionicons";
+import BannerAddMembership from "../../src/app_components/ads/BannerAd";
+import { router, useNavigation } from "expo-router";
+
+const UserWorkoutsScreen: FunctionComponent = (props) => {
+  const theme = useTheme();
+
+  const {
+    data: dataWG,
+    isLoading: isLoadingWG,
+    isSuccess: isSuccessWG,
+    isError: isErrorWG,
+    error: errorWG,
+  } = useGetProfileWorkoutGroupsQuery("");
+
+  const { data, isLoading, isSuccess, isError, error } =
+    useGetProfileViewQuery("");
+
+  const _userWorkouts =
+    !isLoadingWG && isSuccessWG
+      ? ([
+          ...dataWG.workout_groups?.created_workout_groups,
+          ...dataWG.workout_groups?.completed_workout_groups,
+        ] as WorkoutGroupCardProps[])
+      : [];
+
+  const userWorkouts = _userWorkouts.sort((a, b) =>
+    a.for_date > b.for_date ? -1 : 1
   );
-}
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+  const navigation = useNavigation();
+
+  const handleNavCreateWorkoutGroupScreen = () => {
+    console.log("Navigating to CreateWorkoutGroupScreen");
+    router.push({
+      pathname: "/input_pages/gyms/CreateWorkoutGroupScreen",
+      params: {
+        ownedByClass: 0,
+        ownerID: data.user.id as string,
+      },
+    });
+  };
+
+  return (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        backgroundColor: theme.palette.backgroundColor,
+      }}
+    >
+      <BannerAddMembership />
+      {userWorkouts.length ? (
+        <View style={{ padding: 12, flex: 1, height: "100%", width: "100%" }}>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.69}
+              onPress={handleNavCreateWorkoutGroupScreen}
+              style={{
+                backgroundColor: theme.palette.accent,
+                padding: 4,
+                borderRadius: 112,
+              }}
+            >
+              <Icon
+                name="add"
+                color={theme.palette.text}
+                style={{ fontSize: 24 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flex: 10 }}>
+            <FilterGrid
+              searchTextPlaceHolder="Search Workouts"
+              uiView={WorkoutGroupSquares}
+              items={userWorkouts}
+              extraProps={{
+                editable: true,
+              }}
+            />
+          </View>
+        </View>
+      ) : (
+        <View
+          style={{ height: "100%", width: "100%", justifyContent: "center" }}
+        >
+          <TSCaptionText textStyles={{ textAlign: "center", marginBottom: 22 }}>
+            No workouts!
+          </TSCaptionText>
+          {data && !isLoading ? (
+            <View style={{ width: "50%", alignSelf: "center" }}>
+              <RegularButton
+                underlayColor="#cacaca30"
+                btnStyles={{
+                  backgroundColor: "#cacaca00",
+                  borderTopColor: "#cacaca92",
+                  borderBottomColor: "#cacaca92",
+                  borderWidth: 2,
+                  width: "100%",
+                }}
+                onPress={() => {
+                  RootNavigation.navigate("CreateWorkoutGroupScreen", {
+                    ownedByClass: false,
+                    ownerID: data.user.id,
+                  });
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Icon
+                    name="add"
+                    color={theme.palette.text}
+                    style={{ fontSize: 32, marginRight: 16 }}
+                  />
+                  <TSParagrapghText>New workout</TSParagrapghText>
+                </View>
+              </RegularButton>
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default UserWorkoutsScreen;
