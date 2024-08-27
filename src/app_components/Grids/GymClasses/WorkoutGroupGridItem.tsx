@@ -1,6 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { useTheme } from "styled-components";
-import { TSCaptionText, TSParagrapghText, XSmallText } from "../../Text/Text";
+import {
+  TSCaptionText,
+  TSDateText,
+  TSParagrapghText,
+  TSSnippetText,
+  XSmallText,
+} from "../../Text/Text";
 import { router } from "expo-router";
 import { WorkoutGroupCardProps } from "../../Cards/types";
 import { Image, TouchableHighlight, View } from "react-native";
@@ -8,8 +14,9 @@ import LinearGradient from "react-native-linear-gradient";
 import Icon from "react-native-vector-icons/Ionicons";
 import twrnc from "twrnc";
 import moc from "../../../../assets/bgs/moc.png";
-import { dateFormatDayOfWeek } from "../../../app_pages/StatsScreen";
+
 import { green } from "../../shared";
+import { dateFormatDayOfWeek } from "@/src/utils/algos";
 
 const startColor = twrnc.color("bg-stone-900");
 const endColor = twrnc.color("bg-teal-900");
@@ -64,13 +71,13 @@ const WorkoutGroupGridItem: FunctionComponent<{
             />
             <View style={{ flex: 5 }}>
               <View style={{ marginVertical: 4 }}>
-                <TSParagrapghText
+                <TSSnippetText
                   numberOfLines={1}
                   textStyles={{ marginLeft: 16, color: textColor }}
                 >
                   {props.card.title}
-                </TSParagrapghText>
-                <TSCaptionText
+                </TSSnippetText>
+                <TSDateText
                   numberOfLines={1}
                   textStyles={{
                     textAlign: "left",
@@ -79,26 +86,17 @@ const WorkoutGroupGridItem: FunctionComponent<{
                   }}
                 >
                   {dateFormatDayOfWeek(new Date(props.card.for_date))}{" "}
-                </TSCaptionText>
+                </TSDateText>
               </View>
             </View>
             <View style={{ flex: 1, alignItems: "center" }}>
-              <Icon
+              {/* <Icon
                 name={
                   props.card.completed ? "checkmark-circle-outline" : "locate"
                 }
                 color={props.card.completed ? green : theme.palette.text}
                 style={{ fontSize: 24, marginRight: 8 }}
-              />
-              {props.card.owned_by_class === true ? (
-                <></>
-              ) : (
-                <XSmallText
-                  textStyles={{ textAlign: "right", marginRight: 14 }}
-                >
-                  {props.card.owned_by_class === false ? "you" : "class"}
-                </XSmallText>
-              )}
+              /> */}
             </View>
           </View>
         </LinearGradient>

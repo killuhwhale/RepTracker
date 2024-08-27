@@ -27,7 +27,7 @@ export const dateFormatDayOfWeek = (dd: Date) => {
   const d = new Date(dd);
   return `${DAYSOFWEEK[d.getUTCDay()]} ${
     d.getUTCMonth() + 1
-  }-${d.getUTCDate()}-${d.getUTCFullYear()}`;
+  }/${d.getUTCDate()}/${d.getUTCFullYear()}`;
 };
 
 export const jListToNumStr = (jsonListStr: string) => {

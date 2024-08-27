@@ -13,7 +13,13 @@ import * as RootNavigation from "../../navigators/RootNavigation";
 import ActionCancelModal from "./ActionCancelModal";
 import AuthManager from "../../utils/auth";
 import { centeredViewStyle, settingsModalViewStyle } from "./modalStyles";
-import { MediumText, TSCaptionText, TSParagrapghText } from "../Text/Text";
+import {
+  MediumText,
+  TSCaptionText,
+  TSParagrapghText,
+  TSSnippetText,
+  TSTitleText,
+} from "../Text/Text";
 import { TestIDs } from "../../utils/constants";
 import { router } from "expo-router";
 
@@ -63,7 +69,7 @@ const ProfileSettingsModalRow: FunctionComponent<{
           props.onAction();
         }}
       >
-        <MediumText
+        <TSSnippetText
           textStyles={{
             textAlign: variant === 0 ? "left" : "center",
             color:
@@ -71,7 +77,7 @@ const ProfileSettingsModalRow: FunctionComponent<{
           }}
         >
           {props.title}
-        </MediumText>
+        </TSSnippetText>
       </TouchableHighlight>
     </View>
   );
@@ -137,7 +143,7 @@ const ProfileSettingsModal: FunctionComponent<{
               flex: 1,
             }}
           >
-            <TSParagrapghText>Settings</TSParagrapghText>
+            <TSTitleText>Settings</TSTitleText>
           </View>
 
           <View

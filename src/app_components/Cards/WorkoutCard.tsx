@@ -14,7 +14,7 @@ import {
   useDeleteWorkoutMutation,
 } from "../../redux/api/apiSlice";
 import { WorkoutItemPreviewHorizontalList } from "./cardList";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 
 const CardRow = styled.View`
   flex-direction: row;
@@ -47,7 +47,19 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
 
   const navToWorkoutDetail = () => {
     console.log("Navigating to WorkoutDetailScreen w/ props: ", props);
-    // navigation.navigate("WorkoutDetailScreen", props);
+    router.push({
+      pathname: "/WorkoutDetailScreen",
+      params: {
+        id: props.id,
+        title: props.title,
+        desc: props.desc,
+        scheme_rounds: props.scheme_rounds,
+        scheme_type: props.scheme_type,
+        instruction: props.instruction,
+        for_date: props.for_date,
+        ownedByClass: 0,
+      },
+    });
   };
 
   const _deleteWorkout = () => {

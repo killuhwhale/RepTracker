@@ -98,8 +98,6 @@ const TotalsBarChart: FunctionComponent<{
       style={{
         marginBottom: 24,
         paddingBottom: 12,
-        borderBottomWidth: 1,
-        borderColor: theme.palette.text,
       }}
     >
       <View style={{ width: "100%", flexDirection: "row" }}>

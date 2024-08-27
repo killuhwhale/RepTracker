@@ -382,11 +382,10 @@ const CreateWorkoutScreen: FunctionComponent = () => {
 
       <View
         style={{
-          flex:
-            [REPS_W, ROUNDS_W, CREATIVE_W].indexOf(WORKOUT_TYPES[schemeType]) >=
-            0
-              ? 3
-              : 2,
+          flexShrink: 2,
+          flexGrow: 3,
+          flexBasis: 0,
+
           justifyContent: "center",
           width: "100%",
         }}

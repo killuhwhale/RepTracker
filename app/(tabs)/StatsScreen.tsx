@@ -142,12 +142,41 @@ const StatsScreen: FunctionComponent<Props> = () => {
           style={{
             flexDirection: "row",
             width: "100%",
+            height: 24,
+            backgroundColor: theme.palette.darkGray,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 15,
+            borderBottomWidth: 2,
+            borderColor: theme.palette.text,
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <TSCaptionText
+              textStyles={{ textAlign: "center", paddingLeft: 16 }}
+            >
+              Start Date
+            </TSCaptionText>
+          </View>
+          <View style={{ flex: 1 }}>
+            <TSCaptionText
+              textStyles={{ textAlign: "center", paddingLeft: 16 }}
+            >
+              End Date
+            </TSCaptionText>
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
             backgroundColor: theme.palette.darkGray,
             justifyContent: "center",
             alignItems: "center",
             borderBottomWidth: 2,
             borderColor: theme.palette.text,
-            marginTop: 15,
+            marginBottom: 15,
           }}
         >
           <DatePicker
@@ -176,39 +205,16 @@ const StatsScreen: FunctionComponent<Props> = () => {
             }}
           />
         </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            height: 24,
-            backgroundColor: theme.palette.darkGray,
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: 15,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <TSCaptionText
-              textStyles={{ textAlign: "center", paddingLeft: 16 }}
-            >
-              Start Date
-            </TSCaptionText>
-          </View>
-          <View style={{ flex: 1 }}>
-            <TSCaptionText
-              textStyles={{ textAlign: "center", paddingLeft: 16 }}
-            >
-              End Date
-            </TSCaptionText>
-          </View>
-        </View>
       </View>
+
       <View style={{ flex: 8 }}>
-        <TSCaptionText>
-          Found {dataReady ? data?.length : 0}{" "}
-          {dataReady && data?.length == 1 ? "workout" : "workouts"}
-        </TSCaptionText>
+        <View style={{ height: 20 }}>
+          <TSCaptionText>
+            Found {dataReady ? data?.length : 0}{" "}
+            {dataReady && data?.length == 1 ? "workout" : "workouts"}
+          </TSCaptionText>
+        </View>
+
         <ScrollView>
           {dataReady ? (
             <>
@@ -221,11 +227,21 @@ const StatsScreen: FunctionComponent<Props> = () => {
                   data={data}
                 />
               )}
+
               <View style={{ marginBottom: 24 }}>
                 <StatsPanel tags={tags} names={names} />
               </View>
 
               <TotalsBarChart dataTypes={dataTypes} tags={tags} names={names} />
+
+              <View
+                style={{
+                  width: "100%",
+                  borderBottomWidth: 1,
+                  borderColor: theme.palette.text,
+                  marginVertical: 8,
+                }}
+              ></View>
 
               <TotalsLineChart
                 dataTypes={dataTypes}
@@ -235,6 +251,15 @@ const StatsScreen: FunctionComponent<Props> = () => {
                 workoutNameStats={workoutNameStats}
                 workoutTagStats={workoutTagStats}
               />
+
+              <View
+                style={{
+                  width: "100%",
+                  borderBottomWidth: 1,
+                  borderColor: theme.palette.text,
+                  marginVertical: 8,
+                }}
+              ></View>
 
               <TotalsPieChart dataTypes={dataTypes} tags={tags} names={names} />
             </>

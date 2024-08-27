@@ -51,12 +51,13 @@ export const darkRed = twrnc.color("bg-red-800");
 export const green = twrnc.color("bg-emerald-600");
 
 export const tsPageTitle: number = Platform.OS === "ios" ? 20 : 20;
-export const tsParagrapgh: number = Platform.OS === "ios" ? 14 : 14;
+export const tsParagrapgh: number = Platform.OS === "ios" ? 12 : 12;
 export const tsListTitle: number = Platform.OS === "ios" ? 14 : 14; // medium weight
-export const tsSnippet: number = Platform.OS === "ios" ? 16 : 16;
-export const tsCaption: number = Platform.OS === "ios" ? 14 : 14; // lighter color
+export const tsSnippet: number = Platform.OS === "ios" ? 11 : 11;
+export const tsCaption: number = Platform.OS === "ios" ? 11 : 11; // lighter color
 export const tsButton: number = Platform.OS === "ios" ? 14 : 14; // medium weight
 export const tsInput: number = Platform.OS === "ios" ? 16 : 16;
+export const tsDate: number = Platform.OS === "ios" ? 9 : 9;
 
 // Deprecated....
 export const titleFontSize: number = Platform.OS === "ios" ? 44 : 44;

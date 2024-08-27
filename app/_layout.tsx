@@ -179,12 +179,7 @@ export default function RootLayout() {
             <SafeAreaView>
               <View style={{ height: "100%", width: "100%" }}>
                 <Header showBackButton={showBackButton} />
-
                 <AuthNew>
-                  {/* <RootStack
-                    setShowBackButton={setShowBackButton}
-                    navref={navigationRef}
-                    /> */}
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen
                       name="(tabs)"

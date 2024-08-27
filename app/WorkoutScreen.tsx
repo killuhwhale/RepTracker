@@ -18,6 +18,7 @@ import {
   TSParagrapghText,
   LargeText,
   TSTitleText,
+  TSDateText,
 } from "../src/app_components/Text/Text";
 
 import { useTheme } from "styled-components";
@@ -142,6 +143,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
             <></>
           )}
         </View>
+
         <View style={{ flex: 3 }}>
           <TSTitleText textStyles={{ textAlign: "center", marginVertical: 8 }}>
             {workoutGroup.title}
@@ -531,253 +533,275 @@ const WorkoutScreen: FunctionComponent = () => {
           alignItems: "center",
         }}
       >
-        <WorkoutScreenHeader
-          WGOwner={WGOwner}
-          completedIsSuccess={completedIsSuccess}
-          isFinished={isFinished}
-          oGIsLoading={oGIsLoading}
-          oGIsSuccess={oGIsSuccess}
-          onConfirmDelete={onConfirmDelete}
-          personalWorkout={personalWorkout}
-          setShowingOGWorkoutGroup={setShowingOGWorkoutGroup}
-          showingOGWorkoutGroup={showingOGWorkoutGroup}
-          workoutGroup={workoutGroup}
-        />
-
-        {/* {workoutGroup.media_ids &&
-        JSON.parse(workoutGroup.media_ids).length > 0 ? (
-          <Row style={{height: 300}}>
-            <MediaURLSliderClass
-              data={JSON.parse(workoutGroup.media_ids)}
-              mediaClassID={workoutGroup.id}
-              mediaClass={MEDIA_CLASSES[mediaClass]}
+        <View style={{ flex: 1 }}>
+          <View style={{ flexShrink: 1, flexGrow: 2, flexBasis: 0 }}>
+            <WorkoutScreenHeader
+              WGOwner={WGOwner}
+              completedIsSuccess={completedIsSuccess}
+              isFinished={isFinished}
+              oGIsLoading={oGIsLoading}
+              oGIsSuccess={oGIsSuccess}
+              onConfirmDelete={onConfirmDelete}
+              personalWorkout={personalWorkout}
+              setShowingOGWorkoutGroup={setShowingOGWorkoutGroup}
+              showingOGWorkoutGroup={showingOGWorkoutGroup}
+              workoutGroup={workoutGroup}
             />
-          </Row>
-        ) : (
-          <View style={{margin: 69}}>
-            <TSCaptionText>Add some pictures next time!</TSCaptionText>
           </View>
-        )} */}
 
-        <View
-          style={{
-            width: "100%",
-            alignItems: "flex-end",
-          }}
-        >
-          <TSCaptionText>
-            {formatLongDate(new Date(workoutGroup.for_date))}
-          </TSCaptionText>
-        </View>
+          {/* {workoutGroup.media_ids &&
+          JSON.parse(workoutGroup.media_ids).length > 0 ? (
+            <Row style={{height: 300}}>
+              <MediaURLSliderClass
+                data={JSON.parse(workoutGroup.media_ids)}
+                mediaClassID={workoutGroup.id}
+                mediaClass={MEDIA_CLASSES[mediaClass]}
+              />
+            </Row>
+          ) : (
+            <View style={{margin: 69}}>
+              <TSCaptionText>Add some pictures next time!</TSCaptionText>
+            </View>
+          )} */}
 
-        <View
-          style={{
-            width: "100%",
-            alignItems: "flex-start",
-            padding: 6,
-            marginBottom: 12,
-          }}
-        >
-          <TSCaptionText>{workoutGroup.caption}</TSCaptionText>
-        </View>
+          <View
+            style={{
+              width: "100%",
+              alignItems: "flex-end",
+              flexShrink: 1,
+              flexGrow: 2,
+              flexBasis: 0,
+            }}
+          >
+            <TSDateText>
+              {formatLongDate(new Date(workoutGroup.for_date))}
+            </TSDateText>
+          </View>
 
-        {params_editable ? (
-          <>
-            {oGData && showingOGWorkoutGroup && oGData.finished === false ? (
-              <View
-                style={{
-                  flex: 2,
-                  flexDirection: "row",
-                  marginBottom: 12,
-                  justifyContent: "flex-end",
-                  alignContent: "flex-end",
-                  alignItems: "flex-end",
-                  width: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    display: showCreate ? "flex" : "none",
-                    flexDirection: "column",
-                  }}
-                >
-                  <RegularButton
-                    onPress={openCreateWorkoutScreenForStandard.bind(this)}
-                    testID={TestIDs.CreateRegularWorkoutBtn.name()}
-                    btnStyles={{
-                      backgroundColor: "#4285F4",
-                    }}
-                    text="Standard"
-                  />
-                  <RegularButton
-                    onPress={openCreateWorkoutScreenForReps.bind(this)}
-                    btnStyles={{
-                      backgroundColor: "#DB4437",
-                    }}
-                    text="Reps"
-                  />
-                  <RegularButton
-                    onPress={openCreateWorkoutScreenForRounds.bind(this)}
-                    btnStyles={{
-                      backgroundColor: "#F4B400",
-                    }}
-                    text="Rounds"
-                  />
-                  <RegularButton
-                    onPress={openCreateWorkoutScreenCreative.bind(this)}
-                    btnStyles={{
-                      backgroundColor: "#0F9D58",
-                    }}
-                    text="Creative"
-                  />
-                  {/* <RegularButton
-                    onPress={openCreateWorkoutScreenForTimeScore.bind(this)}
-                    btnStyles={{
-                      backgroundColor: '#2dd4bf',
-                    }}
-                    text="Scored Time"
-                  />
-                  <RegularButton
-                    onPress={openCreateWorkoutScreenForTimeLimit.bind(this)}
-                    btnStyles={{
-                      backgroundColor: '#38bdf8',
-                    }}
-                    text="Time Limit"
-                  /> */}
-                </View>
-                <View
-                  style={{
-                    flexDirection: showCreate ? "column" : "row",
-                    justifyContent: "center",
-                    height: "100%",
-                  }}
-                >
-                  <RegularButton
-                    onPress={() => setShowCreate(!showCreate)}
-                    testID={TestIDs.ToggleShowCreateWorkoutBtns.name()}
-                    btnStyles={{
-                      backgroundColor: showCreate ? theme.palette.gray : green,
-                    }}
-                    text={showCreate ? "X" : "Add Workout"}
-                  />
+          <View
+            style={{
+              width: "100%",
+              alignItems: "flex-start",
+              padding: 6,
+              marginBottom: 12,
+              flexShrink: 1,
+              flexGrow: 2,
+              flexBasis: 0,
+            }}
+          >
+            <TSCaptionText>{workoutGroup.caption}</TSCaptionText>
+          </View>
 
-                  <RegularButton
-                    onPress={() => setShowFinishWorkoutGroupModal(true)}
-                    textStyles={{ marginHorizontal: 12 }}
-                    btnStyles={{
-                      backgroundColor: theme.palette.primary.main,
-                      display: !showCreate ? "flex" : "none",
+          <View style={{ flexShrink: 1, flexGrow: 5, flexBasis: 0 }}>
+            {params_editable ? (
+              <>
+                {oGData &&
+                showingOGWorkoutGroup &&
+                oGData.finished === false ? (
+                  <View
+                    style={{
+                      flex: 2,
+                      flexDirection: "row",
+                      marginBottom: 12,
+                      justifyContent: "flex-end",
+                      alignContent: "flex-end",
+                      alignItems: "flex-end",
+                      width: "100%",
                     }}
-                    text="Finish"
-                  />
-                </View>
-              </View>
-            ) : (
-              <></>
-            )}
-
-            {oGData && oGData.finished ? (
-              <></>
-            ) : (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  width: "100%",
-                  marginBottom: 12,
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                {workouts.length ? (
-                  <TouchableWithoutFeedback
-                    onPress={() => setEditable(!editable)}
                   >
-                    <View style={{ alignItems: "flex-end" }}>
-                      <Switch
-                        value={editable}
-                        onValueChange={(v) => {
-                          setEditable(!editable);
+                    <View
+                      style={{
+                        display: showCreate ? "flex" : "none",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForStandard.bind(this)}
+                        testID={TestIDs.CreateRegularWorkoutBtn.name()}
+                        btnStyles={{
+                          backgroundColor: "#4285F4",
                         }}
-                        trackColor={{
-                          true: theme.palette.primary.contrastText,
-                          false: theme.palette.primary.contrastText,
-                        }}
-                        thumbColor={editable ? red : theme.palette.gray}
+                        text="Standard"
                       />
-                      <TSCaptionText
-                        textStyles={{ color: editable ? red : "white" }}
-                      >
-                        Delete mode
-                        {editable
-                          ? ": hold title of workout below to remove."
-                          : ""}
-                      </TSCaptionText>
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForReps.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#DB4437",
+                        }}
+                        text="Reps"
+                      />
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForRounds.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#F4B400",
+                        }}
+                        text="Rounds"
+                      />
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenCreative.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#0F9D58",
+                        }}
+                        text="Creative"
+                      />
+                      {/* <RegularButton
+                        onPress={openCreateWorkoutScreenForTimeScore.bind(this)}
+                        btnStyles={{
+                          backgroundColor: '#2dd4bf',
+                        }}
+                        text="Scored Time"
+                      />
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForTimeLimit.bind(this)}
+                        btnStyles={{
+                          backgroundColor: '#38bdf8',
+                        }}
+                        text="Time Limit"
+                      /> */}
                     </View>
-                  </TouchableWithoutFeedback>
+                    <View
+                      style={{
+                        flexDirection: showCreate ? "column" : "row",
+                        justifyContent: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <RegularButton
+                        onPress={() => setShowCreate(!showCreate)}
+                        testID={TestIDs.ToggleShowCreateWorkoutBtns.name()}
+                        btnStyles={{
+                          backgroundColor: showCreate
+                            ? theme.palette.gray
+                            : green,
+                        }}
+                        text={showCreate ? "X" : "Add Workout"}
+                      />
+
+                      <RegularButton
+                        onPress={() => setShowFinishWorkoutGroupModal(true)}
+                        textStyles={{ marginHorizontal: 12 }}
+                        btnStyles={{
+                          backgroundColor: theme.palette.primary.main,
+                          display: !showCreate ? "flex" : "none",
+                        }}
+                        text="Finish"
+                      />
+                    </View>
+                  </View>
                 ) : (
                   <></>
                 )}
-              </View>
+
+                {oGData && oGData.finished ? (
+                  <></>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      width: "100%",
+                      marginBottom: 12,
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                  >
+                    {workouts.length ? (
+                      <TouchableWithoutFeedback
+                        onPress={() => setEditable(!editable)}
+                      >
+                        <View style={{ alignItems: "flex-end" }}>
+                          <Switch
+                            value={editable}
+                            onValueChange={(v) => {
+                              setEditable(!editable);
+                            }}
+                            trackColor={{
+                              true: theme.palette.primary.contrastText,
+                              false: theme.palette.primary.contrastText,
+                            }}
+                            thumbColor={editable ? red : theme.palette.gray}
+                          />
+                          <TSCaptionText
+                            textStyles={{ color: editable ? red : "white" }}
+                          >
+                            Delete mode
+                            {editable
+                              ? ": hold title of workout below to remove."
+                              : ""}
+                          </TSCaptionText>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                )}
+              </>
+            ) : (
+              <></>
             )}
-          </>
-        ) : (
-          <></>
-        )}
+          </View>
 
-        <Row style={{ width: "100%", borderRadius: 8 }} />
+          <Row style={{ width: "100%", borderRadius: 8 }} />
 
-        {workouts.length ? (
-          <>
-            <Row style={{ width: "100%" }}>
-              <TSTitleText textStyles={{ marginLeft: 6 }}>Stats</TSTitleText>
-            </Row>
+          <View style={{ flexShrink: 1, flexGrow: 5, flexBasis: 0 }}>
+            {workouts.length ? (
+              <>
+                <Row style={{ width: "100%" }}>
+                  <TSTitleText textStyles={{ marginLeft: 6 }}>
+                    Stats
+                  </TSTitleText>
+                </Row>
 
-            <View
-              style={{
-                flex: 4,
-                width: "100%",
-                borderRadius: 8,
-                // backgroundColor: theme.palette.gray,
-                paddingVertical: 20,
-                paddingLeft: 10,
-              }}
-            >
-              <Row>
-                <StatsPanel tags={tags} names={names} />
-              </Row>
-            </View>
+                <View
+                  style={{
+                    flex: 4,
+                    width: "100%",
+                    borderRadius: 8,
+                    // backgroundColor: theme.palette.gray,
+                    paddingVertical: 20,
+                    paddingLeft: 10,
+                  }}
+                >
+                  <Row>
+                    <StatsPanel tags={tags} names={names} />
+                  </Row>
+                </View>
 
-            <Row style={{ width: "100%", borderRadius: 8 }} />
+                <Row style={{ width: "100%", borderRadius: 8 }} />
 
-            <Row style={{ width: "100%" }}>
-              <TSTitleText textStyles={{ marginLeft: 6 }}>Workouts</TSTitleText>
-            </Row>
+                <Row style={{ width: "100%" }}>
+                  <TSTitleText textStyles={{ marginLeft: 6 }}>
+                    Workouts
+                  </TSTitleText>
+                </Row>
 
-            <Row style={{ width: "100%" }}>
-              {(showingOGWorkoutGroup && oGIsLoading) ||
-              (!showingOGWorkoutGroup && completedIsLoading) ? (
-                <TSCaptionText>Loading....</TSCaptionText>
-              ) : (showingOGWorkoutGroup && oGIsSuccess) ||
-                (!showingOGWorkoutGroup && completedIsSuccess) ? (
-                <WorkoutCardFullList
-                  data={workouts}
-                  editable={editable}
-                  group={workoutGroup}
-                />
-              ) : (showingOGWorkoutGroup && oGIsError) ||
-                (!showingOGWorkoutGroup && completedIsError) ? (
-                <TSCaptionText>
-                  Error.... {oGError.toString() | completedError.toString()}
-                </TSCaptionText>
-              ) : (
-                <TSCaptionText>No Data</TSCaptionText>
-              )}
-            </Row>
-          </>
-        ) : (
-          <></>
-        )}
+                <Row style={{ width: "100%" }}>
+                  {(showingOGWorkoutGroup && oGIsLoading) ||
+                  (!showingOGWorkoutGroup && completedIsLoading) ? (
+                    <TSCaptionText>Loading....</TSCaptionText>
+                  ) : (showingOGWorkoutGroup && oGIsSuccess) ||
+                    (!showingOGWorkoutGroup && completedIsSuccess) ? (
+                    <WorkoutCardFullList
+                      data={workouts}
+                      editable={editable}
+                      group={workoutGroup}
+                    />
+                  ) : (showingOGWorkoutGroup && oGIsError) ||
+                    (!showingOGWorkoutGroup && completedIsError) ? (
+                    <TSCaptionText>
+                      Error.... {oGError.toString() | completedError.toString()}
+                    </TSCaptionText>
+                  ) : (
+                    <TSCaptionText>No Data</TSCaptionText>
+                  )}
+                </Row>
+              </>
+            ) : (
+              <></>
+            )}
+          </View>
+        </View>
 
         <ActionCancelModal
           actionText="Delete Workout Group"
