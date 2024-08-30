@@ -8,27 +8,15 @@ import React, {
   PropsWithChildren,
 } from "react";
 
-import {
-  DefaultTheme,
-  ThemeProvider,
-  useTheme,
-} from "styled-components/native";
+import { DefaultTheme, ThemeProvider } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  EmitterSubscription,
-  StatusBar,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useColorScheme, View } from "react-native";
 import { store } from "../src/redux/store";
 import { Provider } from "react-redux";
-import { navigationRef } from "../src/navigators/RootNavigation";
 import Header from "../src/app_components/Header/header";
 import { apiSlice, getToken } from "../src/redux/api/apiSlice";
 
-import * as RootNavigation from "../src/navigators/RootNavigation";
-
-import AuthScreen from "../src/app_pages/AuthScreen";
+import AuthScreen from "@/app/AuthScreen";
 import Uploady from "@rpldy/native-uploady";
 import { BASEURL } from "../src/utils/constants";
 

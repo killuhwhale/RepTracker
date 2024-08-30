@@ -17,6 +17,9 @@ import {
   TSCaptionText,
   TSParagrapghText,
   MediumText,
+  TSInputText,
+  TSSnippetText,
+  TSTitleText,
 } from "../../src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -31,11 +34,13 @@ import {
 } from "../../src/redux/api/apiSlice";
 
 import { RootStackParamList } from "../../src/navigators/RootStack";
+import twrnc from "twrnc";
 
 import * as RootNavigation from "../../src/navigators/RootNavigation";
 import { StackScreenProps } from "@react-navigation/stack";
 import {
   Modal,
+  Platform,
   StyleProp,
   TouchableHighlight,
   TouchableOpacity,
@@ -58,6 +63,7 @@ import { TestIDs } from "../../src/utils/constants";
 import BannerAddMembership from "../../src/app_components/ads/BannerAd";
 import ProfileSettingsModal from "../../src/app_components/modals/profileSettingsModal";
 import { UserProps } from "../types";
+import Purchases, { PurchasesOffering } from "react-native-purchases";
 
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
@@ -159,7 +165,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
           <Input
             containerStyle={{
               backgroundColor: theme.palette.transparent,
-              height: 45,
+              height: 35,
               borderRadius: 8,
               marginHorizontal: 4,
             }}
@@ -178,15 +184,12 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
+              paddingLeft: 24,
             }}
           >
-            <TSParagrapghText
-              textStyles={{ textAlign: "center", flexShrink: 1 }}
-            >
+            <TSInputText textStyles={{ textAlign: "left" }}>
               {newUsername}
-            </TSParagrapghText>
+            </TSInputText>
             <TSCaptionText
               textStyles={{
                 color: `${
@@ -373,69 +376,93 @@ const Profile: FunctionComponent<Props> = () => {
   const { data, isLoading, isSuccess, isError, error } =
     useGetProfileViewQuery("");
 
-  const {
-    data: dataGymFavs,
-    isLoading: isLoadingGymFavs,
-    isSuccess: isSuccessGymFavs,
-    isError: isErrorGymFavs,
-    error: errorGymFavs,
-  } = useGetProfileGymFavsQuery("");
-
-  const {
-    data: dataGymClassFavs,
-    isLoading: isLoadingGymClassFavs,
-    isSuccess: isSuccessGymClassFavs,
-    isError: isErrorGymClassFavs,
-    error: errorGymClassFavs,
-  } = useGetProfileGymClassFavsQuery("");
-
-  const {
-    data: usersGyms,
-    isLoading: userGymsLoading,
-    isSuccess: gymIsSuccess,
-    isError: gymIsError,
-    error: gymError,
-  } = useGetUserGymsQuery("");
-
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [deleteGymModalVisible, setDeleteGymModalVisibleVisible] =
-    useState(false);
+  const [currentOffering, setCurrentOffering] =
+    useState<PurchasesOffering | null>(null);
 
-  const [curDelGym, setCurDelGym] = useState({} as GymCardProps);
+  useEffect(() => {
+    const setup = async () => {
+      try {
+        if (Platform.OS == "android") {
+          await Purchases.configure({ apiKey: "" });
+        } else {
+          await Purchases.configure({ apiKey: "" });
+        }
+        const offerings = await Purchases.getOfferings();
+        setCurrentOffering(offerings.current);
+      } catch (err) {
+        console.log("Error getting offerings: ", err);
+      }
+    };
 
-  const [deleteGymMutation, { isLoading: deleteGymLoading }] =
-    useDeleteGymMutation();
+    Purchases.setDebugLogsEnabled(true);
 
-  const onConfirmDelete = (gym: GymCardProps) => {
-    setCurDelGym(gym);
-    setDeleteGymModalVisibleVisible(true);
-  };
+    setup().catch(console.log);
+  }, []);
 
-  const onDelete = async () => {
-    try {
-      const deletedGym = await deleteGymMutation(curDelGym.id).unwrap();
-      console.log("Deleted Gym: ", deletedGym);
-      setDeleteGymModalVisibleVisible(false);
-    } catch (error) {
-      console.log("Error deleting gym: ", error);
-    }
-  };
+  // const {
+  //   data: dataGymFavs,
+  //   isLoading: isLoadingGymFavs,
+  //   isSuccess: isSuccessGymFavs,
+  //   isError: isErrorGymFavs,
+  //   error: errorGymFavs,
+  // } = useGetProfileGymFavsQuery("");
+
+  // const {
+  //   data: dataGymClassFavs,
+  //   isLoading: isLoadingGymClassFavs,
+  //   isSuccess: isSuccessGymClassFavs,
+  //   isError: isErrorGymClassFavs,
+  //   error: errorGymClassFavs,
+  // } = useGetProfileGymClassFavsQuery("");
+
+  // const {
+  //   data: usersGyms,
+  //   isLoading: userGymsLoading,
+  //   isSuccess: gymIsSuccess,
+  //   isError: gymIsError,
+  //   error: gymError,
+  // } = useGetUserGymsQuery("");
+
+  // const [deleteGymModalVisible, setDeleteGymModalVisibleVisible] =
+  //   useState(false);
+
+  // const [curDelGym, setCurDelGym] = useState({} as GymCardProps);
+
+  // const [deleteGymMutation, { isLoading: deleteGymLoading }] =
+  //   useDeleteGymMutation();
+
+  // const onConfirmDelete = (gym: GymCardProps) => {
+  //   setCurDelGym(gym);
+  //   setDeleteGymModalVisibleVisible(true);
+  // };
+
+  // const onDelete = async () => {
+  //   try {
+  //     const deletedGym = await deleteGymMutation(curDelGym.id).unwrap();
+  //     console.log("Deleted Gym: ", deletedGym);
+  //     setDeleteGymModalVisibleVisible(false);
+  //   } catch (error) {
+  //     console.log("Error deleting gym: ", error);
+  //   }
+  // };
+
   console.log("Profile user: ", error, data?.user);
+
   return (
     <PageContainer>
       <BannerAddMembership />
       {isLoading ? (
         <TSCaptionText>Loading....</TSCaptionText>
       ) : isSuccess ? (
-        <View style={{ flex: 1, width: "100%" }}>
+        <View style={{ flex: 1, width: "100%", marginTop: 36 }}>
           <View
             style={{
               flex: 2,
               flexDirection: "row",
-              height: "100%",
-              justifyContent: "center",
-              alignItems: "center",
+
+              justifyContent: "flex-start",
             }}
           >
             <View style={{ flex: 5 }}>
@@ -448,9 +475,6 @@ const Profile: FunctionComponent<Props> = () => {
                 testID={TestIDs.OpenSettingsModalBtn.name()}
                 style={{
                   flex: 1,
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
                   borderRadius: 12,
                 }}
               >
@@ -464,8 +488,62 @@ const Profile: FunctionComponent<Props> = () => {
               </TouchableHighlight>
             </View>
           </View>
+          <View
+            style={{
+              flex: 4,
+              flexDirection: "row",
 
-          {dataGymFavs?.favorite_gyms?.length > 0 ? (
+              justifyContent: "flex-start",
+            }}
+          >
+            {!isDateInFuture(data.user.sub_end_date) ? (
+              <View style={{ width: "100%" }}>
+                <TSTitleText>In App Purchase</TSTitleText>
+                <View
+                  style={{
+                    width: "100%",
+                    height: 32,
+                    marginTop: 12,
+                    backgroundColor: twrnc.color("bg-blue-600"),
+                    borderRadius: 8,
+                    justifyContent: "center",
+                  }}
+                >
+                  <View style={{}}>
+                    <TSSnippetText textStyles={{ textAlign: "center" }}>
+                      Remove Ads
+                    </TSSnippetText>
+                  </View>
+                  {/* {currentOffering ? (
+                    <View>
+                      <TSSnippetText>
+                        Current Offering: {currentOffering.identifier}
+                      </TSSnippetText>
+                      <TSSnippetText>
+                        Package Count:{" "}
+                        {currentOffering.availablePackages.length}
+                      </TSSnippetText>
+                      {currentOffering.availablePackages.map((pkg) => {
+                        return (
+                          <TSSnippetText>
+                            {pkg.product.identifier}
+                          </TSSnippetText>
+                        );
+                      })}
+                    </View>
+                  ) : (
+                    <TSSnippetText>Loading IAP</TSSnippetText>
+                  )} */}
+                </View>
+              </View>
+            ) : (
+              <View>
+                <TSParagrapghText>Thanks for your support!</TSParagrapghText>
+              </View>
+            )}
+          </View>
+
+          {/* {dataGymFavs?.favorite_gyms?.length > 0 ? (
             <View style={{ flex: 4, width: "100%" }}>
               <TSCaptionText>Favorite Gyms</TSCaptionText>
               <ScrollView>
@@ -498,7 +576,7 @@ const Profile: FunctionComponent<Props> = () => {
             </View>
           ) : (
             <View style={{ flex: 6 }} />
-          )}
+          )} */}
 
           <ProfileSettingsModal
             modalVisible={modalVisible}
@@ -506,14 +584,14 @@ const Profile: FunctionComponent<Props> = () => {
             user={data.user}
           />
 
-          <DeleteActionCancelModal
+          {/* <DeleteActionCancelModal
             confirmName={curDelGym.title}
             actionText="Delete gym"
             closeText="Close"
             onAction={onDelete}
             modalVisible={deleteGymModalVisible}
             onRequestClose={() => setDeleteGymModalVisibleVisible(false)}
-          />
+          /> */}
         </View>
       ) : isError ? (
         <TSCaptionText>Error.... {error.toString()}</TSCaptionText>
