@@ -20,6 +20,7 @@ import {
   TSInputText,
   TSSnippetText,
   TSTitleText,
+  TSButtonText,
 } from "../../src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -47,6 +48,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+
 import { ScrollView } from "react-native-gesture-handler";
 
 import {
@@ -63,7 +65,10 @@ import { TestIDs } from "../../src/utils/constants";
 import BannerAddMembership from "../../src/app_components/ads/BannerAd";
 import ProfileSettingsModal from "../../src/app_components/modals/profileSettingsModal";
 import { UserProps } from "../types";
-import Purchases, { PurchasesOffering } from "react-native-purchases";
+import Purchases, {
+  PurchasesOffering,
+  PurchasesStoreProduct,
+} from "react-native-purchases";
 
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
@@ -378,8 +383,9 @@ const Profile: FunctionComponent<Props> = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [currentOffering, setCurrentOffering] =
-    useState<PurchasesOffering | null>(null);
+  const [curProducts, setCurProducts] = useState<
+    PurchasesStoreProduct[] | null
+  >(null);
 
   useEffect(() => {
     const setup = async () => {
@@ -387,10 +393,13 @@ const Profile: FunctionComponent<Props> = () => {
         if (Platform.OS == "android") {
           await Purchases.configure({ apiKey: "" });
         } else {
-          await Purchases.configure({ apiKey: "" });
+          await Purchases.configure({
+            apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
+          });
         }
-        const offerings = await Purchases.getOfferings();
-        setCurrentOffering(offerings.current);
+        const products = await Purchases.getProducts(["sub_remove_ads"]);
+        setCurProducts(products);
+        console.log("Got product: ", products);
       } catch (err) {
         console.log("Error getting offerings: ", err);
       }
@@ -401,52 +410,14 @@ const Profile: FunctionComponent<Props> = () => {
     setup().catch(console.log);
   }, []);
 
-  // const {
-  //   data: dataGymFavs,
-  //   isLoading: isLoadingGymFavs,
-  //   isSuccess: isSuccessGymFavs,
-  //   isError: isErrorGymFavs,
-  //   error: errorGymFavs,
-  // } = useGetProfileGymFavsQuery("");
-
-  // const {
-  //   data: dataGymClassFavs,
-  //   isLoading: isLoadingGymClassFavs,
-  //   isSuccess: isSuccessGymClassFavs,
-  //   isError: isErrorGymClassFavs,
-  //   error: errorGymClassFavs,
-  // } = useGetProfileGymClassFavsQuery("");
-
-  // const {
-  //   data: usersGyms,
-  //   isLoading: userGymsLoading,
-  //   isSuccess: gymIsSuccess,
-  //   isError: gymIsError,
-  //   error: gymError,
-  // } = useGetUserGymsQuery("");
-
-  // const [deleteGymModalVisible, setDeleteGymModalVisibleVisible] =
-  //   useState(false);
-
-  // const [curDelGym, setCurDelGym] = useState({} as GymCardProps);
-
-  // const [deleteGymMutation, { isLoading: deleteGymLoading }] =
-  //   useDeleteGymMutation();
-
-  // const onConfirmDelete = (gym: GymCardProps) => {
-  //   setCurDelGym(gym);
-  //   setDeleteGymModalVisibleVisible(true);
-  // };
-
-  // const onDelete = async () => {
-  //   try {
-  //     const deletedGym = await deleteGymMutation(curDelGym.id).unwrap();
-  //     console.log("Deleted Gym: ", deletedGym);
-  //     setDeleteGymModalVisibleVisible(false);
-  //   } catch (error) {
-  //     console.log("Error deleting gym: ", error);
-  //   }
-  // };
+  const makePurchase = async (product: PurchasesStoreProduct) => {
+    try {
+      const purchaseRes = await Purchases.purchaseStoreProduct(product);
+      console.log("Make purchases for IAP: ", product.identifier, purchaseRes);
+    } catch (err) {
+      console.error("Error purchasing sub: ", err);
+    }
+  };
 
   console.log("Profile user: ", error, data?.user);
 
@@ -504,15 +475,61 @@ const Profile: FunctionComponent<Props> = () => {
                     width: "100%",
                     height: 32,
                     marginTop: 12,
-                    backgroundColor: twrnc.color("bg-blue-600"),
+
                     borderRadius: 8,
                     justifyContent: "center",
                   }}
                 >
-                  <View style={{}}>
-                    <TSSnippetText textStyles={{ textAlign: "center" }}>
-                      Remove Ads
-                    </TSSnippetText>
+                  <View
+                    style={{
+                      alignContent: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    {curProducts ? (
+                      curProducts.map((product) => {
+                        return (
+                          <View
+                            style={{
+                              width: "80%",
+                              backgroundColor: twrnc.color("bg-blue-600"),
+                              borderRadius: 8,
+                            }}
+                            key={product.identifier}
+                          >
+                            <TouchableHighlight
+                              onPress={() =>
+                                makePurchase(product).catch((err) =>
+                                  console.error("Error makePurchase: ", err)
+                                )
+                              }
+                            >
+                              <View
+                                style={{
+                                  marginVertical: 12,
+                                  paddingHorizontal: 12,
+                                }}
+                              >
+                                <TSButtonText
+                                  textStyles={{ textAlign: "center" }}
+                                >
+                                  {product.title}
+                                </TSButtonText>
+                                <TSSnippetText
+                                  textStyles={{ textAlign: "center" }}
+                                >
+                                  {product.description}
+                                </TSSnippetText>
+                              </View>
+                            </TouchableHighlight>
+                          </View>
+                        );
+                      })
+                    ) : (
+                      <TSSnippetText>Loading...</TSSnippetText>
+                    )}
                   </View>
                   {/* {currentOffering ? (
                     <View>
@@ -603,3 +620,55 @@ const Profile: FunctionComponent<Props> = () => {
 };
 
 export default Profile;
+
+/** Code for Favorites in body of Profile, replace once we are using gyms and classes
+ * 
+ * 
+  // const {
+  //   data: dataGymFavs,
+  //   isLoading: isLoadingGymFavs,
+  //   isSuccess: isSuccessGymFavs,
+  //   isError: isErrorGymFavs,
+  //   error: errorGymFavs,
+  // } = useGetProfileGymFavsQuery("");
+
+  // const {
+  //   data: dataGymClassFavs,
+  //   isLoading: isLoadingGymClassFavs,
+  //   isSuccess: isSuccessGymClassFavs,
+  //   isError: isErrorGymClassFavs,
+  //   error: errorGymClassFavs,
+  // } = useGetProfileGymClassFavsQuery("");
+
+  // const {
+  //   data: usersGyms,
+  //   isLoading: userGymsLoading,
+  //   isSuccess: gymIsSuccess,
+  //   isError: gymIsError,
+  //   error: gymError,
+  // } = useGetUserGymsQuery("");
+
+  // const [deleteGymModalVisible, setDeleteGymModalVisibleVisible] =
+  //   useState(false);
+
+  // const [curDelGym, setCurDelGym] = useState({} as GymCardProps);
+
+  // const [deleteGymMutation, { isLoading: deleteGymLoading }] =
+  //   useDeleteGymMutation();
+
+  // const onConfirmDelete = (gym: GymCardProps) => {
+  //   setCurDelGym(gym);
+  //   setDeleteGymModalVisibleVisible(true);
+  // };
+
+  // const onDelete = async () => {
+  //   try {
+  //     const deletedGym = await deleteGymMutation(curDelGym.id).unwrap();
+  //     console.log("Deleted Gym: ", deletedGym);
+  //     setDeleteGymModalVisibleVisible(false);
+  //   } catch (error) {
+  //     console.log("Error deleting gym: ", error);
+  //   }
+  // };
+ * 
+ */

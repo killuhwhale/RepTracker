@@ -191,7 +191,3 @@ export const debounce = (func, timeout = 300) => {
 export const validEmailRegex = new RegExp(
   "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])"
 );
-
-/**
- * Expose `cloneDeep`
- */

@@ -2,16 +2,22 @@ import React, { FunctionComponent, useMemo, useState } from "react";
 import {
   Platform,
   ScrollView,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { TSCaptionText } from "../../src/app_components/Text/Text";
+import {
+  TSButtonText,
+  TSCaptionText,
+  TSSnippetText,
+} from "../../src/app_components/Text/Text";
 import {
   Container,
   SCREEN_HEIGHT,
   CalcWorkoutStats,
+  formatLongDate,
 } from "../../src/app_components/shared";
 import { RootStackParamList } from "../../src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -58,6 +64,8 @@ const StatsScreen: FunctionComponent<Props> = () => {
 
   const [startDate, setStartDate] = useState<Date>(five_days_ago);
   const [endDate, setEndDate] = useState<Date>(today);
+  const [startDateModalOpen, setStartDateModalOpen] = useState(false);
+  const [endDateModalOpen, setEndDateModalOpen] = useState(false);
 
   const { data, isLoading, isSuccess, isError, error } =
     useGetCompletedWorkoutGroupsForUserByDateRangeQuery({
@@ -142,28 +150,46 @@ const StatsScreen: FunctionComponent<Props> = () => {
           style={{
             flexDirection: "row",
             width: "100%",
-            height: 24,
+            height: 42,
             backgroundColor: theme.palette.darkGray,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 15,
+            marginTop: 12,
             borderBottomWidth: 2,
             borderColor: theme.palette.text,
           }}
         >
           <View style={{ flex: 1 }}>
-            <TSCaptionText
-              textStyles={{ textAlign: "center", paddingLeft: 16 }}
-            >
-              Start Date
-            </TSCaptionText>
+            <TouchableHighlight onPress={() => setStartDateModalOpen(true)}>
+              <>
+                <TSButtonText
+                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                >
+                  Start Date
+                </TSButtonText>
+                <TSButtonText
+                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                >
+                  {formatLongDate(startDate)}
+                </TSButtonText>
+              </>
+            </TouchableHighlight>
           </View>
           <View style={{ flex: 1 }}>
-            <TSCaptionText
-              textStyles={{ textAlign: "center", paddingLeft: 16 }}
-            >
-              End Date
-            </TSCaptionText>
+            <TouchableHighlight onPress={() => setEndDateModalOpen(true)}>
+              <>
+                <TSButtonText
+                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                >
+                  End Date
+                </TSButtonText>
+                <TSButtonText
+                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                >
+                  {formatLongDate(endDate)}
+                </TSButtonText>
+              </>
+            </TouchableHighlight>
           </View>
         </View>
 
@@ -185,11 +211,18 @@ const StatsScreen: FunctionComponent<Props> = () => {
             mode="date"
             locale="en"
             theme="dark"
-            maximumDate={new Date(new Date().getTime() + oneday)}
+            maximumDate={new Date(endDate.getTime() - oneday)}
+            onCancel={() => setStartDateModalOpen(false)}
+            onConfirm={(date) => {
+              setStartDate(date);
+              setStartDateModalOpen(false);
+            }}
+            modal={true}
+            open={startDateModalOpen}
             style={{
               flex: 1,
-              height: SCREEN_HEIGHT * 0.06,
-              transform: [{ scale: 0.65 }],
+              // height: SCREEN_HEIGHT * 0.06,
+              // transform: [{ scale: 0.65 }],
             }}
           />
           <DatePicker
@@ -198,6 +231,14 @@ const StatsScreen: FunctionComponent<Props> = () => {
             mode="date"
             locale="en"
             theme="dark"
+            modal={true}
+            open={endDateModalOpen}
+            minimumDate={new Date(startDate.getTime() + oneday)}
+            onCancel={() => setEndDateModalOpen(false)}
+            onConfirm={(date) => {
+              setEndDate(date);
+              setEndDateModalOpen(false);
+            }}
             style={{
               flex: 1,
               height: SCREEN_HEIGHT * 0.06,

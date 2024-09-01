@@ -459,7 +459,7 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const promptUpdateDualItems = () => {
-    const shouldShow = hasUnfinsihedDualItems(workouts) && owned_by_class === 0;
+    const shouldShow = hasUnfinsihedDualItems(workouts);
     if (shouldShow) {
       console.log(
         "User needs to submit their results if this is not owned by a class"
@@ -502,20 +502,10 @@ const WorkoutScreen: FunctionComponent = () => {
     }
   };
 
-  // console.log(
-  //   'Current workout Group:',
-  //   workoutGroup,
-  //   oGData,
-  //   completedData,
-  //   isShowingOGWorkoutGroup,
-  //   showingOGWorkoutGroup,
-  // );
-
   return (
     <View
       style={{
-        height: SCREEN_HEIGHT + 4,
-        minHeight: SCREEN_HEIGHT,
+        height: "100%",
         width: SCREEN_WIDTH,
       }}
     >
@@ -523,8 +513,7 @@ const WorkoutScreen: FunctionComponent = () => {
       <ScrollView
         style={{
           backgroundColor: theme.palette.backgroundColor,
-          height: SCREEN_HEIGHT,
-          marginBottom: SCREEN_HEIGHT * 0.15,
+          height: "100%",
         }}
         testID={TestIDs.WorkoutScreenScrollView.name()}
         contentContainerStyle={{
