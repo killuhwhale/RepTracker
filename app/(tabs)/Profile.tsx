@@ -390,9 +390,7 @@ const Profile: FunctionComponent<Props> = () => {
   useEffect(() => {
     const setup = async () => {
       try {
-        if (Platform.OS == "android") {
-          await Purchases.configure({ apiKey: "" });
-        } else {
+        if (Platform.OS == "ios") {
           await Purchases.configure({
             apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
           });
@@ -405,9 +403,10 @@ const Profile: FunctionComponent<Props> = () => {
       }
     };
 
-    Purchases.setDebugLogsEnabled(true);
-
-    setup().catch(console.log);
+    if (Platform.OS == "ios") {
+      Purchases.setDebugLogsEnabled(true);
+      setup().catch(console.log);
+    }
   }, []);
 
   const makePurchase = async (product: PurchasesStoreProduct) => {
@@ -459,106 +458,90 @@ const Profile: FunctionComponent<Props> = () => {
               </TouchableHighlight>
             </View>
           </View>
-          <View
-            style={{
-              flex: 4,
-              flexDirection: "row",
+          {Platform.OS === "ios" ? (
+            <View
+              style={{
+                flex: 4,
+                flexDirection: "row",
 
-              justifyContent: "flex-start",
-            }}
-          >
-            {!isDateInFuture(data.user.sub_end_date) ? (
-              <View style={{ width: "100%" }}>
-                <TSTitleText>In App Purchase</TSTitleText>
-                <View
-                  style={{
-                    width: "100%",
-                    height: 32,
-                    marginTop: 12,
-
-                    borderRadius: 8,
-                    justifyContent: "center",
-                  }}
-                >
+                justifyContent: "flex-start",
+              }}
+            >
+              {!isDateInFuture(data.user.sub_end_date) ? (
+                <View style={{ width: "100%" }}>
+                  <TSTitleText>In App Purchase</TSTitleText>
                   <View
                     style={{
-                      alignContent: "center",
-                      justifyContent: "center",
-                      alignItems: "center",
                       width: "100%",
+                      height: 32,
+                      marginTop: 12,
+
+                      borderRadius: 8,
+                      justifyContent: "center",
                     }}
                   >
-                    {curProducts ? (
-                      curProducts.map((product) => {
-                        return (
-                          <View
-                            style={{
-                              width: "80%",
-                              backgroundColor: twrnc.color("bg-blue-600"),
-                              borderRadius: 8,
-                            }}
-                            key={product.identifier}
-                          >
-                            <TouchableHighlight
-                              onPress={() =>
-                                makePurchase(product).catch((err) =>
-                                  console.error("Error makePurchase: ", err)
-                                )
-                              }
+                    <View
+                      style={{
+                        alignContent: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      {curProducts ? (
+                        curProducts.map((product) => {
+                          return (
+                            <View
+                              style={{
+                                width: "80%",
+                                backgroundColor: twrnc.color("bg-blue-600"),
+                                borderRadius: 8,
+                              }}
+                              key={product.identifier}
                             >
-                              <View
-                                style={{
-                                  marginVertical: 12,
-                                  paddingHorizontal: 12,
-                                }}
+                              <TouchableHighlight
+                                onPress={() =>
+                                  makePurchase(product).catch((err) =>
+                                    console.error("Error makePurchase: ", err)
+                                  )
+                                }
                               >
-                                <TSButtonText
-                                  textStyles={{ textAlign: "center" }}
+                                <View
+                                  style={{
+                                    marginVertical: 12,
+                                    paddingHorizontal: 12,
+                                  }}
                                 >
-                                  {product.title}
-                                </TSButtonText>
-                                <TSSnippetText
-                                  textStyles={{ textAlign: "center" }}
-                                >
-                                  {product.description}
-                                </TSSnippetText>
-                              </View>
-                            </TouchableHighlight>
-                          </View>
-                        );
-                      })
-                    ) : (
-                      <TSSnippetText>Loading...</TSSnippetText>
-                    )}
-                  </View>
-                  {/* {currentOffering ? (
-                    <View>
-                      <TSSnippetText>
-                        Current Offering: {currentOffering.identifier}
-                      </TSSnippetText>
-                      <TSSnippetText>
-                        Package Count:{" "}
-                        {currentOffering.availablePackages.length}
-                      </TSSnippetText>
-                      {currentOffering.availablePackages.map((pkg) => {
-                        return (
-                          <TSSnippetText>
-                            {pkg.product.identifier}
-                          </TSSnippetText>
-                        );
-                      })}
+                                  <TSButtonText
+                                    textStyles={{ textAlign: "center" }}
+                                  >
+                                    {product.title}
+                                  </TSButtonText>
+                                  <TSSnippetText
+                                    textStyles={{ textAlign: "center" }}
+                                  >
+                                    {product.description}
+                                  </TSSnippetText>
+                                </View>
+                              </TouchableHighlight>
+                            </View>
+                          );
+                        })
+                      ) : (
+                        <TSSnippetText>Loading...</TSSnippetText>
+                      )}
                     </View>
-                  ) : (
-                    <TSSnippetText>Loading IAP</TSSnippetText>
-                  )} */}
+                  </View>
                 </View>
-              </View>
-            ) : (
-              <View>
-                <TSParagrapghText>Thanks for your support!</TSParagrapghText>
-              </View>
-            )}
-          </View>
+              ) : (
+                <View>
+                  <TSParagrapghText>Thanks for your support!</TSParagrapghText>
+                </View>
+              )}
+            </View>
+          ) : (
+            <></>
+          )}
 
           {/* {dataGymFavs?.favorite_gyms?.length > 0 ? (
             <View style={{ flex: 4, width: "100%" }}>
@@ -622,8 +605,8 @@ const Profile: FunctionComponent<Props> = () => {
 export default Profile;
 
 /** Code for Favorites in body of Profile, replace once we are using gyms and classes
- * 
- * 
+ *
+ *
   // const {
   //   data: dataGymFavs,
   //   isLoading: isLoadingGymFavs,
@@ -670,5 +653,5 @@ export default Profile;
   //     console.log("Error deleting gym: ", error);
   //   }
   // };
- * 
+ *
  */

@@ -22,6 +22,7 @@ import {
 } from "../Text/Text";
 import { TestIDs } from "../../utils/constants";
 import { router } from "expo-router";
+import { DOMAIN_NAME } from "@/src/utils/constants";
 
 const ProfileSettingsModalRow: FunctionComponent<{
   onAction(): void;
@@ -242,7 +243,7 @@ const ProfileSettingsModal: FunctionComponent<{
             <ProfileSettingsModalRow
               testID={TestIDs.ResetPasswordScreenBtn.name()}
               onAction={() => {
-                Linking.openURL("https://fittrackrr.com/removeAccount");
+                Linking.openURL(`https://${DOMAIN_NAME}/removeAccount`);
                 props.onRequestClose();
               }}
               variant={1}

@@ -1,15 +1,17 @@
-const nodeEnv = process.env.NODE_ENV || '';
+const nodeEnv = process.env.NODE_ENV || "";
+
+const DOMAIN_NAME = "reptrackrr.com";
 
 const BASEURL =
-  ['development', 'test'].indexOf(nodeEnv) >= 0
-    ? 'http://localhost:8000/'
-    : 'https://fittrackrr.com/ffapi/'; // iOS simulator & physical device w/ adb reverse
-// : 'https://starfish-app-r4hzq.ondigitalocean.app/'; // iOS simulator & physical device w/ adb reverse
-console.log('Using Baseurl: ', BASEURL);
-console.log('Env vars: ', process.env);
+  ["development", "test"].indexOf(nodeEnv) < 0
+    ? "http://localhost:8000/"
+    : `https://${DOMAIN_NAME}/ffapi/`;
+
+console.log("Using Baseurl: ", BASEURL);
+console.log("Env vars: ", process.env);
 // const BASEURL = "http://10.0.2.2:8000/" // android emulator
 
-const SPACES_URL = 'https://fitform.sfo3.digitaloceanspaces.com';
+const SPACES_URL = "";
 
 /*
    TestIDs
@@ -17,120 +19,120 @@ const SPACES_URL = 'https://fitform.sfo3.digitaloceanspaces.com';
 
 class TestIDs {
   // Profile
-  static OpenSettingsModalBtn = new TestIDs('OpenSettingsModalBtn');
+  static OpenSettingsModalBtn = new TestIDs("OpenSettingsModalBtn");
   static CreatePersonalWorkoutGroupBtn = new TestIDs(
-    'CreatePersonalWorkoutGroupBtn',
+    "CreatePersonalWorkoutGroupBtn"
   );
 
-  static GymRowTouchable = new TestIDs('GymRowTouchable');
+  static GymRowTouchable = new TestIDs("GymRowTouchable");
 
   // Profile Settings Modal
-  static CreateGymScreenBtn = new TestIDs('CreateGymScreenBtn');
-  static CreateGymClassScreenBtn = new TestIDs('CreateGymClassScreenBtn');
+  static CreateGymScreenBtn = new TestIDs("CreateGymScreenBtn");
+  static CreateGymClassScreenBtn = new TestIDs("CreateGymClassScreenBtn");
   static CreateWorkoutGroupScreenBtn = new TestIDs(
-    'CreateWorkoutGroupScreenBtn',
+    "CreateWorkoutGroupScreenBtn"
   );
-  static ResetPasswordScreenBtn = new TestIDs('ResetPasswordScreenBtn');
-  static CloseProfileSettingsBtn = new TestIDs('CloseProfileSettingsBtn');
+  static ResetPasswordScreenBtn = new TestIDs("ResetPasswordScreenBtn");
+  static CloseProfileSettingsBtn = new TestIDs("CloseProfileSettingsBtn");
 
   // Header
-  static PlanetHome = new TestIDs('PlanetHome');
+  static PlanetHome = new TestIDs("PlanetHome");
 
   // AuthScreen
-  static SignInEmailField = new TestIDs('SignInEmailField');
-  static SignInPasswordField = new TestIDs('SignInPasswordField');
-  static SignInSubmit = new TestIDs('SignInSubmit');
+  static SignInEmailField = new TestIDs("SignInEmailField");
+  static SignInPasswordField = new TestIDs("SignInPasswordField");
+  static SignInSubmit = new TestIDs("SignInSubmit");
 
   // RootStack (Bottom nav)
-  static HomeTab = new TestIDs('HomeTab');
-  static ProfileTab = new TestIDs('ProfileTab');
+  static HomeTab = new TestIDs("HomeTab");
+  static ProfileTab = new TestIDs("ProfileTab");
 
   // CreateGymScreen
-  static GymTitleField = new TestIDs('GymTitleField');
-  static GymDescField = new TestIDs('GymDescField');
-  static GymSubmitBtn = new TestIDs('GymSubmitBtn');
+  static GymTitleField = new TestIDs("GymTitleField");
+  static GymDescField = new TestIDs("GymDescField");
+  static GymSubmitBtn = new TestIDs("GymSubmitBtn");
 
   // CreateGymClassScreen
-  static GymClassTitleField = new TestIDs('GymClassTitleField');
-  static GymClassDescField = new TestIDs('GymClassDescField');
-  static GymClassPrivateSwitch = new TestIDs('GymClassPrivateSwitch');
+  static GymClassTitleField = new TestIDs("GymClassTitleField");
+  static GymClassDescField = new TestIDs("GymClassDescField");
+  static GymClassPrivateSwitch = new TestIDs("GymClassPrivateSwitch");
   static GymClassRNPickerTouchableGym = new TestIDs(
-    'GymClassRNPickerTouchableGym',
+    "GymClassRNPickerTouchableGym"
   );
-  static GymClassRNPickerModalGym = new TestIDs('GymClassRNPickerModalGym');
-  static GymClassRNPickerGym = new TestIDs('GymClassRNPickerGym');
-  static GymClassCreateBtn = new TestIDs('GymClassCreateBtn');
+  static GymClassRNPickerModalGym = new TestIDs("GymClassRNPickerModalGym");
+  static GymClassRNPickerGym = new TestIDs("GymClassRNPickerGym");
+  static GymClassCreateBtn = new TestIDs("GymClassCreateBtn");
 
   // GymClassScreen
   static CreateWorkoutGroupScreenForClassBtn = new TestIDs(
-    'CreateWorkoutGroupScreenForClassBtn',
+    "CreateWorkoutGroupScreenForClassBtn"
   );
 
   // WorkoutGroupScreen
-  static WorkoutGroupTitleField = new TestIDs('WorkoutGroupTitleField');
-  static WorkoutGroupCaptionField = new TestIDs('WorkoutGroupCaptionField');
-  static WorkoutGroupCreateBtn = new TestIDs('WorkoutGroupCreateBtn');
+  static WorkoutGroupTitleField = new TestIDs("WorkoutGroupTitleField");
+  static WorkoutGroupCaptionField = new TestIDs("WorkoutGroupCaptionField");
+  static WorkoutGroupCreateBtn = new TestIDs("WorkoutGroupCreateBtn");
 
   // Workout Screen
-  static CreateRegularWorkoutBtn = new TestIDs('CreateRegularWorkoutBtn');
+  static CreateRegularWorkoutBtn = new TestIDs("CreateRegularWorkoutBtn");
   static ToggleShowCreateWorkoutBtns = new TestIDs(
-    'ToggleShowCreateWorkoutBtns',
+    "ToggleShowCreateWorkoutBtns"
   );
-  static WorkoutScreenScrollView = new TestIDs('WorkoutScreenScrollView');
-  static WorkoutCardList = new TestIDs('WorkoutCardList'); // Holds list of workouts, count childitem for num of workouts
-  static WorkoutCardItemList = new TestIDs('WorkoutCardItemList'); // Holds list of workout items for a workout, count childitem for num of workout items
+  static WorkoutScreenScrollView = new TestIDs("WorkoutScreenScrollView");
+  static WorkoutCardList = new TestIDs("WorkoutCardList"); // Holds list of workouts, count childitem for num of workouts
+  static WorkoutCardItemList = new TestIDs("WorkoutCardItemList"); // Holds list of workout items for a workout, count childitem for num of workout items
 
   // Create Workout Screen
-  static CreateWorkoutTitleField = new TestIDs('CreateWorkoutTitleField');
-  static CreateWorkoutDescField = new TestIDs('CreateWorkoutDescField');
-  static CreateWorkoutAddItemBtn = new TestIDs('CreateWorkoutAddItemBtn');
-  static CreateWorkoutCreateBtn = new TestIDs('CreateWorkoutCreateBtn');
+  static CreateWorkoutTitleField = new TestIDs("CreateWorkoutTitleField");
+  static CreateWorkoutDescField = new TestIDs("CreateWorkoutDescField");
+  static CreateWorkoutAddItemBtn = new TestIDs("CreateWorkoutAddItemBtn");
+  static CreateWorkoutCreateBtn = new TestIDs("CreateWorkoutCreateBtn");
 
   // Add Item Panel on Create workoutscreen
-  static AddItemPauseDurField = new TestIDs('AddItemPauseDurField');
+  static AddItemPauseDurField = new TestIDs("AddItemPauseDurField");
   static AddItemRNPickerTouchableItemPicker = new TestIDs(
-    'AddItemRNPickerTouchableItemPicker',
+    "AddItemRNPickerTouchableItemPicker"
   );
   static AddItemRNPickerModalItemPicker = new TestIDs(
-    'com.fitform:id/select_dialog_listview',
+    "com.fitform:id/select_dialog_listview"
   );
   static VerticalPickerGestureHandlerQtyType = new TestIDs(
-    'VerticalPickerGestureHandlerQtyType',
+    "VerticalPickerGestureHandlerQtyType"
   );
   static VerticalPickerGestureHandlerDuration = new TestIDs(
-    'VerticalPickerGestureHandlerDuration',
+    "VerticalPickerGestureHandlerDuration"
   );
   static VerticalPickerGestureHandlerDistance = new TestIDs(
-    'VerticalPickerGestureHandlerDistance',
+    "VerticalPickerGestureHandlerDistance"
   );
   static VerticalPickerGestureHandlerWtUnit = new TestIDs(
-    'VerticalPickerGestureHandlerWtUnit',
+    "VerticalPickerGestureHandlerWtUnit"
   );
   static VerticalPickerGestureHandlerRestUnit = new TestIDs(
-    'VerticalPickerGestureHandlerRestUnit',
+    "VerticalPickerGestureHandlerRestUnit"
   );
-  static AddItemSetsField = new TestIDs('AddItemSetsField');
-  static AddItemRepsField = new TestIDs('AddItemRepsField');
-  static AddItemDistanceField = new TestIDs('AddItemDistanceField');
-  static AddItemDurationField = new TestIDs('AddItemDurationField');
-  static AddItemWeightField = new TestIDs('AddItemWeightField');
-  static AddItemRestField = new TestIDs('AddItemRestField');
-  static AddItemPercentOfField = new TestIDs('AddItemPercentOfField');
+  static AddItemSetsField = new TestIDs("AddItemSetsField");
+  static AddItemRepsField = new TestIDs("AddItemRepsField");
+  static AddItemDistanceField = new TestIDs("AddItemDistanceField");
+  static AddItemDurationField = new TestIDs("AddItemDurationField");
+  static AddItemWeightField = new TestIDs("AddItemWeightField");
+  static AddItemRestField = new TestIDs("AddItemRestField");
+  static AddItemPercentOfField = new TestIDs("AddItemPercentOfField");
   // Opens Item Name picker filter listview
   // Each item in the list has an ID by its WorkoutName
   static AddItemChooseWorkoutNameField = new TestIDs(
-    'AddItemChooseWorkoutNameField',
+    "AddItemChooseWorkoutNameField"
   );
   // Search input for workout names in filter modal
   static AddItemFilterModalInputField = new TestIDs(
-    'AddItemFilterModalInputField',
+    "AddItemFilterModalInputField"
   );
 
-  static AuthSignUpBtn = new TestIDs('AuthSignUpBtn');
-  static AuthSignUpEmail = new TestIDs('AuthSignUpEmail');
-  static AuthSignUpPassword = new TestIDs('AuthSignUpPassword');
-  static AuthSignUpPasswordConfirm = new TestIDs('AuthSignUpPasswordConfirm');
-  static AuthSignUpRegisterBtn = new TestIDs('AuthSignUpRegisterBtn');
+  static AuthSignUpBtn = new TestIDs("AuthSignUpBtn");
+  static AuthSignUpEmail = new TestIDs("AuthSignUpEmail");
+  static AuthSignUpPassword = new TestIDs("AuthSignUpPassword");
+  static AuthSignUpPasswordConfirm = new TestIDs("AuthSignUpPasswordConfirm");
+  static AuthSignUpRegisterBtn = new TestIDs("AuthSignUpRegisterBtn");
 
   #name: string;
 
@@ -147,4 +149,4 @@ class TestIDs {
   }
 }
 
-export {BASEURL, SPACES_URL, TestIDs, nodeEnv};
+export { BASEURL, SPACES_URL, TestIDs, nodeEnv, DOMAIN_NAME };
