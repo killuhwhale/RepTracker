@@ -5,9 +5,10 @@ import React, {
   useEffect,
 } from "react";
 import styled from "styled-components/native";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, TouchableHighlight, View } from "react-native";
 import {
   Container,
+  formatLongDate,
   limitTextLength,
   mdFontSize,
   SCREEN_HEIGHT,
@@ -176,6 +177,8 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
     // TODO possibly dispatch to refresh data
   };
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   return (
     <PageContainer>
       <View style={{ height: "100%", width: "100%" }}>
@@ -241,28 +244,41 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
           <View
             style={{
               flexDirection: "row",
+              height: 35,
               width: "100%",
               backgroundColor: theme.palette.darkGray,
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <TSCaptionText
-              textStyles={{ textAlign: "center", paddingLeft: 16 }}
-            >
-              For:{" "}
-            </TSCaptionText>
-            <DatePicker
-              date={forDate}
-              onDateChange={setForDate}
-              mode="date"
-              locale="en"
-              theme="dark"
+            <TouchableHighlight
               style={{
-                height: SCREEN_HEIGHT * 0.06,
-                transform: [{ scale: 0.65 }],
+                height: "100%",
+                width: "100%",
+                justifyContent: "center",
               }}
-            />
+              onPress={() => setShowDatePicker(!showDatePicker)}
+            >
+              <>
+                <TSCaptionText
+                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                >
+                  For: {formatLongDate(forDate)}
+                </TSCaptionText>
+                <DatePicker
+                  date={forDate}
+                  mode="date"
+                  locale="en"
+                  theme="dark"
+                  modal={true}
+                  open={showDatePicker}
+                  onCancel={() => setShowDatePicker(false)}
+                  onConfirm={(date) => setForDate(date)}
+                  buttonColor={theme.palette.text}
+                  title={"For Date"}
+                />
+              </>
+            </TouchableHighlight>
           </View>
         </View>
         {/* <View style={{flex: 8}}>

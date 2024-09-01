@@ -1,25 +1,22 @@
 import React, { FunctionComponent } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useTheme } from "styled-components";
-import { WorkoutGroupCardProps } from "../../src/app_components/Cards/types";
+import { WorkoutGroupCardProps } from "@/src/app_components/Cards/types";
 
-import FilterGrid from "../../src/app_components/Grids/FilterGrid";
-import { WorkoutGroupSquares } from "../../src/app_components/Grids/GymClasses/WorkoutGroupSquares";
+import FilterGrid from "@/src/app_components/Grids/FilterGrid";
+import { WorkoutGroupSquares } from "@/src/app_components/Grids/GymClasses/WorkoutGroupSquares";
 import {
   useGetProfileViewQuery,
   useGetProfileWorkoutGroupsQuery,
-} from "../../src/redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 import {
-  LargeText,
   TSParagrapghText,
   TSCaptionText,
-} from "../../src/app_components/Text/Text";
-import { RegularButton } from "../../src/app_components/Buttons/buttons";
-// import * as RootNavigation from "../../src/navigators/RootNavigation";
-import { Props as CreateWorkoutGroupScreenProps } from "../../src/app_pages/input_pages/gyms/CreateWorkoutGroupScreen";
+} from "@/src/app_components/Text/Text";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import BannerAddMembership from "../../src/app_components/ads/BannerAd";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
 import { router, useNavigation } from "expo-router";
 
 const UserWorkoutsScreen: FunctionComponent = (props) => {
@@ -126,9 +123,12 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
                   width: "100%",
                 }}
                 onPress={() => {
-                  RootNavigation.navigate("CreateWorkoutGroupScreen", {
-                    ownedByClass: false,
-                    ownerID: data.user.id,
+                  router.push({
+                    pathname: "/input_pages/gyms/CreateWorkoutGroupScreen",
+                    params: {
+                      ownedByClass: 0,
+                      ownerID: data.user.id,
+                    },
                   });
                 }}
               >

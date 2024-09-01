@@ -36,6 +36,7 @@ import FreqCalendar from "../../src/app_components/charts/freqCalendar";
 import BannerAddMembership from "../../src/app_components/ads/BannerAd";
 import { StatsPanel } from "../../src/app_components/Stats/StatsPanel";
 import { dateFormat } from "@/src/utils/algos";
+import twrnc from "twrnc";
 export type Props = StackScreenProps<RootStackParamList, "StatsScreen">;
 
 const ScreenContainer = styled(Container)`
@@ -219,11 +220,8 @@ const StatsScreen: FunctionComponent<Props> = () => {
             }}
             modal={true}
             open={startDateModalOpen}
-            style={{
-              flex: 1,
-              // height: SCREEN_HEIGHT * 0.06,
-              // transform: [{ scale: 0.65 }],
-            }}
+            buttonColor={theme.palette.text}
+            title={"Start Date"}
           />
           <DatePicker
             date={endDate}
@@ -239,11 +237,8 @@ const StatsScreen: FunctionComponent<Props> = () => {
               setEndDate(date);
               setEndDateModalOpen(false);
             }}
-            style={{
-              flex: 1,
-              height: SCREEN_HEIGHT * 0.06,
-              transform: [{ scale: 0.65 }],
-            }}
+            buttonColor={theme.palette.text}
+            title={"End Date"}
           />
         </View>
       </View>
