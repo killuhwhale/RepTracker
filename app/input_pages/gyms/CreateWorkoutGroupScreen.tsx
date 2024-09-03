@@ -9,6 +9,7 @@ import { ActivityIndicator, TouchableHighlight, View } from "react-native";
 import {
   Container,
   formatLongDate,
+  isDateInFuture,
   limitTextLength,
   mdFontSize,
   SCREEN_HEIGHT,
@@ -26,7 +27,10 @@ import DocumentPicker from "react-native-document-picker";
 
 import { useTheme } from "styled-components";
 import { useAppDispatch } from "../../../src/redux/hooks";
-import { useCreateWorkoutGroupMutation } from "../../../src/redux/api/apiSlice";
+import {
+  useCreateWorkoutGroupMutation,
+  useGetProfileViewQuery,
+} from "../../../src/redux/api/apiSlice";
 import { MediaSlider } from "../../../src/app_components/MediaSlider/MediaSlider";
 
 import { RootStackParamList } from "../../../src/navigators/RootStack";
@@ -97,6 +101,13 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
 
   const { ownerID } = params;
   const ownedByClass = false;
+  const {
+    data: userData,
+    isLoading: userIsLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetProfileViewQuery("");
   // Access/ send actions
   const dispatch = useAppDispatch();
   const [files, setFiles] = useState<ImageOrVideo[]>();
@@ -290,24 +301,34 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
         </View> */}
         <View style={{ flex: 2 }}>
           {!isCreating ? (
-            <>
+            isDateInFuture(userData.user.sub_end_date) ? (
               <RegularButton
                 onPress={() => {
-                  setShowAd(true);
+                  setReadyToCreate(true); // Trigger useEffect
                 }}
                 btnStyles={{ backgroundColor: theme.palette.darkGray }}
                 text="Create"
               />
-              <InterstitialAdMembership
-                text="Create"
-                onClose={() => {
-                  setShowAd(false); // return to prev state.
-                  setReadyToCreate(true); // Trigger useEffect
-                }}
-                show={showAd}
-                testID={TestIDs.GymClassCreateBtn.name()}
-              />
-            </>
+            ) : (
+              <>
+                <RegularButton
+                  onPress={() => {
+                    setShowAd(true);
+                  }}
+                  btnStyles={{ backgroundColor: theme.palette.darkGray }}
+                  text="Create"
+                />
+                <InterstitialAdMembership
+                  text="Create"
+                  onClose={() => {
+                    setShowAd(false); // return to prev state.
+                    setReadyToCreate(true); // Trigger useEffect
+                  }}
+                  show={showAd}
+                  testID={TestIDs.GymClassCreateBtn.name()}
+                />
+              </>
+            )
           ) : (
             <ActivityIndicator size="small" color={theme.palette.text} />
           )}

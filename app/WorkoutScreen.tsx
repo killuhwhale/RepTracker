@@ -600,59 +600,78 @@ const WorkoutScreen: FunctionComponent = () => {
                   >
                     <View
                       style={{
-                        display: showCreate ? "flex" : "none",
                         flexDirection: "column",
+                        // backgroundColor: "red",
+                        width: "80%",
                       }}
                     >
-                      <RegularButton
-                        onPress={openCreateWorkoutScreenForStandard.bind(this)}
-                        testID={TestIDs.CreateRegularWorkoutBtn.name()}
-                        btnStyles={{
-                          backgroundColor: "#4285F4",
+                      <View
+                        style={{
+                          display: showCreate ? "flex" : "none",
+                          flexDirection: "row",
+                          justifyContent: "space-evenly",
                         }}
-                        text="Standard"
-                      />
-                      <RegularButton
-                        onPress={openCreateWorkoutScreenForReps.bind(this)}
-                        btnStyles={{
-                          backgroundColor: "#DB4437",
+                      >
+                        <View style={{ width: "30%", padding: 6 }}>
+                          <RegularButton
+                            onPress={openCreateWorkoutScreenForStandard.bind(
+                              this
+                            )}
+                            testID={TestIDs.CreateRegularWorkoutBtn.name()}
+                            btnStyles={{
+                              backgroundColor: "#4285F4",
+                            }}
+                            text="Standard"
+                          />
+                        </View>
+                        <View style={{ width: "30%", padding: 6 }}>
+                          <RegularButton
+                            onPress={openCreateWorkoutScreenForReps.bind(this)}
+                            btnStyles={{
+                              backgroundColor: "#DB4437",
+                            }}
+                            text="Reps"
+                          />
+                        </View>
+                      </View>
+
+                      <View
+                        style={{
+                          display: showCreate ? "flex" : "none",
+                          flexDirection: "row",
+                          justifyContent: "space-evenly",
                         }}
-                        text="Reps"
-                      />
-                      <RegularButton
-                        onPress={openCreateWorkoutScreenForRounds.bind(this)}
-                        btnStyles={{
-                          backgroundColor: "#F4B400",
-                        }}
-                        text="Rounds"
-                      />
-                      <RegularButton
-                        onPress={openCreateWorkoutScreenCreative.bind(this)}
-                        btnStyles={{
-                          backgroundColor: "#0F9D58",
-                        }}
-                        text="Creative"
-                      />
-                      {/* <RegularButton
-                        onPress={openCreateWorkoutScreenForTimeScore.bind(this)}
-                        btnStyles={{
-                          backgroundColor: '#2dd4bf',
-                        }}
-                        text="Scored Time"
-                      />
-                      <RegularButton
-                        onPress={openCreateWorkoutScreenForTimeLimit.bind(this)}
-                        btnStyles={{
-                          backgroundColor: '#38bdf8',
-                        }}
-                        text="Time Limit"
-                      /> */}
+                      >
+                        <View style={{ width: "30%", padding: 6 }}>
+                          <RegularButton
+                            onPress={openCreateWorkoutScreenForRounds.bind(
+                              this
+                            )}
+                            btnStyles={{
+                              backgroundColor: "#F4B400",
+                            }}
+                            text="Rounds"
+                          />
+                        </View>
+                        <View style={{ width: "30%", padding: 6 }}>
+                          <RegularButton
+                            onPress={openCreateWorkoutScreenCreative.bind(this)}
+                            btnStyles={{
+                              backgroundColor: "#0F9D58",
+                            }}
+                            text="Creative"
+                          />
+                        </View>
+                      </View>
                     </View>
+
                     <View
                       style={{
                         flexDirection: showCreate ? "column" : "row",
                         justifyContent: "center",
                         height: "100%",
+                        marginRight: 8,
+                        paddingRight: 8,
                       }}
                     >
                       <RegularButton
@@ -698,7 +717,9 @@ const WorkoutScreen: FunctionComponent = () => {
                       <TouchableWithoutFeedback
                         onPress={() => setEditable(!editable)}
                       >
-                        <View style={{ alignItems: "flex-end" }}>
+                        <View
+                          style={{ alignItems: "flex-end", marginRight: 16 }}
+                        >
                           <Switch
                             value={editable}
                             onValueChange={(v) => {
@@ -793,11 +814,9 @@ const WorkoutScreen: FunctionComponent = () => {
         </View>
 
         <ActionCancelModal
-          actionText="Delete Workout Group"
+          actionText="Delete"
           closeText="Close"
-          modalText={`Delete ${title} (${
-            showingOGWorkoutGroup ? "Ori" : "Comp"
-          })?`}
+          modalText={`Delete ${title}${showingOGWorkoutGroup ? "" : ""}?`}
           onAction={onDelete}
           modalVisible={deleteWorkoutGroupModalVisible}
           onRequestClose={() => setDeleteWorkoutGroupModalVisible(false)}
@@ -806,7 +825,7 @@ const WorkoutScreen: FunctionComponent = () => {
         <ActionCancelModal
           actionText="Finish"
           closeText="Close"
-          modalText={`Finish ${title}? \n \t cannot be undone`}
+          modalText={`Finish ${title}?`}
           onAction={() => {
             setShowFinishWorkoutGroupModal(false);
             if (!promptUpdateDualItems()) {

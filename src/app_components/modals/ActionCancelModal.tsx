@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import React, { FunctionComponent } from "react";
 
 import {
   Modal,
@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 
-import {RegularButton} from '../Buttons/buttons';
-import {TSParagrapghText} from '../Text/Text';
-import {centeredViewStyle, modalViewStyle} from './modalStyles';
-import {useTheme} from 'styled-components';
+import { LargeButton, RegularButton } from "../Buttons/buttons";
+import { TSParagrapghText, TSSnippetText } from "../Text/Text";
+import { centeredViewStyle, modalViewStyle } from "./modalStyles";
+import { useTheme } from "styled-components";
 
 const ActionCancelModal: FunctionComponent<{
   modalVisible: boolean;
@@ -21,61 +21,89 @@ const ActionCancelModal: FunctionComponent<{
   modalText: string;
   onAction(): void;
   containerStyle?: StyleProp<ViewStyle>;
-}> = props => {
+}> = (props) => {
   const theme = useTheme();
-  console.log('ACM: ', props.modalVisible);
+  console.log("ACM: ", props.modalVisible);
 
   return (
     <Modal
       animationType="slide"
       transparent={true}
       visible={props.modalVisible}
-      onRequestClose={() => props.onRequestClose()}>
+      onRequestClose={() => props.onRequestClose()}
+    >
       <View
         style={[
           centeredViewStyle.centeredView,
-          {backgroundColor: '#000000DD'},
-        ]}>
+          { backgroundColor: "#000000DD" },
+        ]}
+      >
         <TouchableOpacity
           style={[
             centeredViewStyle.centeredView,
-            {width: '100%', height: '100%'},
+            { width: "100%", height: "100%" },
           ]}
-          onPress={() => props.onRequestClose()}>
+          onPress={() => props.onRequestClose()}
+        >
           <View
             style={[
               modalViewStyle.modalView,
               {
                 backgroundColor: theme.palette.darkGray,
+                width: "80%",
+                height: "35%",
               },
               props.containerStyle,
-            ]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 12,
-              }}>
-              <TSParagrapghText>{props.modalText}</TSParagrapghText>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <RegularButton
-                onPress={props.onRequestClose}
-                btnStyles={{
-                  backgroundColor: '#DB4437',
-                  marginRight: 4,
+            ]}
+          >
+            <View style={{ flex: 1, width: "100%", height: "100%" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 6,
+                  marginBottom: 12,
+                  flex: 4,
+                  width: "100%",
                 }}
-                text={props.closeText}
-              />
+              >
+                <TSSnippetText textStyles={{ textAlign: "center" }}>
+                  {props.modalText}
+                </TSSnippetText>
+              </View>
 
-              <RegularButton
-                onPress={props.onAction}
-                btnStyles={{
-                  backgroundColor: theme.palette.primary.main,
-                  marginLeft: 4,
+              <View
+                style={{
+                  flex: 2,
+                  flexDirection: "row",
+                  width: "100%",
+                  justifyContent: "space-around",
+                  alignContent: "center",
+                  alignItems: "center",
+                  paddingVertical: 12,
                 }}
-                text={props.actionText}
-              />
+              >
+                <LargeButton
+                  onPress={props.onRequestClose}
+                  btnStyles={{
+                    backgroundColor: "#DB4437",
+
+                    paddingVertical: 8,
+                  }}
+                  text={props.closeText}
+                />
+
+                <LargeButton
+                  onPress={props.onAction}
+                  btnStyles={{
+                    backgroundColor: theme.palette.primary.main,
+
+                    paddingVertical: 8,
+                  }}
+                  text={props.actionText}
+                />
+              </View>
             </View>
           </View>
         </TouchableOpacity>

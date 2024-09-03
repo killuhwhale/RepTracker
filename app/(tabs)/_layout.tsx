@@ -1,5 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 import twrnc from "twrnc";
 
 const FONTSIZE = 10;
@@ -9,6 +10,10 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: {
+          paddingBottom: 0,
+          maxHeight: "8%",
+        },
         tabBarActiveTintColor: twrnc.color("bg-blue-500"),
         tabBarActiveBackgroundColor: twrnc.color("bg-slate-950"),
 
@@ -44,15 +49,15 @@ export default function TabLayout() {
         }}
       />
       {/* <Tabs.Screen
-        name="DailySnapshot"
-        options={{
-          title: "Daily",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="terminal" color={color} />
-          ),
-        }}
-      /> */}
+          name="DailySnapshot"
+          options={{
+            title: "Daily",
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <FontAwesome size={28} name="terminal" color={color} />
+            ),
+          }}
+        /> */}
       <Tabs.Screen
         name="Profile"
         options={{

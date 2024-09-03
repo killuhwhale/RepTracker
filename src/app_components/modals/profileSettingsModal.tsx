@@ -23,6 +23,12 @@ import {
 import { TestIDs } from "../../utils/constants";
 import { router } from "expo-router";
 import { DOMAIN_NAME } from "@/src/utils/constants";
+import { apiSlice } from "@/src/redux/api/apiSlice";
+import { store } from "@/src/redux/store";
+
+const invalidateUser = () => {
+  store.dispatch(apiSlice.util.invalidateTags(["User"]));
+};
 
 const ProfileSettingsModalRow: FunctionComponent<{
   onAction(): void;
@@ -151,12 +157,35 @@ const ProfileSettingsModal: FunctionComponent<{
             style={{
               alignItems: "flex-end",
               width: "100%",
-              justifyContent: "center",
+              justifyContent: "flex-end",
               marginBottom: 32,
-
+              flexDirection: "row",
               flex: 1,
             }}
           >
+            <TouchableHighlight
+              underlayColor="#00000022"
+              style={{ borderRadius: 8 }}
+              onPress={() => {
+                invalidateUser();
+              }}
+            >
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  padding: 12,
+                }}
+              >
+                <Icon
+                  name="refresh"
+                  color="blue"
+                  style={{ fontSize: 24, marginRight: 4 }}
+                />
+                <TSCaptionText>Sub Status</TSCaptionText>
+              </View>
+            </TouchableHighlight>
             <TouchableHighlight
               underlayColor="#00000022"
               style={{ borderRadius: 8 }}

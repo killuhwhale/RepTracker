@@ -8,7 +8,11 @@ import React, {
   PropsWithChildren,
 } from "react";
 
-import { DefaultTheme, ThemeProvider } from "styled-components/native";
+import {
+  DefaultTheme,
+  ThemeProvider,
+  useTheme,
+} from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme, View } from "react-native";
 import { store } from "../src/redux/store";
@@ -143,13 +147,19 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
   }, []);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       {props && props.children ? (
-        <>{loggedIn ? <>{props.children[0]}</> : <>{props.children[1]}</>}</>
+        <View style={{ flex: 1 }}>
+          {loggedIn ? (
+            <View style={{ flex: 1 }}>{props.children[0]}</View>
+          ) : (
+            <View style={{ flex: 1 }}>{props.children[1]}</View>
+          )}
+        </View>
       ) : (
         <></>
       )}
-    </>
+    </View>
   );
 };
 
@@ -159,29 +169,38 @@ export default function RootLayout() {
   const [showBackButton, setShowBackButton] = useState(false);
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={DarkTheme}>
-        <Uploady destination={{ url: `${BASEURL}` }}>
-          {/* <React.StrictMode> */}
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaView>
-              <View style={{ height: "100%", width: "100%" }}>
-                <Header showBackButton={showBackButton} />
-                <AuthNew>
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen
-                      name="(tabs)"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack>
-                  <AuthScreen />
-                </AuthNew>
-              </View>
-            </SafeAreaView>
-          </GestureHandlerRootView>
-          {/* </React.StrictMode> */}
-        </Uploady>
-      </ThemeProvider>
-    </Provider>
+    <View style={{ height: "100%", width: "100%", backgroundColor: "red" }}>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: d_background, paddingBottom: 0 }}
+      >
+        <Provider store={store}>
+          <ThemeProvider theme={DarkTheme}>
+            <Uploady destination={{ url: `${BASEURL}` }}>
+              {/* <React.StrictMode> */}
+              <GestureHandlerRootView>
+                <View
+                  style={{
+                    flex: 1,
+                    width: "100%",
+                  }}
+                >
+                  <Header showBackButton={showBackButton} />
+                  <AuthNew>
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen
+                        name="(tabs)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
+                    <AuthScreen />
+                  </AuthNew>
+                </View>
+              </GestureHandlerRootView>
+              {/* </React.StrictMode> */}
+            </Uploady>
+          </ThemeProvider>
+        </Provider>
+      </SafeAreaView>
+    </View>
   );
 }

@@ -1,20 +1,20 @@
-import {useGetUserInfoQuery} from '../../redux/api/apiSlice';
+import { useGetUserInfoQuery } from "../../redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,
   TestIds,
   InterstitialAd,
   AdEventType,
-} from 'react-native-google-mobile-ads';
-import React, {FunctionComponent, useEffect, useState} from 'react';
-import {UserProps} from '../../app_pages/types';
-import {useTheme} from 'styled-components';
-import {RegularButton} from '../Buttons/buttons';
-import {View} from 'react-native';
+} from "react-native-google-mobile-ads";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { UserProps } from "../../app_pages/types";
+import { useTheme } from "styled-components";
+import { RegularButton } from "../Buttons/buttons";
+import { View } from "react-native";
 
 const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
   requestNonPersonalizedAdsOnly: true,
-  keywords: ['fashion', 'clothing'],
+  keywords: ["fashion", "clothing"],
 });
 
 const InterstitialAdMembership: FunctionComponent<{
@@ -22,7 +22,7 @@ const InterstitialAdMembership: FunctionComponent<{
   text: string;
   testID?: string;
   show?: boolean;
-}> = props => {
+}> = (props) => {
   const theme = useTheme();
   const {
     data: _userData,
@@ -30,7 +30,7 @@ const InterstitialAdMembership: FunctionComponent<{
     isSuccess: userIsSuccess,
     isError: userIsError,
     error: userError,
-  } = useGetUserInfoQuery('');
+  } = useGetUserInfoQuery("");
 
   const userData = _userData as UserProps;
 
@@ -41,14 +41,14 @@ const InterstitialAdMembership: FunctionComponent<{
       AdEventType.LOADED,
       () => {
         setLoaded(true);
-      },
+      }
     );
     const unsubscribeClosed = interstitial.addAdEventListener(
       AdEventType.CLOSED,
       () => {
         if (props.onClose) props.onClose();
         setLoaded(false);
-      },
+      }
     );
 
     // Start loading the interstitial straight away

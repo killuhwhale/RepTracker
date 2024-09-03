@@ -2,6 +2,7 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import styled from "styled-components/native";
@@ -26,6 +27,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import { useTheme } from "styled-components";
 import {
+  apiSlice,
   useDeleteGymMutation,
   useGetProfileGymClassFavsQuery,
   useGetProfileGymFavsQuery,
@@ -40,6 +42,7 @@ import twrnc from "twrnc";
 import * as RootNavigation from "../../src/navigators/RootNavigation";
 import { StackScreenProps } from "@react-navigation/stack";
 import {
+  ActivityIndicator,
   Modal,
   Platform,
   StyleProp,
@@ -69,6 +72,7 @@ import Purchases, {
   PurchasesOffering,
   PurchasesStoreProduct,
 } from "react-native-purchases";
+import { store } from "@/src/redux/store";
 
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
@@ -381,6 +385,7 @@ const Profile: FunctionComponent<Props> = () => {
   const { data, isLoading, isSuccess, isError, error } =
     useGetProfileViewQuery("");
 
+  const loadedProductsRef = useRef(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [curProducts, setCurProducts] = useState<
@@ -388,14 +393,48 @@ const Profile: FunctionComponent<Props> = () => {
   >(null);
 
   useEffect(() => {
+    Purchases.invalidateCustomerInfoCache();
+  }, []);
+
+  const invalidateUser = () => {
+    store.dispatch(apiSlice.util.invalidateTags(["User"]));
+  };
+
+  const makePurchase = async (product: PurchasesStoreProduct) => {
+    try {
+      console.log("Making purchase....");
+      const purchaseRes = await Purchases.purchaseStoreProduct(product);
+      console.log("Made purchases for IAP: ", product.identifier, purchaseRes);
+    } catch (err) {
+      console.error("Error purchasing sub: ", err);
+    }
+    try {
+      invalidateUser();
+    } catch (err) {
+      console.log("Error invalidating user after makepurchase: ", err);
+    }
+  };
+
+  console.log("Profile user: ", error, data);
+
+  if (data && !isLoading && !loadedProductsRef.current) {
     const setup = async () => {
       try {
         if (Platform.OS == "ios") {
-          await Purchases.configure({
+          const configureRes = await Purchases.configure({
             apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
           });
+          console.log("configureRes: ", configureRes);
         }
+
         const products = await Purchases.getProducts(["sub_remove_ads"]);
+        console.log("Setting user attr: ", data.user.id);
+        await Purchases.setAttributes({
+          userID: data?.user.id.toString(),
+        });
+        const setAttrRes = await Purchases.syncAttributesAndOfferingsIfNeeded();
+        console.log("setAttrRes: ", setAttrRes);
+
         setCurProducts(products);
         console.log("Got product: ", products);
       } catch (err) {
@@ -405,26 +444,17 @@ const Profile: FunctionComponent<Props> = () => {
 
     if (Platform.OS == "ios") {
       Purchases.setDebugLogsEnabled(true);
-      setup().catch(console.log);
+      setup()
+        .then(() => (loadedProductsRef.current = true))
+        .catch(console.log);
     }
-  }, []);
-
-  const makePurchase = async (product: PurchasesStoreProduct) => {
-    try {
-      const purchaseRes = await Purchases.purchaseStoreProduct(product);
-      console.log("Make purchases for IAP: ", product.identifier, purchaseRes);
-    } catch (err) {
-      console.error("Error purchasing sub: ", err);
-    }
-  };
-
-  console.log("Profile user: ", error, data?.user);
+  }
 
   return (
     <PageContainer>
       <BannerAddMembership />
       {isLoading ? (
-        <TSCaptionText>Loading....</TSCaptionText>
+        <ActivityIndicator size="small" color={theme.palette.text} />
       ) : isSuccess ? (
         <View style={{ flex: 1, width: "100%", marginTop: 36 }}>
           <View
@@ -528,7 +558,10 @@ const Profile: FunctionComponent<Props> = () => {
                           );
                         })
                       ) : (
-                        <TSSnippetText>Loading...</TSSnippetText>
+                        <ActivityIndicator
+                          size="small"
+                          color={theme.palette.text}
+                        />
                       )}
                     </View>
                   </View>
