@@ -46,13 +46,15 @@ const CodeResetPasswordPage: FunctionComponent<CodeResetPasswordProps> = ({
   return (
     <View style={{ flex: 10 }}>
       <TSParagrapghText textStyles={{ textAlign: "center", marginBottom: 16 }}>
-        Enter Code to
+        Enter the Code from the email sent to you
       </TSParagrapghText>
-      <TSCaptionText textStyles={{ textAlign: "center", marginBottom: 16 }}>
-        Reset Password
-      </TSCaptionText>
-
       <TSParagrapghText textStyles={{ textAlign: "center", marginBottom: 16 }}>
+        in order to Reset Your Password
+      </TSParagrapghText>
+
+      <TSParagrapghText
+        textStyles={{ textAlign: "center", marginBottom: 16, color: "red" }}
+      >
         {resetPasswordError}
       </TSParagrapghText>
 
@@ -102,7 +104,7 @@ const CodeResetPasswordPage: FunctionComponent<CodeResetPasswordProps> = ({
             borderBottomEndRadius: 8,
           }}
           label=""
-          placeholder="Password"
+          placeholder="New Password"
           value={resetPassword}
           onChangeText={setResetPassword}
           secureTextEntry={hideResetPassword}
@@ -126,6 +128,7 @@ const CodeResetPasswordPage: FunctionComponent<CodeResetPasswordProps> = ({
             }}
             btnStyles={{
               backgroundColor: theme.palette.primary.main,
+              paddingVertical: 8,
             }}
             text="Reset"
           />

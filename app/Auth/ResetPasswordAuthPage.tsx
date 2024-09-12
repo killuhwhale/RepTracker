@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { RegularButton } from "../../src/app_components/Buttons/buttons";
 import { TestIDs } from "../../src/utils/constants";
 import { TSParagrapghText } from "../../src/app_components/Text/Text";
@@ -25,10 +25,11 @@ const ResetPasswordAuthPage: FunctionComponent<ResetPasswordAuthPageProps> = ({
         flex: 10,
       }}
     >
-      <View style={{ flex: 3, justifyContent: "center" }}>
-        <ResetPasswordViaEmail />
-      </View>
-      <View style={{ flex: 7 }}></View>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
+        <View style={{ flex: 3, justifyContent: "center" }}>
+          <ResetPasswordViaEmail />
+        </View>
+      </ScrollView>
     </View>
   );
 };

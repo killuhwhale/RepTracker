@@ -37,12 +37,19 @@ class AuthManager {
   }
 
   async register(data) {
+    console.log("Create data type for this data: ", data);
     // Perform login, update tokens access and fresh tokens
     try {
       const res = await post(`${BASEURL}users/`, data, "multipart/form-data");
       console.log("Register res: ", res);
-      if (res.status != 200) {
-        return console.log("Error register user: ", res.url);
+
+      if (res.status != 201) {
+        switch (res.status) {
+          case 400:
+            return { email: "Email taken", id: -1, username: "" } as UserProps;
+          default:
+            return { email: "", id: -1, username: "" } as UserProps;
+        }
       }
 
       const result = await res.json();
@@ -54,13 +61,13 @@ class AuthManager {
     }
   }
 
-  async login(email, password) {
+  async login(email: string, password: string) {
     // Perform login, update tokens access and fresh tokens
     try {
       const res = await post(`${BASEURL}token/`, { email: email, password });
       const result = await res.json();
       console.log("Login res: ", result);
-      // WHen user is_active=False
+      // WHen user is_active=False or bad password
       // {"detail": "No active account found with the given credentials"}
 
       let loggedIn = false;

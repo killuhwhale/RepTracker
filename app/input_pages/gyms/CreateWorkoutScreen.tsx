@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  TouchableHighlight,
 } from "react-native";
 import { useTheme } from "styled-components";
 import styled from "styled-components/native";
@@ -365,156 +366,179 @@ const CreateWorkoutScreen: FunctionComponent = () => {
 
   return (
     <PageContainer>
-      <View style={{ flex: 1, justifyContent: "center", width: "100%" }}>
-        <TSParagrapghText textStyles={{ textAlign: "center" }}>
-          Create Workout
-        </TSParagrapghText>
-        <TSCaptionText textStyles={{ textAlign: "center" }}>
-          {workoutGroupTitle}
-        </TSCaptionText>
-      </View>
-
-      {createWorkoutError.length ? (
-        <TSCaptionText>{createWorkoutError}</TSCaptionText>
-      ) : (
-        <></>
-      )}
-
-      <View
-        style={{
-          flexShrink: 2,
-          flexGrow: 3,
-          flexBasis: 0,
-
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        <View style={{ height: 35, marginBottom: 8 }}>
-          <Input
-            onChangeText={(t) => {
-              setTitle(limitTextLength(t, WorkoutTitleLimit));
-              setCreateWorkoutError("");
-              setIsCreating(false);
-            }}
-            value={title}
-            label=""
-            testID={TestIDs.CreateWorkoutTitleField.name()}
-            placeholder="Title"
-            inputStyles={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            containerStyle={{
-              width: "100%",
-              backgroundColor: theme.palette.darkGray,
-              borderRadius: 8,
-              paddingHorizontal: 8,
-            }}
-            leading={
-              <Icon
-                name="person"
-                color={theme.palette.text}
-                style={{ fontSize: mdFontSize }}
-              />
-            }
-          />
+      <ScrollView style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center", width: "100%" }}>
+          <TSParagrapghText textStyles={{ textAlign: "center" }}>
+            Create Workout
+          </TSParagrapghText>
+          <TSCaptionText textStyles={{ textAlign: "center" }}>
+            {workoutGroupTitle}
+          </TSCaptionText>
         </View>
 
-        <View style={{ height: 35 }}>
-          <Input
-            label=""
-            placeholder="Description"
-            testID={TestIDs.CreateWorkoutDescField.name()}
-            value={desc}
-            onChangeText={(t) => setDesc(limitTextLength(t, WorkoutDescLimit))}
-            containerStyle={{
-              width: "100%",
-              backgroundColor: theme.palette.darkGray,
-              borderRadius: 8,
-              paddingHorizontal: 8,
-            }}
-            leading={
-              <Icon
-                name="person"
-                color={theme.palette.text}
-                style={{ fontSize: mdFontSize }}
-              />
-            }
-          />
-        </View>
+        {createWorkoutError.length ? (
+          <TSCaptionText>{createWorkoutError}</TSCaptionText>
+        ) : (
+          <></>
+        )}
 
-        <SchemeField
-          schemeType={schemeType}
-          schemeRounds={schemeRounds}
-          setSchemeRounds={(t) =>
-            setSchemeRounds(limitTextLength(t, SchemeTextLimit))
-          }
-          setInstruction={(t) =>
-            setInstruction(limitTextLength(t, CreateSchemeInstructionLimit))
-          }
-          schemeRoundsError={schemeRoundsError}
-          setSchemeRoundsError={setSchemeRoundsError}
-          instruction={instruction}
-        />
-      </View>
+        <View
+          style={{
+            flexShrink: 2,
+            flexGrow: 3,
+            flexBasis: 0,
 
-      <View
-        style={{
-          flex: 4,
-          width: "100%",
-          justifyContent: "center",
-        }}
-      >
-        <AddItem onAddItem={addWorkoutItem} schemeType={schemeType} />
-      </View>
-
-      <View
-        style={{
-          flex: 6,
-          justifyContent: "flex-start",
-          alignContent: "flex-start",
-          alignItems: "flex-start",
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        <View style={{ height: "100%", width: "100%", marginTop: 8 }}>
-          {schemeType <= 2 ? (
-            <CreateWorkoutItemList
-              items={items}
-              schemeType={schemeType}
-              curColor={curColor}
-              showAddSSID={showAddSSID}
-              setShowAddSSID={setShowAddSSID}
-              setCurColor={setCurColor}
-              removeItemSSID={removeItemSSID}
-              addItemToSSID={addItemToSSID}
-              updateItemConstant={updateItemConstant}
-              removeItem={removeItem}
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <View style={{ height: 35, marginBottom: 8 }}>
+            <Input
+              onChangeText={(t) => {
+                setTitle(limitTextLength(t, WorkoutTitleLimit));
+                setCreateWorkoutError("");
+                setIsCreating(false);
+              }}
+              value={title}
+              label=""
+              testID={TestIDs.CreateWorkoutTitleField.name()}
+              placeholder="Title"
+              inputStyles={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              containerStyle={{
+                width: "100%",
+                backgroundColor: theme.palette.darkGray,
+                borderRadius: 8,
+                paddingHorizontal: 8,
+              }}
+              leading={
+                <Icon
+                  name="person"
+                  color={theme.palette.text}
+                  style={{ fontSize: mdFontSize }}
+                />
+              }
             />
+          </View>
+
+          <View style={{ height: 35 }}>
+            <Input
+              label=""
+              placeholder="Description"
+              testID={TestIDs.CreateWorkoutDescField.name()}
+              value={desc}
+              onChangeText={(t) =>
+                setDesc(limitTextLength(t, WorkoutDescLimit))
+              }
+              containerStyle={{
+                width: "100%",
+                backgroundColor: theme.palette.darkGray,
+                borderRadius: 8,
+                paddingHorizontal: 8,
+              }}
+              leading={
+                <Icon
+                  name="person"
+                  color={theme.palette.text}
+                  style={{ fontSize: mdFontSize }}
+                />
+              }
+            />
+          </View>
+
+          <SchemeField
+            schemeType={schemeType}
+            schemeRounds={schemeRounds}
+            setSchemeRounds={(t) =>
+              setSchemeRounds(limitTextLength(t, SchemeTextLimit))
+            }
+            setInstruction={(t) =>
+              setInstruction(limitTextLength(t, CreateSchemeInstructionLimit))
+            }
+            schemeRoundsError={schemeRoundsError}
+            setSchemeRoundsError={setSchemeRoundsError}
+            instruction={instruction}
+          />
+        </View>
+
+        <View style={{ flex: 1, width: "100%", justifyContent: "center" }}>
+          {!isCreating ? (
+            <TouchableHighlight
+              style={{ marginBottom: 6 }}
+              onPress={_createWorkoutWithItems.bind(this)}
+            >
+              <View
+                style={{ justifyContent: "center", alignItems: "flex-end" }}
+              >
+                <Icon
+                  name="add-outline"
+                  size={24}
+                  style={{ marginRight: 4 }}
+                  color={theme.palette.text}
+                />
+                <TSCaptionText textStyles={{ textAlign: "right" }}>
+                  Create
+                </TSCaptionText>
+              </View>
+            </TouchableHighlight>
           ) : (
-            <CreateWorkoutDualItemList
-              items={items as WorkoutDualItemProps[]}
-              schemeType={schemeType}
-              removeItem={removeItem}
-              addPenalty={addPenalty}
-            />
+            // <RegularButton
+            //   onPress={_createWorkoutWithItems.bind(this)}
+            //   testID={TestIDs.CreateWorkoutCreateBtn.name()}
+            //   btnStyles={{ backgroundColor: theme.palette.darkGray }}
+            //   text="Create"
+            // />
+            <ActivityIndicator size="small" color={theme.palette.text} />
           )}
         </View>
-      </View>
-      <View style={{ flex: 1, width: "100%", justifyContent: "center" }}>
-        {!isCreating ? (
-          <RegularButton
-            onPress={_createWorkoutWithItems.bind(this)}
-            testID={TestIDs.CreateWorkoutCreateBtn.name()}
-            btnStyles={{ backgroundColor: theme.palette.darkGray }}
-            text="Create"
-          />
-        ) : (
-          <ActivityIndicator size="small" color={theme.palette.text} />
-        )}
-      </View>
+
+        <View
+          style={{
+            flex: 4,
+            width: "100%",
+            justifyContent: "center",
+          }}
+        >
+          <AddItem onAddItem={addWorkoutItem} schemeType={schemeType} />
+        </View>
+
+        <View
+          style={{
+            flex: 6,
+            justifyContent: "flex-start",
+            alignContent: "flex-start",
+            alignItems: "flex-start",
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          <View style={{ height: "100%", width: "100%", marginTop: 8 }}>
+            {schemeType <= 2 ? (
+              <CreateWorkoutItemList
+                items={items}
+                schemeType={schemeType}
+                curColor={curColor}
+                showAddSSID={showAddSSID}
+                setShowAddSSID={setShowAddSSID}
+                setCurColor={setCurColor}
+                removeItemSSID={removeItemSSID}
+                addItemToSSID={addItemToSSID}
+                updateItemConstant={updateItemConstant}
+                removeItem={removeItem}
+              />
+            ) : (
+              <CreateWorkoutDualItemList
+                items={items as WorkoutDualItemProps[]}
+                schemeType={schemeType}
+                removeItem={removeItem}
+                addPenalty={addPenalty}
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
 
       <AlertModal
         closeText="Close"

@@ -45,6 +45,7 @@ const AuthScreen: FunctionComponent = () => {
   const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
   const [emailHelperText, setEmailHelperText] = useState("");
+  const [showSignInFailedText, setShowSignInFailedText] = useState(false);
   const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
   const [newEmail, setNewEmail] = useState("");
@@ -74,11 +75,7 @@ const AuthScreen: FunctionComponent = () => {
     console.log("AuthScreen.tsx listenLogin: ", loggedIn, msg);
 
     if (!loggedIn) {
-      if (msg == "No active account found with the given credentials") {
-        setEmailHelperText("Confirm your email!");
-      } else {
-        setEmailHelperText(msg);
-      }
+      setShowSignInFailedText(true);
     }
   }, "authscreen");
 
@@ -162,12 +159,11 @@ const AuthScreen: FunctionComponent = () => {
     try {
       const res = await auth.register(data);
       console.log("Sign up res: ", res);
-
-      if (res.id > 0) {
+      if (!res) {
+        console.log("WTF is happening right now");
+      } else if (res.id > 0) {
         setAuthMode(0);
-      } else if (
-        res.email[0] == "user with this email address already exists."
-      ) {
+      } else if (res.email == "Email taken") {
         setRegisterError("Email taken!");
       }
     } catch (error) {
@@ -205,6 +201,7 @@ const AuthScreen: FunctionComponent = () => {
         {authModes[authMode] == 0 ? (
           <SignInComp
             email={email}
+            showSignInFailedText={showSignInFailedText}
             emailHelperText={emailHelperText}
             hidePassword={hidePassword}
             login={login}

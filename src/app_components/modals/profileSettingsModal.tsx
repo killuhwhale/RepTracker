@@ -294,10 +294,10 @@ const ProfileSettingsModal: FunctionComponent<{
           >
             <RegularButton
               testID={TestIDs.CloseProfileSettingsBtn.name()}
-              underlayColor="#CACACACA"
+              underlayColor={theme.palette.secondary.main}
               onPress={props.onRequestClose}
               btnStyles={{
-                backgroundColor: theme.palette.tertiary.main,
+                backgroundColor: theme.palette.primary.main,
                 width: "75%",
               }}
               text="Close"

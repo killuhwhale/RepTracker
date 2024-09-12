@@ -1,12 +1,14 @@
-import {useGetUserInfoQuery} from '../../redux/api/apiSlice';
+import { useGetUserInfoQuery } from "../../redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,
   TestIds,
-} from 'react-native-google-mobile-ads';
-import React, {FunctionComponent} from 'react';
-import {UserProps} from '../../app_pages/types';
-import { isMember } from '../shared';
+} from "react-native-google-mobile-ads";
+import React, { FunctionComponent } from "react";
+
+import { isDateInFuture } from "../shared";
+import { UserProps } from "@/app/types";
+import { View } from "react-native";
 
 const BannerAddMembership: FunctionComponent = () => {
   const {
@@ -15,17 +17,17 @@ const BannerAddMembership: FunctionComponent = () => {
     isSuccess: userIsSuccess,
     isError: userIsError,
     error: userError,
-  } = useGetUserInfoQuery('');
+  } = useGetUserInfoQuery("");
 
   const userData = _userData as UserProps;
 
   return (
-    <>
+    <View style={{ width: "100%" }}>
       {userIsloading ? (
         <></>
       ) : !userIsloading &&
         userData &&
-        isMember(userData.sub_end_date) ? (
+        isDateInFuture(userData.sub_end_date) ? (
         <></>
       ) : (
         <GAMBannerAd
@@ -36,7 +38,7 @@ const BannerAddMembership: FunctionComponent = () => {
           }}
         />
       )}
-    </>
+    </View>
   );
 };
 

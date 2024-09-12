@@ -42,36 +42,42 @@ const WorkoutNameDetailScreen: FunctionComponent = () => {
     <ScreenContainer>
       <View style={{ width: "100%" }}>
         <BannerAddMembership />
-        <LargeText
-          textStyles={{
-            color: theme.palette.accent,
-            marginBottom: 4,
-          }}
-        >
-          {name}
-        </LargeText>
-        <MediumText
-          textStyles={{ marginBottom: 32, color: theme.palette.primary.main }}
-        >
-          Primary category: {primary}
-        </MediumText>
-        <MediumText
-          textStyles={{ marginBottom: 32, color: theme.palette.secondary.main }}
-        >
-          Secondary category: {secondary}
-        </MediumText>
-        <MediumText
-          textStyles={{ marginBottom: 32, color: theme.palette.text }}
-        >
-          Description
-        </MediumText>
-        <TSCaptionText>{desc}</TSCaptionText>
 
-        <MediaURLSliderClass
-          data={JSON.parse(media_ids as string)}
-          mediaClassID={parseInt(id as string)}
-          mediaClass={MEDIA_CLASSES[3]}
-        />
+        <View>
+          <LargeText
+            textStyles={{
+              color: theme.palette.accent,
+              marginBottom: 4,
+            }}
+          >
+            {name}
+          </LargeText>
+          <MediumText
+            textStyles={{ marginBottom: 32, color: theme.palette.primary.main }}
+          >
+            Primary category: {primary}
+          </MediumText>
+          <MediumText
+            textStyles={{
+              marginBottom: 32,
+              color: theme.palette.secondary.main,
+            }}
+          >
+            Secondary category: {secondary}
+          </MediumText>
+          <MediumText
+            textStyles={{ marginBottom: 32, color: theme.palette.text }}
+          >
+            Description
+          </MediumText>
+          <TSCaptionText>{desc}</TSCaptionText>
+
+          <MediaURLSliderClass
+            data={JSON.parse(media_ids as string)}
+            mediaClassID={parseInt(id as string)}
+            mediaClass={MEDIA_CLASSES[3]}
+          />
+        </View>
       </View>
     </ScreenContainer>
   );

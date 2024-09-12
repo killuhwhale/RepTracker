@@ -7,10 +7,11 @@ import {
   AdEventType,
 } from "react-native-google-mobile-ads";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { UserProps } from "../../app_pages/types";
+
 import { useTheme } from "styled-components";
 import { RegularButton } from "../Buttons/buttons";
 import { View } from "react-native";
+import { UserProps } from "@/app/types";
 
 const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
   requestNonPersonalizedAdsOnly: true,
@@ -37,18 +38,22 @@ const InterstitialAdMembership: FunctionComponent<{
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const onAdLoaded = () => setLoaded(true);
+
     const unsubscribe = interstitial.addAdEventListener(
       AdEventType.LOADED,
-      () => {
-        setLoaded(true);
-      }
+      onAdLoaded
     );
+
+    // Event listener for ad closed
+    const onAdClosed = () => {
+      setLoaded(false);
+      interstitial.load(); // Reload the ad when it is closed
+      if (props.onClose) props.onClose(); // Execute onClose prop if provided
+    };
     const unsubscribeClosed = interstitial.addAdEventListener(
       AdEventType.CLOSED,
-      () => {
-        if (props.onClose) props.onClose();
-        setLoaded(false);
-      }
+      onAdClosed
     );
 
     // Start loading the interstitial straight away
@@ -59,28 +64,22 @@ const InterstitialAdMembership: FunctionComponent<{
       unsubscribe();
       unsubscribeClosed();
     };
-  }, [loaded]);
+  }, []);
 
-  const hack = () => {
-    interstitial.show();
-    return true;
+  // Function to show the ad if loaded
+  const showAd = () => {
+    if (loaded) {
+      interstitial.show();
+    }
   };
 
-  return (
-    <View>{props.show && hack() ? <></> : <></>}</View>
-    // <RegularButton
-    //   testID={props.testID}
-    //   onPress={() => {
-    //     if (new Date(userData.sub_end_date) < new Date()) {
-    //       interstitial.show();
-    //     } else if (props.onClose) {
-    //       props.onClose();
-    //     }
-    //   }}
-    //   btnStyles={{backgroundColor: theme.palette.darkGray}}
-    //   text={props.text}
-    // />
-  );
+  useEffect(() => {
+    if (props.show) {
+      showAd(); // Trigger the ad display based on the `show` prop
+    }
+  }, [props.show, loaded]);
+
+  return <View></View>;
 };
 
 export default InterstitialAdMembership;

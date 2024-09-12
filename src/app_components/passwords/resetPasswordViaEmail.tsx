@@ -1,23 +1,23 @@
-import React, {FunctionComponent, useState} from 'react';
+import React, { FunctionComponent, useState } from "react";
 
-import {View} from 'react-native';
-import {TSParagrapghText, TSCaptionText} from '../Text/Text';
-import {RegularButton} from '../Buttons/buttons';
-import {post} from '../../utils/fetchAPI';
-import {BASEURL} from '../../utils/constants';
-import Input, {AutoCaptilizeEnum} from '../Input/input';
-import {useTheme} from 'styled-components';
-import {validEmailRegex} from '../../utils/algos';
+import { View } from "react-native";
+import { TSParagrapghText, TSCaptionText } from "../Text/Text";
+import { RegularButton } from "../Buttons/buttons";
+import { post } from "../../utils/fetchAPI";
+import { BASEURL } from "../../utils/constants";
+import Input, { AutoCaptilizeEnum } from "../Input/input";
+import { useTheme } from "styled-components";
+import { validEmailRegex } from "../../utils/algos";
 
 const ResetPasswordViaEmail: FunctionComponent = () => {
   const theme = useTheme();
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [showHint, setShowHint] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
 
   const sendEmail = async () => {
-    setErrorMsg('');
+    setErrorMsg("");
     if (email.length <= 0) {
       return;
     }
@@ -33,34 +33,24 @@ const ResetPasswordViaEmail: FunctionComponent = () => {
       setErrorMsg(result.error);
     } else {
       // console.log('Send email res:', result, await result.formData());
-      console.log('Send email res:', result);
+      console.log("Send email res:", result);
       setShowHint(true);
     }
   };
 
   return (
-    <View style={{width: '100%'}}>
+    <View style={{ width: "100%" }}>
       <TSParagrapghText
         textStyles={{
-          textAlign: 'center',
+          textAlign: "center",
           marginBottom: 16,
           marginHorizontal: 30,
-        }}>
+        }}
+      >
         Please enter the email registered to your account
       </TSParagrapghText>
-      {errorMsg.length > 0 ? (
-        <TSCaptionText textStyles={{textAlign: 'center', marginBottom: 16}}>
-          {errorMsg}
-        </TSCaptionText>
-      ) : showHint ? (
-        <TSCaptionText textStyles={{textAlign: 'center', marginBottom: 16}}>
-          Only one code will be sent per email every 15mins
-        </TSCaptionText>
-      ) : (
-        <></>
-      )}
 
-      <View style={{height: 35, marginBottom: 16}}>
+      <View style={{ height: 35, marginBottom: 16 }}>
         <Input
           containerStyle={{
             backgroundColor: theme.palette.gray,
@@ -73,29 +63,51 @@ const ResetPasswordViaEmail: FunctionComponent = () => {
           autoCapitalize={AutoCaptilizeEnum.None}
           onChangeText={(_email: string) => {
             if (!validEmailRegex.test(_email)) {
-              setEmailError('Invalid email');
+              setEmailError("Invalid email");
             } else if (emailError.length) {
-              setEmailError('');
+              setEmailError("");
             }
             setEmail(_email);
           }}
-          inputStyles={{paddingLeft: 24}}
+          inputStyles={{ paddingLeft: 24 }}
           value={email}
         />
       </View>
 
-      <View style={{alignItems: 'center'}}>
+      <View style={{ alignItems: "center" }}>
         <RegularButton
           btnStyles={{
-            width: '100%',
-            justifyContent: 'center',
+            width: "100%",
+            justifyContent: "center",
             backgroundColor: theme.palette.primary.main,
           }}
-          textStyles={{textAlign: 'center', fontSize: 16}}
+          textStyles={{ textAlign: "center", paddingVertical: 8 }}
           onPress={sendEmail}
           text="Send Reset Code"
           disabled={showHint}
         />
+      </View>
+
+      <View style={{ alignItems: "center", marginTop: 32 }}>
+        {errorMsg.length > 0 ? (
+          <TSCaptionText
+            textStyles={{ textAlign: "center", marginBottom: 16, color: "red" }}
+          >
+            {errorMsg}
+          </TSCaptionText>
+        ) : showHint ? (
+          <TSCaptionText
+            textStyles={{
+              textAlign: "center",
+              marginBottom: 1,
+              color: "green",
+            }}
+          >
+            Only one code will be sent per email every 15mins
+          </TSCaptionText>
+        ) : (
+          <></>
+        )}
       </View>
     </View>
   );

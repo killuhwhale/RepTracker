@@ -13,6 +13,7 @@ import {
   mdFontSize,
   smFontSize,
   isDateInFuture,
+  SCREEN_HEIGHT,
 } from "../../src/app_components/shared";
 import {
   TSCaptionText,
@@ -50,9 +51,11 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  Image,
+  Animated,
 } from "react-native";
 
-import { ScrollView } from "react-native-gesture-handler";
+import thanks from "@/assets/images/thanks.png";
 
 import {
   GymCardProps,
@@ -125,7 +128,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
   const [_updateUsername, { isLoading }] = useUpdateUsernameMutation();
   const [savedUsername, setSavedUsername] = useState(false);
 
-  const manageUpdateUsername = async (text) => {
+  const manageUpdateUsername = async (text: string) => {
     const data = new FormData();
     data.append("username", text);
     if (!isLoading) {
@@ -137,7 +140,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
   };
 
   // Persist fucntion calls based on input params, allows debounce to work
-  const updateUsername = useCallback(debounce(manageUpdateUsername, 5500), []);
+  const updateUsername = useCallback(debounce(manageUpdateUsername, 2992), []);
 
   // This cleanup function should run on unmount
   useEffect(() => {
@@ -170,6 +173,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
           }}
           color={theme.palette.text}
         />
+
         {showEditusername ? (
           <Input
             containerStyle={{
@@ -196,23 +200,28 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
               paddingLeft: 24,
             }}
           >
-            <TSInputText textStyles={{ textAlign: "left" }}>
-              {newUsername}
-            </TSInputText>
-            <TSCaptionText
-              textStyles={{
-                color: `${
-                  isDateInFuture(sub_end_date) ? "#FFD700" : "#C0C000"
-                }`,
-                marginLeft: 10,
-                textAlign: "center",
-                textAlignVertical: "center",
-                alignContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {isDateInFuture(sub_end_date) ? "Member" : "Non-member"}
-            </TSCaptionText>
+            <View style={{ flexBasis: 0, flexShrink: 1, flexGrow: 5 }}>
+              <TSInputText textStyles={{ textAlign: "left" }}>
+                {newUsername}
+              </TSInputText>
+            </View>
+
+            <View style={{ flexBasis: 0, flexShrink: 1, flexGrow: 2 }}>
+              <TSCaptionText
+                textStyles={{
+                  color: `${
+                    isDateInFuture(sub_end_date) ? "#FFD700" : "#C0C000"
+                  }`,
+                  marginLeft: 10,
+                  textAlign: "left",
+                  textAlignVertical: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {isDateInFuture(sub_end_date) ? "Member" : "Non-member"}
+              </TSCaptionText>
+            </View>
           </View>
         )}
       </View>
@@ -388,6 +397,8 @@ const Profile: FunctionComponent<Props> = () => {
   const loadedProductsRef = useRef(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [makePurchaseLoading, setMakePurchaseLoading] = useState(false);
+
   const [curProducts, setCurProducts] = useState<
     PurchasesStoreProduct[] | null
   >(null);
@@ -409,45 +420,70 @@ const Profile: FunctionComponent<Props> = () => {
       console.error("Error purchasing sub: ", err);
     }
     try {
-      invalidateUser();
+      setMakePurchaseLoading(true);
+      setTimeout(() => {
+        invalidateUser();
+        setMakePurchaseLoading(false);
+        startThankYouFadeIn();
+      }, 2200);
     } catch (err) {
       console.log("Error invalidating user after makepurchase: ", err);
     }
   };
 
-  console.log("Profile user: ", error, data);
+  // console.log("Profile user: ", error, data);
 
   if (data && !isLoading && !loadedProductsRef.current) {
     const setup = async () => {
       try {
         if (Platform.OS == "ios") {
-          const configureRes = await Purchases.configure({
+          await Purchases.configure({
             apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
           });
-          console.log("configureRes: ", configureRes);
+          const products = await Purchases.getProducts(["sub_remove_ads"]);
+          console.log("Got ios product: ", products);
+          loadedProductsRef.current = true;
+          setCurProducts(products);
+        } else if (Platform.OS == "android") {
+          await Purchases.configure({
+            apiKey: "goog_ruuVJMgQrGOBuoxnbJSgzHnIQph",
+          });
+          const products = await Purchases.getProducts(["sub_remove_ads"]);
+          console.log("Got android product: ", products);
+          loadedProductsRef.current = true;
+          setCurProducts(products);
         }
 
-        const products = await Purchases.getProducts(["sub_remove_ads"]);
-        console.log("Setting user attr: ", data.user.id);
         await Purchases.setAttributes({
           userID: data?.user.id.toString(),
         });
-        const setAttrRes = await Purchases.syncAttributesAndOfferingsIfNeeded();
-        console.log("setAttrRes: ", setAttrRes);
-
-        setCurProducts(products);
-        console.log("Got product: ", products);
+        await Purchases.syncAttributesAndOfferingsIfNeeded();
       } catch (err) {
         console.log("Error getting offerings: ", err);
       }
     };
 
-    if (Platform.OS == "ios") {
-      Purchases.setDebugLogsEnabled(true);
-      setup()
-        .then(() => (loadedProductsRef.current = true))
-        .catch(console.log);
-    }
+    Purchases.setDebugLogsEnabled(true);
+    setup()
+      .then(() => (loadedProductsRef.current = true))
+      .catch(console.log);
+  }
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const startThankYouFadeIn = () => {
+    Animated.timing(fadeAnim, {
+      delay: 500,
+      toValue: 1, // Final opacity value (fully visible)
+      duration: 7000, // Duration of the fade-in effect (10 second)
+      useNativeDriver: true, // Optimize performance
+    }).start();
+  };
+
+  if (isSuccess && isDateInFuture(data.user.sub_end_date)) {
+    startThankYouFadeIn();
+  } else if (isSuccess && !isDateInFuture(data.user.sub_end_date)) {
+    fadeAnim.setValue(0);
   }
 
   return (
@@ -456,7 +492,35 @@ const Profile: FunctionComponent<Props> = () => {
       {isLoading ? (
         <ActivityIndicator size="small" color={theme.palette.text} />
       ) : isSuccess ? (
-        <View style={{ flex: 1, width: "100%", marginTop: 36 }}>
+        <View style={{ flex: 1, width: "100%", marginTop: 12 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            <TouchableHighlight
+              hitSlop={{ bottom: 12, left: 12, right: 12, top: 12 }}
+              onPress={() => setModalVisible(!modalVisible)}
+              testID={TestIDs.OpenSettingsModalBtn.name()}
+              style={{
+                flex: 1,
+                borderRadius: 12,
+                justifyContent: "center",
+                alignItems: "flex-end",
+              }}
+            >
+              <Icon
+                name="settings"
+                color={theme.palette.text}
+                style={{
+                  fontSize: 24,
+                  marginRight: 24,
+                }}
+              />
+            </TouchableHighlight>
+          </View>
           <View
             style={{
               flex: 2,
@@ -468,30 +532,11 @@ const Profile: FunctionComponent<Props> = () => {
             <View style={{ flex: 5 }}>
               <UserInfoPanel user={data.user} />
             </View>
-            <View style={{ flex: 1 }}>
-              <TouchableHighlight
-                hitSlop={{ bottom: 12, left: 12, right: 12, top: 12 }}
-                onPress={() => setModalVisible(!modalVisible)}
-                testID={TestIDs.OpenSettingsModalBtn.name()}
-                style={{
-                  flex: 1,
-                  borderRadius: 12,
-                }}
-              >
-                <Icon
-                  name="settings"
-                  color={theme.palette.text}
-                  style={{
-                    fontSize: 24,
-                  }}
-                />
-              </TouchableHighlight>
-            </View>
           </View>
-          {Platform.OS === "ios" ? (
+          {Platform.OS === "ios" || Platform.OS === "android" ? (
             <View
               style={{
-                flex: 4,
+                flex: 8,
                 flexDirection: "row",
 
                 justifyContent: "flex-start",
@@ -500,75 +545,95 @@ const Profile: FunctionComponent<Props> = () => {
               {!isDateInFuture(data.user.sub_end_date) ? (
                 <View style={{ width: "100%" }}>
                   <TSTitleText>In App Purchase</TSTitleText>
-                  <View
-                    style={{
-                      width: "100%",
-                      height: 32,
-                      marginTop: 12,
-
-                      borderRadius: 8,
-                      justifyContent: "center",
-                    }}
-                  >
+                  {makePurchaseLoading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={theme.palette.text}
+                    />
+                  ) : (
                     <View
                       style={{
-                        alignContent: "center",
-                        justifyContent: "center",
-                        alignItems: "center",
                         width: "100%",
+                        height: 32,
+                        marginTop: 12,
+
+                        borderRadius: 8,
+                        justifyContent: "center",
                       }}
                     >
-                      {curProducts ? (
-                        curProducts.map((product) => {
-                          return (
-                            <View
-                              style={{
-                                width: "80%",
-                                backgroundColor: twrnc.color("bg-blue-600"),
-                                borderRadius: 8,
-                              }}
-                              key={product.identifier}
-                            >
-                              <TouchableHighlight
-                                onPress={() =>
-                                  makePurchase(product).catch((err) =>
-                                    console.error("Error makePurchase: ", err)
-                                  )
-                                }
+                      <View
+                        style={{
+                          alignContent: "center",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        {curProducts ? (
+                          curProducts.map((product) => {
+                            return (
+                              <View
+                                style={{
+                                  width: "80%",
+                                  backgroundColor: twrnc.color("bg-blue-600"),
+                                  borderRadius: 8,
+                                }}
+                                key={product.identifier}
                               >
-                                <View
-                                  style={{
-                                    marginVertical: 12,
-                                    paddingHorizontal: 12,
-                                  }}
+                                <TouchableHighlight
+                                  onPress={() =>
+                                    makePurchase(product).catch((err) =>
+                                      console.error("Error makePurchase: ", err)
+                                    )
+                                  }
                                 >
-                                  <TSButtonText
-                                    textStyles={{ textAlign: "center" }}
+                                  <View
+                                    style={{
+                                      marginVertical: 12,
+                                      paddingHorizontal: 12,
+                                    }}
                                   >
-                                    {product.title}
-                                  </TSButtonText>
-                                  <TSSnippetText
-                                    textStyles={{ textAlign: "center" }}
-                                  >
-                                    {product.description}
-                                  </TSSnippetText>
-                                </View>
-                              </TouchableHighlight>
-                            </View>
-                          );
-                        })
-                      ) : (
-                        <ActivityIndicator
-                          size="small"
-                          color={theme.palette.text}
-                        />
-                      )}
+                                    <TSButtonText
+                                      textStyles={{ textAlign: "center" }}
+                                    >
+                                      {product.title}
+                                    </TSButtonText>
+                                    <TSSnippetText
+                                      textStyles={{ textAlign: "center" }}
+                                    >
+                                      {product.description}
+                                    </TSSnippetText>
+                                  </View>
+                                </TouchableHighlight>
+                              </View>
+                            );
+                          })
+                        ) : (
+                          <ActivityIndicator
+                            size="small"
+                            color={theme.palette.text}
+                          />
+                        )}
+                      </View>
                     </View>
-                  </View>
+                  )}
                 </View>
               ) : (
-                <View>
-                  <TSParagrapghText>Thanks for your support!</TSParagrapghText>
+                <View style={{ flex: 4 }}>
+                  <TSParagrapghText textStyles={{ textAlign: "center" }}>
+                    Thanks for your support!
+                  </TSParagrapghText>
+                  <Animated.Image
+                    source={thanks}
+                    style={[
+                      {
+                        width: SCREEN_WIDTH,
+                        height: SCREEN_HEIGHT / 3,
+                        borderRadius: 8,
+                      },
+                      { opacity: fadeAnim }, // Bind animated opacity to style
+                    ]}
+                  />
                 </View>
               )}
             </View>

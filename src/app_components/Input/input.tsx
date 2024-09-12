@@ -59,7 +59,10 @@ const Input: FunctionComponent<InputProps> = (props) => {
   const inpRef = useRef<TTextInput>(null);
 
   return (
-    <View style={[props.containerStyle, { width: "100%", flex: 1 }]}>
+    <View
+      style={[props.containerStyle, { width: "100%", flex: 1 }]}
+      hitSlop={{ bottom: 12, left: 12, right: 12, top: 12 }}
+    >
       <TouchableWithoutFeedback>
         <View style={{ width: "100%" }}>
           <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>

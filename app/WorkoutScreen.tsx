@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo, useState } from "react";
+import React, { FunctionComponent, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import {
   COMPLETED_WORKOUT_MEDIA,
@@ -431,8 +431,10 @@ const WorkoutScreen: FunctionComponent = () => {
     setDeleteWorkoutGroupModalVisible(true);
   };
 
+  const disableDeleteBtnRed = useRef(false);
   const onDelete = async () => {
-    if (showingOGWorkoutGroup) {
+    if (showingOGWorkoutGroup && !disableDeleteBtnRed.current) {
+      disableDeleteBtnRed.current = true;
       const delData = new FormData();
       delData.append("owner_id", oGData.owner_id);
       delData.append("owned_by_class", oGData.owned_by_class);
@@ -454,8 +456,8 @@ const WorkoutScreen: FunctionComponent = () => {
       console.log("Del WG res: ", deletedWorkoutGroup);
     }
     setDeleteWorkoutGroupModalVisible(false);
-    console.log("Should be calling!!!  navigation.goBack();");
-    // navigation.goBack(); TODO()
+    disableDeleteBtnRed.current = false;
+    router.push("/");
   };
 
   const promptUpdateDualItems = () => {

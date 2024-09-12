@@ -5,7 +5,12 @@ import React, {
   useEffect,
 } from "react";
 import styled from "styled-components/native";
-import { ActivityIndicator, TouchableHighlight, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableHighlight,
+  View,
+} from "react-native";
 import {
   Container,
   formatLongDate,
@@ -147,8 +152,14 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   //   console.log('forDate: ', forDate);
   // };
 
+  const [titleError, setTitleError] = useState("");
   const _createWorkout = async () => {
     console.log("Creatting workout: ");
+
+    if (!title) {
+      setTitleError("Title is required");
+      return console.error("User must provide title to workout group.");
+    }
 
     setIsCreating(true);
     // Need to get file from the URI
@@ -192,154 +203,167 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
 
   return (
     <PageContainer>
-      <View style={{ height: "100%", width: "100%" }}>
-        <View style={{ flex: 2 }}>
+      <ScrollView
+        style={{ flex: 10, width: "100%" }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={{ height: "100%", width: "100%", flex: 1 }}>
           <BannerAddMembership />
-        </View>
-        <View style={{ flex: 1 }}>
-          <TSTitleText textStyles={{ marginBottom: 8, textAlign: "center" }}>
-            Create Workout Group
-          </TSTitleText>
-        </View>
+          <View style={{ flex: 20 }}>
+            <View style={{ flex: 1 }}>
+              <TSTitleText
+                textStyles={{ marginBottom: 8, textAlign: "center" }}
+              >
+                Create Workout Group
+              </TSTitleText>
+            </View>
 
-        <View style={{ flex: 5 }}>
-          <View style={{ marginBottom: 15, height: 40 }}>
-            <Input
-              placeholder="Title"
-              testID={TestIDs.WorkoutGroupTitleField.name()}
-              onChangeText={(t) =>
-                setTitle(limitTextLength(t, WorkoutGroupTitleLimit))
-              }
-              value={title || ""}
-              label="Title"
-              containerStyle={{
-                width: "100%",
-                backgroundColor: theme.palette.darkGray,
-                borderRadius: 8,
-                paddingHorizontal: 8,
-              }}
-              leading={
-                <Icon
-                  name="information-circle-outline"
-                  color={theme.palette.text}
-                  style={{ fontSize: mdFontSize }}
+            <View style={{ flex: 5 }}>
+              <View style={{ marginBottom: 15, height: 40 }}>
+                <Input
+                  placeholder="Title"
+                  testID={TestIDs.WorkoutGroupTitleField.name()}
+                  onChangeText={(t) => {
+                    setTitle(limitTextLength(t, WorkoutGroupTitleLimit));
+                    setTitleError("");
+                  }}
+                  value={title || ""}
+                  label="Title"
+                  isError={titleError.length > 0}
+                  helperText={titleError}
+                  containerStyle={{
+                    width: "100%",
+                    backgroundColor: theme.palette.darkGray,
+                    borderRadius: 8,
+                    paddingHorizontal: 8,
+                  }}
+                  leading={
+                    <Icon
+                      name="information-circle-outline"
+                      color={theme.palette.text}
+                      style={{ fontSize: mdFontSize }}
+                    />
+                  }
                 />
-              }
-            />
-          </View>
-          <View style={{ marginBottom: 15, height: 40 }}>
-            <Input
-              placeholder="Caption"
-              testID={TestIDs.WorkoutGroupCaptionField.name()}
-              onChangeText={(t) =>
-                setCaption(limitTextLength(t, WorkoutGroupDescLimit))
-              }
-              value={caption || ""}
-              label="Caption"
-              containerStyle={{
-                width: "100%",
-                backgroundColor: theme.palette.darkGray,
-                borderRadius: 8,
-                paddingHorizontal: 8,
-              }}
-              leading={
-                <Icon
-                  name="information-circle-outline"
-                  color={theme.palette.text}
-                  style={{ fontSize: mdFontSize }}
+              </View>
+              <View style={{ marginBottom: 15, height: 40 }}>
+                <Input
+                  placeholder="Caption"
+                  testID={TestIDs.WorkoutGroupCaptionField.name()}
+                  onChangeText={(t) =>
+                    setCaption(limitTextLength(t, WorkoutGroupDescLimit))
+                  }
+                  value={caption || ""}
+                  label="Caption"
+                  containerStyle={{
+                    width: "100%",
+                    backgroundColor: theme.palette.darkGray,
+                    borderRadius: 8,
+                    paddingHorizontal: 8,
+                  }}
+                  leading={
+                    <Icon
+                      name="information-circle-outline"
+                      color={theme.palette.text}
+                      style={{ fontSize: mdFontSize }}
+                    />
+                  }
                 />
-              }
-            />
-          </View>
+              </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              height: 35,
-              width: "100%",
-              backgroundColor: theme.palette.darkGray,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <TouchableHighlight
-              style={{
-                height: "100%",
-                width: "100%",
-                justifyContent: "center",
-              }}
-              onPress={() => setShowDatePicker(!showDatePicker)}
-            >
-              <>
-                <TSCaptionText
-                  textStyles={{ textAlign: "center", paddingLeft: 16 }}
-                >
-                  For: {formatLongDate(forDate)}
-                </TSCaptionText>
-                <DatePicker
-                  date={forDate}
-                  mode="date"
-                  locale="en"
-                  theme="dark"
-                  modal={true}
-                  open={showDatePicker}
-                  onCancel={() => setShowDatePicker(false)}
-                  onConfirm={(date) => setForDate(date)}
-                  buttonColor={theme.palette.text}
-                  title={"For Date"}
-                />
-              </>
-            </TouchableHighlight>
-          </View>
-        </View>
-        {/* <View style={{flex: 8}}>
-          <MediaPicker
-            setState={setFiles.bind(this)}
-            title="Select Main Image"
-          />
-          {files && files.length > 0 ? <MediaSlider data={files} /> : <></>}
-        </View> */}
-        <View style={{ flex: 2 }}>
-          {!isCreating ? (
-            isDateInFuture(userData.user.sub_end_date) ? (
-              <RegularButton
-                onPress={() => {
-                  setReadyToCreate(true); // Trigger useEffect
+              <View
+                style={{
+                  flexDirection: "row",
+                  height: 35,
+                  width: "100%",
+                  backgroundColor: theme.palette.darkGray,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-                btnStyles={{ backgroundColor: theme.palette.darkGray }}
-                text="Create"
+              >
+                <TouchableHighlight
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    justifyContent: "center",
+                  }}
+                  onPress={() => setShowDatePicker(!showDatePicker)}
+                >
+                  <>
+                    <TSCaptionText
+                      textStyles={{ textAlign: "center", paddingLeft: 16 }}
+                    >
+                      For: {formatLongDate(forDate)}
+                    </TSCaptionText>
+                    <DatePicker
+                      date={forDate}
+                      mode="date"
+                      locale="en"
+                      theme="dark"
+                      modal={true}
+                      open={showDatePicker}
+                      onCancel={() => setShowDatePicker(false)}
+                      onConfirm={(date) => setForDate(date)}
+                      buttonColor={theme.palette.text}
+                      title={"For Date"}
+                    />
+                  </>
+                </TouchableHighlight>
+              </View>
+            </View>
+            {/* <View style={{flex: 8}}>
+              <MediaPicker
+                setState={setFiles.bind(this)}
+                title="Select Main Image"
               />
-            ) : (
-              <>
-                <RegularButton
-                  onPress={() => {
-                    setShowAd(true);
-                  }}
-                  btnStyles={{ backgroundColor: theme.palette.darkGray }}
-                  text="Create"
-                />
-                <InterstitialAdMembership
-                  text="Create"
-                  onClose={() => {
-                    setShowAd(false); // return to prev state.
-                    setReadyToCreate(true); // Trigger useEffect
-                  }}
-                  show={showAd}
-                  testID={TestIDs.GymClassCreateBtn.name()}
-                />
-              </>
-            )
-          ) : (
-            <ActivityIndicator size="small" color={theme.palette.text} />
-          )}
+              {files && files.length > 0 ? <MediaSlider data={files} /> : <></>}
+            </View> */}
+            <View style={{ flex: 2, marginTop: 48 }}>
+              {!isCreating ? (
+                isDateInFuture(userData.user.sub_end_date) ? (
+                  <RegularButton
+                    onPress={() => {
+                      setReadyToCreate(true); // Trigger useEffect
+                    }}
+                    btnStyles={{
+                      backgroundColor: theme.palette.darkGray,
+                      paddingVertical: 8,
+                    }}
+                    text="Create"
+                  />
+                ) : (
+                  <>
+                    <RegularButton
+                      onPress={() => {
+                        setShowAd(true);
+                      }}
+                      btnStyles={{ backgroundColor: theme.palette.darkGray }}
+                      text="Create"
+                    />
+                    <InterstitialAdMembership
+                      text="Create"
+                      onClose={() => {
+                        setShowAd(false); // return to prev state.
+                        setReadyToCreate(true); // Trigger useEffect
+                      }}
+                      show={showAd}
+                      testID={TestIDs.GymClassCreateBtn.name()}
+                    />
+                  </>
+                )
+              ) : (
+                <ActivityIndicator size="small" color={theme.palette.text} />
+              )}
+            </View>
+          </View>
+          <AlertModal
+            closeText="Close"
+            bodyText="Failed to create workoutGroup: members are limited to 15 workouts per day and non members 1 workout per day including Completed workouts."
+            modalVisible={showAlert}
+            onRequestClose={() => setShowAlert(false)}
+          />
         </View>
-      </View>
-      <AlertModal
-        closeText="Close"
-        bodyText="Failed to create workoutGroup: members are limited to 15 workouts per day and non members 1 workout per day including Completed workouts."
-        modalVisible={showAlert}
-        onRequestClose={() => setShowAlert(false)}
-      />
+      </ScrollView>
     </PageContainer>
   );
 };
