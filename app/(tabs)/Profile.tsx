@@ -76,7 +76,7 @@ import Purchases, {
   PurchasesStoreProduct,
 } from "react-native-purchases";
 import { store } from "@/src/redux/store";
-
+import AuthManager from "@/src/utils/auth";
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
 const PageContainer = styled(Container)`
@@ -390,6 +390,15 @@ const FavGymClassesPanel: FunctionComponent<FavGymClassesPanelProps> = (
 
 const Profile: FunctionComponent<Props> = () => {
   const theme = useTheme();
+
+  // Force Logout... dev
+  // const auth = AuthManager;
+  // auth
+  //   .logout()
+  //   .then((res) => {
+  //     console.log("ProfileSettings: Logged out");
+  //   })
+  //   .catch((err) => console.log("ProfileSettings Logout Error", err));
 
   const { data, isLoading, isSuccess, isError, error } =
     useGetProfileViewQuery("");

@@ -89,14 +89,33 @@ const WorkoutCardFullList: FunctionComponent<WorkoutCardListProps> = (
     >
       {props.data.map((item) => {
         const num_items = item.workout_items?.length || 0;
+
+        console.log("WorkoutCardFullList Group", props.group.finished);
+        // WorkoutCardFullList Group
+        // On Animate Finish
         return (
           <WorkoutCard
             testID={`${TestIDs.WorkoutCardItemList}_${item.title}_${num_items}`}
             key={`wcfl__${item.id}`}
+            {...item}
             editable={props.editable}
             for_date={props.group.for_date}
-            {...item}
+            group={props.group}
             ownedByClass={props.group.owned_by_class}
+            navToWorkoutScreenWithItems={() => {
+              console.log("Editing workout: ", item.title, item.desc);
+              props.navToWorkoutScreenWithItems(
+                props.group.id.toString(),
+                props.group.title,
+                item.id.toString(),
+                item.scheme_type,
+                item.workout_items ?? [],
+                item.title,
+                item.desc,
+                item.scheme_rounds,
+                item.instruction ?? ""
+              );
+            }}
           />
         );
       })}

@@ -1,40 +1,41 @@
-import React, {FunctionComponent, ReactElement, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {PanGestureHandler} from 'react-native-gesture-handler';
-import MaskedView from '@react-native-masked-view/masked-view';
+import React, {
+  FunctionComponent,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { StyleSheet, View } from "react-native";
+import { PanGestureHandler } from "react-native-gesture-handler";
+import MaskedView from "@react-native-masked-view/masked-view";
 import Animated, {
   useSharedValue,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   withSpring,
   runOnJS,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import {SmallText, TSCaptionText} from '../Text/Text';
+import { SmallText, TSCaptionText } from "../Text/Text";
 
 {
   /* https://www.youtube.com/watch?v=PVSjPswRn0U&ab_channel=WilliamCandillon */
 }
 const VerticalPicker: FunctionComponent<{
   data: string[];
-  onChange(idx: number);
+  onChange(idx: number): void;
   testID?: string;
-}> = props => {
-  const {data} = props;
-  const _data = data?.length == 1 ? ['', data[0], ''] : data;
-  if (data?.length == 1) {
-    // console.log('Padded array, ', _data);
-  }
+  itemDisplayIndex?: number;
+}> = (props) => {
+  const { data } = props;
+  const _data = data?.length == 1 ? ["", data[0], ""] : data;
 
   const [xState, setXState] = useState(0);
-  const [startPos, setStartPos] = useState(0);
-  const [curIdx, setCurIdx] = useState(0);
-  const [prevIdx, setPrevIdx] = useState(-1);
 
   const transX = useSharedValue(xState);
-  const sharedStartPos = useSharedValue(startPos);
-  const sharedCurIdx = useSharedValue(curIdx);
-  const sharedPrevIdx = useSharedValue(prevIdx);
+  const sharedStartPos = useSharedValue(0);
+  const sharedCurIdx = useSharedValue(0);
+  const sharedPrevIdx = useSharedValue(-1);
 
   const [itemWidth, setItemWidth] = useState(10);
   const sharedItemWidth = useSharedValue(itemWidth);
@@ -42,6 +43,33 @@ const VerticalPicker: FunctionComponent<{
   const [wordSkew, setWordSkew] = useState(0);
   const sharedWordSkew = useSharedValue(wordSkew);
   // iF data cotnains only 1 item, fix it in the middle, dont allow user to change
+
+  useEffect(() => {
+    if (
+      props.itemDisplayIndex === null ||
+      props.itemDisplayIndex === undefined
+    ) {
+      return console.log(
+        "Dont do anything we just set a new index ....",
+        props.itemDisplayIndex
+      );
+    }
+
+    console.log(
+      "Update, display item index: show index ",
+      props.itemDisplayIndex
+    );
+
+    const moveTo = props.itemDisplayIndex * -sharedItemWidth.value;
+    safeXUpdate(moveTo);
+    transX.value = moveTo;
+    sharedStartPos.value = moveTo;
+    sharedPrevIdx.value = sharedCurIdx.value;
+    sharedCurIdx.value = props.itemDisplayIndex;
+    safeCallOnChange(props.itemDisplayIndex);
+  }, [props.itemDisplayIndex]);
+
+  const slideToIndex = (index: number) => {};
 
   const safeCallOnChange = (idx: number) => {
     props.onChange(idx);
@@ -68,7 +96,7 @@ const VerticalPicker: FunctionComponent<{
           sharedWordSkew.value = event.translationX + sharedStartPos.value * 4;
           // setXState(transX.value)
         } catch (err) {
-          console.log('onActive Error: ', err);
+          console.log("onActive Error: ", err);
         }
       },
       onEnd: (event, ctx) => {
@@ -93,17 +121,17 @@ const VerticalPicker: FunctionComponent<{
             transX.value = moveTo;
             runOnJS(safeXUpdate)(moveTo);
             runOnJS(safeCallOnChange)(0);
-            console.log('End moveTo ', moveTo, 'onChange ', 0);
+            console.log("End moveTo ", moveTo, "onChange ", 0);
             return;
           }
           const numItemsTOMove = Math.max(
             -data.length - 1,
-            Math.min(data.length - 1, _numItemsTOMove),
+            Math.min(data.length - 1, _numItemsTOMove)
           );
           // console.log('numItemsTOMove', numItemsTOMove, sharedCurIdx.value);
           const newIdx = Math.max(
             0,
-            Math.min(data.length - 1, numItemsTOMove + sharedCurIdx.value),
+            Math.min(data.length - 1, numItemsTOMove + sharedCurIdx.value)
           );
           // console.log('New index', newIdx);
           const moveTo = newIdx * -sharedItemWidth.value;
@@ -123,28 +151,28 @@ const VerticalPicker: FunctionComponent<{
             runOnJS(safeCallOnChange)(newIdx);
           } else {
             console.log(
-              'Value not changed!!!',
+              "Value not changed!!!",
               sharedPrevIdx.value,
-              sharedCurIdx.value,
+              sharedCurIdx.value
             );
           }
         } catch (err) {
-          console.log('onActive Error: ', err);
+          console.log("onActive Error: ", err);
         }
       },
     },
-    [false],
+    [false]
   );
 
   const uas = useAnimatedStyle(() => {
     return {
       // left: snapToPoints[Math.floor(transX.value / itemWidth)],
-      transform: [{translateX: withSpring(transX.value)}],
+      transform: [{ translateX: withSpring(transX.value) }],
       // transform: [{translateX: transX.value}],
     };
   }, [transX.value]);
 
-  const getWidthLayout = e => {
+  const getWidthLayout = (e) => {
     sharedItemWidth.value = e.nativeEvent.layout.width;
     setItemWidth(e.nativeEvent.layout.width);
     setXState(0);
@@ -164,9 +192,10 @@ const VerticalPicker: FunctionComponent<{
             {
               width: itemWidth,
             },
-          ]}>
-          <SmallText textStyles={{textAlign: 'center'}}>{label}</SmallText>
-        </View>,
+          ]}
+        >
+          <SmallText textStyles={{ textAlign: "center" }}>{label}</SmallText>
+        </View>
       );
     }
 
@@ -174,25 +203,27 @@ const VerticalPicker: FunctionComponent<{
   };
 
   return (
-    <View style={{flex: 1, width: '100%'}} onLayout={getWidthLayout}>
+    <View style={{ flex: 1, width: "100%" }} onLayout={getWidthLayout}>
       <MaskedView
-        style={{flex: 1, height: '100%', flexDirection: 'row', width: '100%'}}
+        style={{ flex: 1, height: "100%", flexDirection: "row", width: "100%" }}
         androidRenderingMode="software"
         maskElement={
           <Animated.View
             style={[
-              {flexDirection: 'row', height: '100%', alignItems: 'center'},
+              { flexDirection: "row", height: "100%", alignItems: "center" },
               uas,
-            ]}>
+            ]}
+          >
             {mapData()}
           </Animated.View>
-        }>
-        <View style={{width: '15%', backgroundColor: 'grey'}} />
-        <View style={{width: '70%', backgroundColor: 'white'}} />
-        <View style={{width: '15%', backgroundColor: 'grey'}} />
+        }
+      >
+        <View style={{ width: "15%", backgroundColor: "grey" }} />
+        <View style={{ width: "70%", backgroundColor: "white" }} />
+        <View style={{ width: "15%", backgroundColor: "grey" }} />
       </MaskedView>
       <PanGestureHandler onGestureEvent={eventHandler} testID={props.testID}>
-        <Animated.View style={[StyleSheet.absoluteFill, {flex: 1}]} />
+        <Animated.View style={[StyleSheet.absoluteFill, { flex: 1 }]} />
       </PanGestureHandler>
     </View>
   );

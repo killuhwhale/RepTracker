@@ -41,7 +41,7 @@ const RepSheme: FunctionComponent<{
         }}
         leading={
           <Icon
-            name="person"
+            name="code-outline"
             color={theme.palette.text}
             style={{ fontSize: mdFontSize }}
           />
@@ -82,7 +82,7 @@ const RoundSheme: FunctionComponent<{
         }}
         leading={
           <Icon
-            name="person"
+            name="code-outline"
             color={theme.palette.text}
             style={{ fontSize: mdFontSize }}
           />
@@ -113,7 +113,7 @@ const CreativeScheme: FunctionComponent<{
         }}
         leading={
           <Icon
-            name="person"
+            name="code-outline"
             color={theme.palette.text}
             style={{ fontSize: mdFontSize }}
           />

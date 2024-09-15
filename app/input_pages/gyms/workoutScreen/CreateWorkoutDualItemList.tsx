@@ -1,9 +1,17 @@
-import React, { FunctionComponent, useState } from "react";
-import { View, ScrollView } from "react-native";
+import React, { FunctionComponent, ReactNode, useState } from "react";
+import {
+  View,
+  ScrollView,
+  Switch,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useTheme } from "styled-components";
 import { TSCaptionText } from "../../../../src/app_components/Text/Text";
 import { SCREEN_HEIGHT } from "../../../../src/app_components/shared";
-import { WorkoutDualItemProps } from "../../../../src/app_components/Cards/types";
+import {
+  WorkoutDualItemProps,
+  WorkoutItemProps,
+} from "../../../../src/app_components/Cards/types";
 import ItemString from "../../../../src/app_components/WorkoutItems/ItemString";
 import { AnimatedButton } from "../../../../src/app_components/Buttons/buttons";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -13,25 +21,114 @@ const hasPenalty = (item: WorkoutDualItemProps) => {
   return item.penalty?.length && item.penalty?.length > 0;
 };
 
+const ItemRowButton: FunctionComponent<{
+  allowDeleteInUpdateMode: boolean;
+  idx: number;
+  item: WorkoutItemProps | WorkoutDualItemProps;
+  children: ReactNode;
+  RowItemOnPress: (
+    idx: number,
+    item: WorkoutItemProps | WorkoutDualItemProps,
+    _allowDeleteInUpdateMode: boolean
+  ) => void;
+}> = ({ allowDeleteInUpdateMode, idx, item, children, RowItemOnPress }) => {
+  return allowDeleteInUpdateMode ? (
+    <TouchableWithoutFeedback
+      key={`item_test_${Math.random()}`}
+      style={{ width: "100%" }}
+      onPress={() => {
+        RowItemOnPress(idx, item, allowDeleteInUpdateMode);
+      }}
+    >
+      {children}
+    </TouchableWithoutFeedback>
+  ) : (
+    <AnimatedButton
+      title={item.name.name}
+      style={{ width: "100%" }}
+      onFinish={() => {
+        RowItemOnPress(idx, item, false);
+      }}
+      key={`itemz_${idx}_${Math.random()}`}
+    >
+      {children}
+    </AnimatedButton>
+  );
+};
+
 const CreateWorkoutDualItemList: FunctionComponent<{
   items: WorkoutDualItemProps[];
   schemeType: number;
   removeItem(n: number): void;
   addPenalty(penalty: string, selectedIdx: number): void;
-}> = ({ items, schemeType, removeItem, addPenalty }) => {
+  requestUpdate: (item: WorkoutItemProps | WorkoutDualItemProps | null) => void;
+}> = ({ items, schemeType, removeItem, addPenalty, requestUpdate }) => {
   const theme = useTheme();
   const [showPenaltyModal, setShowPenaltyModal] = useState(false);
   const [curItem, setCurItem] = useState(0);
   const [text, setText] = useState("");
+  const [allowDeleteInUpdateMode, setAllowDeleteInUpdateMode] = useState(false);
+
+  const RowItemOnPress = (
+    idx: number,
+    item: WorkoutItemProps | WorkoutDualItemProps,
+    _allowDeleteInUpdateMode: boolean
+  ) => {
+    if (_allowDeleteInUpdateMode) {
+      requestUpdate(item);
+    } else {
+      removeItem(idx);
+    }
+  };
+
   return (
     <View style={{ flex: 4, width: "100%", height: "100%" }}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 12,
+          alignItems: "center",
+          width: "100%",
+          borderWidth: 1,
+          borderColor: "white",
+        }}
+      >
+        <View>
+          <TSCaptionText
+            textStyles={{ color: theme.palette.text, textAlign: "left" }}
+          >
+            Update
+          </TSCaptionText>
+        </View>
+        <View>
+          <Switch
+            value={allowDeleteInUpdateMode}
+            onValueChange={(v) => {
+              setAllowDeleteInUpdateMode(v);
+            }}
+            trackColor={{
+              true: theme.palette.primary.contrastText,
+              false: theme.palette.darkGray,
+            }}
+            thumbColor={
+              allowDeleteInUpdateMode
+                ? theme.palette.primary.main
+                : theme.palette.gray
+            }
+          />
+        </View>
+      </View>
+
       <ScrollView style={{ marginTop: 12 }}>
         {items.map((item, idx) => {
           return (
-            <AnimatedButton
-              title={item.name.name}
-              style={{ width: "100%" }}
-              onFinish={() => removeItem(idx)}
+            <ItemRowButton
+              idx={idx}
+              item={item}
+              allowDeleteInUpdateMode={allowDeleteInUpdateMode}
+              RowItemOnPress={RowItemOnPress}
               key={`itemz_${idx}_${Math.random()}`}
             >
               <View
@@ -77,7 +174,7 @@ const CreateWorkoutDualItemList: FunctionComponent<{
                 <View style={{flex: 1}}> */}
                 </View>
               </View>
-            </AnimatedButton>
+            </ItemRowButton>
           );
         })}
       </ScrollView>

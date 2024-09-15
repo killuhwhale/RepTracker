@@ -17,7 +17,7 @@ import ItemString from "../WorkoutItems/ItemString";
 
 import {
   useFinishWorkoutGroupMutation,
-  useUpdateWorkoutDualItemsMutation,
+  useRecordWorkoutDualItemsMutation,
 } from "../../redux/api/apiSlice";
 import EditWorkoutDualItem from "@/app/input_pages/gyms/workoutScreen/EditWorkoutDualItem";
 
@@ -128,7 +128,7 @@ const FinishDualWorkoutItems: FunctionComponent<{
   const [editedWorkoutGroup, setEditedWorkoutGroup] =
     useState<WorkoutGroupProps>(initGroup);
 
-  const [updateWorkout, isUpdateLoading] = useUpdateWorkoutDualItemsMutation();
+  const [recordWorkout, isUpdateLoading] = useRecordWorkoutDualItemsMutation();
 
   useEffect(() => {
     // Our copy of initGroup does not have data on first render since we are fetching from API. onces its ready, fill it
@@ -224,7 +224,7 @@ const FinishDualWorkoutItems: FunctionComponent<{
           data.append("items", JSON.stringify(updatedItems));
 
           // console.log('Updating: ', updatedItems);
-          return updateWorkout(data);
+          return recordWorkout(data);
         }) ?? [];
 
     Promise.all(promises)
@@ -283,7 +283,7 @@ const FinishDualWorkoutItems: FunctionComponent<{
                 (workout: WorkoutCardProps, workoutIdx: number) => {
                   const containsDualItems = workout.scheme_type > 2;
                   return (
-                    <View key={`${workout.id}_${workout.title}_updateWorkout`}>
+                    <View key={`${workout.id}_${workout.title}_recordWorkout`}>
                       {containsDualItems ? (
                         <>
                           <TSCaptionText>{workout.title}</TSCaptionText>

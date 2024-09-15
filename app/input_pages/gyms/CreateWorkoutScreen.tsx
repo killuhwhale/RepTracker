@@ -38,11 +38,14 @@ import {
   SchemeTextLimit,
   CreateSchemeInstructionLimit,
 } from "../../../src/app_components/shared";
-import { useAppDispatch } from "../../../src/redux/hooks";
+
 import {
   useCreateWorkoutMutation,
   useCreateWorkoutItemsMutation,
   useCreateWorkoutDualItemsMutation,
+  useUpdateWorkoutMutation,
+  useUpdateWorkoutItemsMutation,
+  useUpdateWorkoutDualItemsMutation,
 } from "../../../src/redux/api/apiSlice";
 
 import { RootStackParamList } from "../../../src/navigators/RootStack";
@@ -50,11 +53,8 @@ import { StackScreenProps } from "@react-navigation/stack";
 import {
   WorkoutDualItemProps,
   WorkoutItemProps,
+  WorkoutItems,
 } from "../../../src/app_components/Cards/types";
-import {
-  AnimatedButton,
-  RegularButton,
-} from "../../../src/app_components/Buttons/buttons";
 
 import Input from "../../../src/app_components/Input/input";
 
@@ -142,7 +142,7 @@ const verifyWorkoutItem = (
   else if (WORKOUT_TYPES[schemeType] == ROUNDS_W) {
     // If scheme rounds have not been entered....
     console.log("Current shcemeRounds ", schemeRounds);
-    if (schemeRounds.length == 0) {
+    if (!schemeRounds || schemeRounds.length == 0) {
       return {
         success: false,
         errorType: 0,
@@ -178,7 +178,13 @@ const verifyWorkoutItem = (
   return { success: true, errorType: -1, errorMsg: "" };
 };
 
-type WorkoutItems = WorkoutItemProps[] | WorkoutDualItemProps[];
+const uuid = () => Math.floor(Math.random() * 1000000).toString();
+
+const appendUUID = (items: WorkoutItems) => {
+  return items.map((item) => {
+    return { ...item, uuid: uuid() };
+  });
+};
 
 const CreateWorkoutScreen: FunctionComponent = () => {
   const theme = useTheme();
@@ -186,32 +192,49 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const {
     workoutGroupID: _workoutGroupID,
     workoutGroupTitle: _workoutGroupTitle,
+    workoutID: _workoutID,
     schemeType: _schemeType,
+    workoutTitle,
+    workoutDesc,
+    initItems,
+
+    scheme_rounds,
+    instruction: _instruction,
   } = params;
 
-  const [workoutGroupID, workoutGroupTitle, schemeType] = [
+  const [workoutGroupID, workoutGroupTitle, workoutID, schemeType] = [
     _workoutGroupID as string,
     _workoutGroupTitle as string,
+    _workoutID as string,
     parseInt(_schemeType as string),
   ];
 
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [schemeRounds, setSchemeRounds] = useState("");
-  const [instruction, setInstruction] = useState("");
-
-  const _items: WorkoutItems = [];
+  const _items: WorkoutItems = appendUUID(JSON.parse(initItems as string));
   const [items, setItems] = useState(_items);
+
+  console.log("Workout title: ", workoutTitle, workoutDesc);
+
+  const [title, setTitle] = useState(workoutTitle as string);
+  const [desc, setDesc] = useState(workoutDesc as string);
+  const [schemeRounds, setSchemeRounds] = useState(scheme_rounds as string);
+  const [instruction, setInstruction] = useState(_instruction as string);
 
   const [showAddSSID, setShowAddSSID] = useState(false);
   const [curColor, setCurColor] = useState(-1);
   const [createWorkout, { isLoading: workoutIsLoading }] =
     useCreateWorkoutMutation();
+  const [updateWorkout, { isLoading: updateWorkoutIsLoading }] =
+    useUpdateWorkoutMutation();
   const [createWorkoutItem, { isLoading: workoutItemIsLoading }] =
     useCreateWorkoutItemsMutation();
+  const [updateWorkoutItem, { isLoading: updateWorkoutItemIsLoading }] =
+    useUpdateWorkoutItemsMutation();
 
   const [createWorkoutDualItem, { isLoading: workoutDualItemIsLoading }] =
     useCreateWorkoutDualItemsMutation();
+
+  const [updateWorkoutDualItem, { isLoading: updateWorkoutDualItemIsLoading }] =
+    useUpdateWorkoutDualItemsMutation();
 
   const [schemeRoundsError, setSchemeRoundsError] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -219,7 +242,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const [createWorkoutError, setCreateWorkoutError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
-  const _createWorkoutWithItems = async () => {
+  const _createWorkoutWithItems = async (_isUpdateMode: boolean) => {
     // Need to get file from the URI
     if (items.length == 0 || items.length > 15) return setShowAlert(true);
     setIsCreating(true);
@@ -230,8 +253,12 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     workoutData.append("title", title);
     workoutData.append("desc", desc);
     workoutData.append("instruction", instruction);
-    workoutData.append("scheme_type", schemeType);
+    workoutData.append("scheme_type", schemeType.toString());
     workoutData.append("scheme_rounds", schemeRounds);
+
+    if (_isUpdateMode) {
+      workoutData.append("id", workoutID);
+    }
 
     console.log(
       "Creatting workout with Group ID and Data: ",
@@ -239,9 +266,48 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       workoutData
     );
 
+    // Create Workout
+    // 1. Create Workout
+    // 2. Then Create workout items...
+
+    // Update Workout
+    // 1. Update Workout: title, desc, rep_shceme, instructions
+    // 2. Then Create workout items...
+
     try {
-      const createdWorkout = await createWorkout(workoutData).unwrap();
-      console.log("Workout res", createdWorkout);
+      const data = new FormData();
+
+      let createdWorkout = null;
+      if (_isUpdateMode) {
+        if (
+          title != workoutTitle ||
+          desc != workoutDesc ||
+          instruction != instruction ||
+          schemeRounds != scheme_rounds
+        ) {
+          console.log("Updating workout! updateWorkout");
+          createdWorkout = await updateWorkout(workoutData).unwrap();
+        }
+      } else {
+        createdWorkout = await createWorkout(workoutData).unwrap();
+      }
+
+      console.log("Workout res ", createdWorkout);
+
+      if (!createdWorkout) {
+        // Use Default Workout, only the workoutID is needed below
+        createdWorkout = {
+          date: "",
+          desc: "",
+          group: "",
+          id: workoutID,
+          instruction: "",
+          scheme_rounds: "",
+          scheme_type: 1,
+          title: "",
+          err_type: -1,
+        };
+      }
 
       // TODO() Catch this error better, shoudl return a specific error num for  unique constraint errors.
       // eslint-disable-next-line dot-notation
@@ -255,19 +321,43 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         console.log("Creating item: ", item);
         item.order = idx;
         item.workout = createdWorkout.id;
+        if ("finished" in item) {
+          item.finished = false;
+        }
+
+        delete item["uuid"];
+        if (schemeType <= 2) {
+          // These scheme types do not have penalty field, only exists on DualItems
+          if ("penalty" in item) {
+            console.log("Removing Penaly");
+            delete item["penalty"];
+          }
+        }
       });
 
       data.append("items", JSON.stringify(items));
       data.append("workout", createdWorkout.id);
       data.append("workout_group", workoutGroupID);
       let createdItems;
+
       if (schemeType <= 2) {
         // For reg, reps, and rounds type workouts, the description is the prescription.
-        createdItems = await createWorkoutItem(data).unwrap();
+        if (_isUpdateMode) {
+          console.log("Update workout items: updateWorkoutItem");
+          createdItems = await updateWorkoutItem(data).unwrap();
+        } else {
+          createdItems = await createWorkoutItem(data).unwrap();
+        }
       } else {
         // For Time based workouts, or do you best workouts, we store prescription and record separately
-        createdItems = await createWorkoutDualItem(data).unwrap();
+        if (_isUpdateMode) {
+          console.log("Update workout items: updateWorkoutDualItem");
+          createdItems = await updateWorkoutDualItem(data).unwrap();
+        } else {
+          createdItems = await createWorkoutDualItem(data).unwrap();
+        }
       }
+
       console.log("Workout item res", createdItems);
 
       // TODO handle errors
@@ -277,6 +367,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     } catch (err) {
       console.log("Error creating workout", err);
     }
+
     setIsCreating(false);
   };
 
@@ -286,7 +377,10 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     setItems(_items);
   };
 
-  const addWorkoutItem = (item: WorkoutItemProps): AddWorkoutItemProps => {
+  const addWorkoutItem = (
+    item: WorkoutItemProps | WorkoutDualItemProps,
+    shouldUpdateItem: boolean
+  ): AddWorkoutItemProps => {
     const _item = { ...item };
 
     const { success, errorType, errorMsg } = verifyWorkoutItem(
@@ -305,13 +399,34 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       setSchemeRoundsError(false);
     }
 
+    console.log("Weight check: ", _item.weights);
+    console.log("Reps check: ", _item.reps);
+
     _item.weights = jList(_item.weights);
     _item.reps = jList(_item.reps);
     _item.duration = jList(_item.duration);
     _item.distance = jList(_item.distance);
 
-    console.log("~~~~Adding item: ", _item);
-    setItems([...items, _item]);
+    console.log("Weight jList check: ", _item.weights);
+    console.log("Reps jList check: ", _item.reps);
+
+    // we can do an update here instead.....
+    console.log("\n shouldUpdateItem: ", shouldUpdateItem, "\n\n");
+    if (shouldUpdateItem) {
+      const updatedItems = items.map((itemState) => {
+        if (itemState.uuid === _item.uuid) {
+          return _item;
+        }
+        return itemState;
+      });
+
+      setItems(updatedItems);
+    } else {
+      _item.uuid = uuid();
+      console.log("~~~~Adding item: ", _item);
+      setItems([...items, _item]);
+    }
+
     return { success: true, errorType: -1, errorMsg: "" };
   };
 
@@ -364,9 +479,24 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     console.log("Toggled item as constant", item);
   };
 
+  const [itemToUpdate, setItemToUpdate] = useState<
+    null | WorkoutItemProps | WorkoutDualItemProps
+  >(null);
+
+  const [toggleUpdateHack, setToggleUpdateHack] = useState(false);
+
+  const requestUpdate = (
+    item: WorkoutItemProps | WorkoutDualItemProps | null
+  ) => {
+    setItemToUpdate(item);
+    setToggleUpdateHack(!toggleUpdateHack);
+  };
+
+  const isUpdateMode = initItems.length > 2;
+
   return (
     <PageContainer>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1, width: "100%" }}>
         <View style={{ flex: 1, justifyContent: "center", width: "100%" }}>
           <TSParagrapghText textStyles={{ textAlign: "center" }}>
             Create Workout
@@ -415,7 +545,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               }}
               leading={
                 <Icon
-                  name="person"
+                  name="remove-outline"
                   color={theme.palette.text}
                   style={{ fontSize: mdFontSize }}
                 />
@@ -440,7 +570,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               }}
               leading={
                 <Icon
-                  name="person"
+                  name="remove-outline"
                   color={theme.palette.text}
                   style={{ fontSize: mdFontSize }}
                 />
@@ -463,35 +593,43 @@ const CreateWorkoutScreen: FunctionComponent = () => {
           />
         </View>
 
-        <View style={{ flex: 1, width: "100%", justifyContent: "center" }}>
-          {!isCreating ? (
-            <TouchableHighlight
-              style={{ marginBottom: 6 }}
-              onPress={_createWorkoutWithItems.bind(this)}
-            >
-              <View
-                style={{ justifyContent: "center", alignItems: "flex-end" }}
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "flex-end",
+            paddingRight: 12,
+          }}
+        >
+          <View style={{ width: "20%" }}>
+            {!isCreating ? (
+              <TouchableHighlight
+                style={{ marginBottom: 6 }}
+                onPress={() => _createWorkoutWithItems(isUpdateMode)}
               >
-                <Icon
-                  name="add-outline"
-                  size={24}
-                  style={{ marginRight: 4 }}
-                  color={theme.palette.text}
-                />
-                <TSCaptionText textStyles={{ textAlign: "right" }}>
-                  Create
-                </TSCaptionText>
-              </View>
-            </TouchableHighlight>
-          ) : (
-            // <RegularButton
-            //   onPress={_createWorkoutWithItems.bind(this)}
-            //   testID={TestIDs.CreateWorkoutCreateBtn.name()}
-            //   btnStyles={{ backgroundColor: theme.palette.darkGray }}
-            //   text="Create"
-            // />
-            <ActivityIndicator size="small" color={theme.palette.text} />
-          )}
+                <View
+                  style={{ justifyContent: "center", alignItems: "flex-end" }}
+                >
+                  <Icon
+                    name={
+                      isUpdateMode
+                        ? "arrow-up-circle-outline"
+                        : "add-circle-outline"
+                    }
+                    size={24}
+                    style={{ marginRight: 4 }}
+                    color={theme.palette.text}
+                  />
+                  <TSCaptionText textStyles={{ textAlign: "right" }}>
+                    {isUpdateMode ? "Update" : "Create"}
+                  </TSCaptionText>
+                </View>
+              </TouchableHighlight>
+            ) : (
+              <ActivityIndicator size="small" color={theme.palette.text} />
+            )}
+          </View>
         </View>
 
         <View
@@ -501,7 +639,13 @@ const CreateWorkoutScreen: FunctionComponent = () => {
             justifyContent: "center",
           }}
         >
-          <AddItem onAddItem={addWorkoutItem} schemeType={schemeType} />
+          <AddItem
+            addWorkoutItem={addWorkoutItem}
+            schemeType={schemeType}
+            itemToUpdate={itemToUpdate}
+            toggleUpdateHack={toggleUpdateHack}
+            requestUpdate={requestUpdate}
+          />
         </View>
 
         <View
@@ -527,6 +671,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
                 addItemToSSID={addItemToSSID}
                 updateItemConstant={updateItemConstant}
                 removeItem={removeItem}
+                requestUpdate={requestUpdate}
               />
             ) : (
               <CreateWorkoutDualItemList
@@ -534,6 +679,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
                 schemeType={schemeType}
                 removeItem={removeItem}
                 addPenalty={addPenalty}
+                requestUpdate={requestUpdate}
               />
             )}
           </View>

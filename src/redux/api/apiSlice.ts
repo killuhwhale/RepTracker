@@ -470,6 +470,21 @@ export const apiSlice = createApi({
           : ["UserWorkoutGroups"];
       },
     }),
+    duplicateWorkoutGroup: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutGroups/duplicate/",
+        method: "POST",
+        data: data,
+        params: { contentType: "multipart/form-data" },
+      }),
+      invalidatesTags: (result, err, arg) => {
+        const data = new Map<string, string>(arg._parts);
+
+        return data.get("owned_by_class")
+          ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
+          : ["UserWorkoutGroups"];
+      },
+    }),
     finishWorkoutGroup: builder.mutation({
       query: (data = {}) => ({
         url: "workoutGroups/finish/",
@@ -528,6 +543,28 @@ export const apiSlice = createApi({
       // },
     }),
 
+    //     updateWorkout
+    // updateWorkoutItem
+    // updateWorkoutDualItem
+
+    updateWorkout: builder.mutation({
+      query: (arg = {}) => {
+        const data = new Map<string, string>(arg._parts);
+        console.log("Update workout data: ", data);
+        return {
+          url: `workouts/${data.get("id")}/`,
+          method: "PUT",
+          data: arg,
+          params: { contentType: "multipart/form-data" },
+        };
+      },
+      invalidatesTags: (result, error, arg) => {
+        const data = new Map<string, string>(arg._parts);
+        console.log("Invalidates tag, Workouts: ", data);
+        return [{ type: "WorkoutGroupWorkouts", id: data.get("group") }];
+      },
+    }),
+
     getWorkoutByID: builder.query({
       query: (id) => {
         return { url: `workouts/${id}/` };
@@ -582,6 +619,30 @@ export const apiSlice = createApi({
       },
     }),
 
+    updateWorkoutItems: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutItems/update_items/",
+        method: "POST",
+        data: data,
+        params: { contentType: "multipart/form-data" },
+      }),
+
+      invalidatesTags: (resut, error, arg) => {
+        const data = new Map<string, string>(arg._parts);
+        // console.log(
+        //   "Invalidating create normal Item: ",
+        //   data.get("workout_group"),
+        //   data
+        // );
+        return [
+          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "UserWorkoutGroups" },
+          { type: "StatsQuery" },
+          { type: "DailySnapshot" },
+        ];
+      },
+    }),
+
     createWorkoutDualItems: builder.mutation({
       query: (data = {}) => ({
         url: "workoutDualItems/items/",
@@ -605,9 +666,28 @@ export const apiSlice = createApi({
       },
     }),
 
-    updateWorkoutDualItems: builder.mutation({
+    recordWorkoutDualItems: builder.mutation({
       query: (data = {}) => ({
         url: "workoutDualItems/record_items/",
+        method: "POST",
+        data: data,
+        params: { contentType: "multipart/form-data" },
+      }),
+      invalidatesTags: (resut, error, arg) => {
+        const data = new Map<string, string>(arg._parts);
+
+        return [
+          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "UserWorkoutGroups" },
+          { type: "StatsQuery" },
+          { type: "DailySnapshot" },
+        ];
+      },
+    }),
+
+    updateWorkoutDualItems: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutDualItems/update_items/",
         method: "POST",
         data: data,
         params: { contentType: "multipart/form-data" },
@@ -829,10 +909,14 @@ export const {
   useDeleteWorkoutMutation,
   useGetWorkoutByIDQuery,
   useCreateWorkoutGroupMutation,
+  useDuplicateWorkoutGroupMutation,
   useDeleteWorkoutGroupMutation,
   useCreateWorkoutMutation,
+  useUpdateWorkoutMutation,
   useCreateWorkoutItemsMutation,
+  useUpdateWorkoutItemsMutation,
   useCreateWorkoutDualItemsMutation,
+  useRecordWorkoutDualItemsMutation,
   useUpdateWorkoutDualItemsMutation,
   useCreateCompletedWorkoutMutation,
   useGetCompletedWorkoutGroupsForUserByDateRangeQuery,

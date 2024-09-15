@@ -73,6 +73,36 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
     }
   };
 
+  const onFinish = () => {
+    console.log(
+      "On Animate Finish, group finished? ",
+      props.group,
+      props.group?.finished
+    );
+
+    if (props.editable) {
+      _deleteWorkout();
+    } else if (props.group?.finished) {
+      navToWorkoutDetail();
+    } else {
+      props.navToWorkoutScreenWithItems();
+    }
+  };
+
+  const displaySchemeRounds = displayJList(props.scheme_rounds);
+  const instruction = props.instruction;
+  const displaySchemeType =
+    props.scheme_type <= 2 ? WORKOUT_TYPE_LABELS[props.scheme_type] : "";
+  let subtitle = ``;
+  if (displaySchemeRounds && displaySchemeRounds !== "undefined") {
+    subtitle += displaySchemeRounds + " ";
+  }
+  if (instruction && instruction !== "undefined") {
+    subtitle += instruction + " ";
+  }
+  if (displaySchemeType) {
+    subtitle += displaySchemeType;
+  }
   return (
     <View
       testID={props.testID}
@@ -102,9 +132,7 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
         }}
       >
         <AnimatedButton
-          onFinish={() =>
-            props.editable ? _deleteWorkout() : navToWorkoutDetail()
-          }
+          onFinish={() => onFinish()}
           title="del workout"
           active={props.editable}
         >
@@ -123,10 +151,12 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
             >
               <TSParagrapghText>{props.title} </TSParagrapghText>
               <TSCaptionText>
-                {displayJList(props.scheme_rounds)} {props.instruction}{" "}
+                {subtitle}
+                {/* {displayJList(props.scheme_rounds)}{" "}
+                {props.instruction ? props.instruction : ""}{" "}
                 {props.scheme_type <= 2
                   ? WORKOUT_TYPE_LABELS[props.scheme_type]
-                  : ""}
+                  : ""} */}
               </TSCaptionText>
 
               <Icon

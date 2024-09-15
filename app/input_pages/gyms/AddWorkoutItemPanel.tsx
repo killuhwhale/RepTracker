@@ -24,6 +24,7 @@ import {
 import { useGetWorkoutNamesQuery } from "../../../src/redux/api/apiSlice";
 
 import {
+  WorkoutDualItemProps,
   WorkoutItemProps,
   WorkoutNameProps,
 } from "../../../src/app_components/Cards/types";
@@ -42,9 +43,23 @@ interface AddWorkoutItemProps {
   errorMsg: string;
 }
 
+const isArrayStringEmpty = (s: string) => {
+  return stripArrStr(s) === "0";
+};
+
+const stripArrStr = (s: string) => {
+  return s.substring(1, s.length - 1).replaceAll(",", " ");
+};
+
 const AddItem: FunctionComponent<{
-  onAddItem(item: WorkoutItemProps): AddWorkoutItemProps;
+  addWorkoutItem(
+    item: WorkoutItemProps,
+    shouldUpdateItem: boolean
+  ): AddWorkoutItemProps;
+  itemToUpdate: WorkoutDualItemProps | WorkoutItemProps | null;
   schemeType: number;
+  toggleUpdateHack: boolean;
+  requestUpdate: (item: WorkoutItemProps | WorkoutDualItemProps | null) => void;
 }> = (props) => {
   // Need to have blank values, empty strings in the field instead of a default 0
 
@@ -64,15 +79,91 @@ const AddItem: FunctionComponent<{
   const initRestDuration = "";
   const initRestDurationUnit = 0;
 
+  // TODO() Need to update vertical item picker to change its position with a useEffect.... weight_unit
+  // TODO() Need to update horizontal item picker to change its position with a useEffect.... quanitity Type, distance_unit, duration_unit, rest_unit
+  //  Need to change the Slider to display the correct unit type and also the underlying data variable that stores the value (already set with useEffect)...
+  useEffect(() => {
+    if (!props.itemToUpdate) return resetDefaultItem();
+
+    const updateRowOne = async () => {
+      console.log("AddItem useEffect: ", props.itemToUpdate);
+      if (!props.itemToUpdate) return resetDefaultItem();
+
+      setWorkoutName(workoutNamesMap.get(props.itemToUpdate.name.name) ?? 0); // get index from list props.itemToUpdate
+
+      if (!isArrayStringEmpty(props.itemToUpdate.reps)) {
+        setShowQuantity(() => 0);
+      } else if (!isArrayStringEmpty(props.itemToUpdate.duration)) {
+        setShowQuantity(() => 1);
+      } else if (!isArrayStringEmpty(props.itemToUpdate.distance)) {
+        setShowQuantity(() => 2);
+      }
+      setPauseDuration(props.itemToUpdate.pause_duration.toString());
+    };
+
+    const updateRowTwo = async () => {
+      if (!props.itemToUpdate) return resetDefaultItem();
+      console.log(
+        "Update distance unit to : ",
+        props.itemToUpdate?.distance_unit
+      );
+      // Row 2
+      setSets(props.itemToUpdate.sets.toString());
+      setReps(stripArrStr(props.itemToUpdate.reps));
+      setDistance(stripArrStr(props.itemToUpdate.distance));
+      setDistanceUnit(props.itemToUpdate?.distance_unit ?? 0);
+      setDuration(stripArrStr(props.itemToUpdate.duration));
+      setDurationUnit(() => props.itemToUpdate?.duration_unit ?? 0);
+      setWeight(stripArrStr(props.itemToUpdate.weights));
+      setWeightUnit(props.itemToUpdate.weight_unit);
+    };
+
+    const updateRowThree = async () => {
+      if (!props.itemToUpdate) return resetDefaultItem();
+
+      // Row 3
+      setRestDuration(props.itemToUpdate.rest_duration.toString());
+      console.log(
+        "Setting restDuration unit: ",
+        props.itemToUpdate.rest_duration_unit
+      );
+      setRestDurationUnit(props.itemToUpdate?.rest_duration_unit ?? 0);
+
+      setPercentOfWeightUnit(props.itemToUpdate.percent_of);
+      setCurrentItemUUID(props.itemToUpdate.uuid ?? "");
+    };
+
+    (async () => {
+      await updateRowOne();
+      setTimeout(async () => {
+        await updateRowTwo();
+        setTimeout(async () => {
+          await updateRowThree();
+        }, 1);
+      }, 1);
+    })()
+      .then(() => console.log("Done init update item"))
+      .catch((err) => console.log("error::: ", err));
+
+    if ("penalty" in props.itemToUpdate) {
+      setItemPenalty(props.itemToUpdate.penalty ?? "");
+    }
+  }, [props.itemToUpdate, props.toggleUpdateHack]);
+
   const theme = useTheme();
   const { data, isLoading, isSuccess, isError, error } =
     useGetWorkoutNamesQuery("");
   const workoutNames = data as [WorkoutNameProps];
-  const workoutNamesMap = workoutNames
-    ? new Map(workoutNames.map((workoutName, idx) => [workoutName.name, idx]))
-    : new Map();
-  const pickerRef = useRef<any>();
+  const workoutNamesMap: Map<string, number> = workoutNames
+    ? new Map<string, number>(
+        workoutNames.map((workoutName, idx) => [workoutName.name, idx])
+      )
+    : new Map<string, number>();
 
+  const pickerRef = useRef<any>();
+  const [itemPenalty, setItemPenalty] = useState(""); // preserve item penalty when updating item
+
+  const [currentItemUUID, setCurrentItemUUID] = useState("");
   const [workoutName, setWorkoutName] = useState(initWorkoutName);
 
   const [weight, setWeight] = useState(initWeight); // Json string list of numbers.
@@ -121,6 +212,7 @@ const AddItem: FunctionComponent<{
 
   const resetDefaultItem = () => {
     console.log("Resetting item");
+
     setWeight(initWeight);
     setDistance(initDistance);
     setPercentOfWeightUnit(initPercentOfWeightUnit);
@@ -129,10 +221,11 @@ const AddItem: FunctionComponent<{
     setPauseDuration(initPauseDuration);
     setDuration(initDuration);
     setRestDuration(initRestDuration);
+    setItemPenalty("");
     // setRestDurationUnit(initRestDurationUnit);
   };
 
-  const _addItem = () => {
+  const _addItem = (updateItem: boolean = false) => {
     if (!data || data.length <= 0) {
       console.log("Error, no workout names to add to item.");
       return;
@@ -177,10 +270,10 @@ const AddItem: FunctionComponent<{
     }
 
     const item = {
-      workout: 0,
+      workout: props.itemToUpdate ? props.itemToUpdate.workout : 0,
       name: data[workoutName] as WorkoutNameProps,
-      ssid: -1,
-      constant: false,
+      ssid: props.itemToUpdate ? props.itemToUpdate.ssid : -1,
+      constant: props.itemToUpdate ? props.itemToUpdate.constant : false,
       pause_duration: nanOrNah(pauseDuration),
       sets: setsItem,
       reps: repsItem,
@@ -193,14 +286,19 @@ const AddItem: FunctionComponent<{
       rest_duration: nanOrNah(restDuration),
       rest_duration_unit: restDurationUnit,
       percent_of: percentOfWeightUnit,
-      order: -1,
-      date: "",
-      id: 0,
+      order: props.itemToUpdate ? props.itemToUpdate.order : -1,
+      date: props.itemToUpdate ? props.itemToUpdate.date : "",
+      id: props.itemToUpdate ? props.itemToUpdate.id : 0,
+      uuid: currentItemUUID,
+      penalty: itemPenalty,
     };
     console.log("Adding item: ", item);
 
     // // Checks if reps and weights match the repScheme
-    const { success, errorType, errorMsg } = props.onAddItem(item);
+    const { success, errorType, errorMsg } = props.addWorkoutItem(
+      item,
+      updateItem
+    );
 
     if (success) {
       resetDefaultItem();
@@ -326,15 +424,18 @@ const AddItem: FunctionComponent<{
               Quantity type
             </TSCaptionText>
             <View style={{ flex: 1, width: "100%" }}>
+              {/* // TODO  Update Vertical Picker to update itself programmatically  */}
+
               <VerticalPicker
                 key={"qty"}
+                itemDisplayIndex={showQuantity}
                 data={QuantityLabels}
                 testID={TestIDs.VerticalPickerGestureHandlerQtyType.name()}
                 onChange={(itemIndex) => {
                   const itemValue = QuantityLabels[itemIndex];
-                  setDistance(initDistance);
-                  setDuration(initDuration);
-                  setReps(initReps);
+                  // setDistance(initDistance);
+                  // setDuration(initDuration);
+                  // setReps(initReps);
                   // updateItem('distance', nanOrNah(initDistance))
                   // updateItem('duration', nanOrNah(initDuration))
                   // updateItem('reps', nanOrNah(initReps))
@@ -474,6 +575,7 @@ const AddItem: FunctionComponent<{
                   <View style={{ flex: 1 }}>
                     <View style={{ flex: 1, width: "100%" }}>
                       <VerticalPicker
+                        itemDisplayIndex={durationUnit}
                         key={"dur"}
                         data={DURATION_UNITS}
                         testID={TestIDs.VerticalPickerGestureHandlerDuration.name()}
@@ -530,6 +632,7 @@ const AddItem: FunctionComponent<{
                     <View style={{ flex: 1, width: "100%" }}>
                       <VerticalPicker
                         key={"dist"}
+                        itemDisplayIndex={distanceUnit}
                         data={DISTANCE_UNITS}
                         testID={TestIDs.VerticalPickerGestureHandlerDistance.name()}
                         onChange={(itemIndex) => {
@@ -603,6 +706,7 @@ const AddItem: FunctionComponent<{
               <View style={{ flex: 1 }}>
                 <VerticalPicker
                   key={"wts"}
+                  itemDisplayIndex={WEIGHT_UNITS.indexOf(weightUnit)}
                   data={WEIGHT_UNITS}
                   testID={TestIDs.VerticalPickerGestureHandlerWtUnit.name()}
                   onChange={(itemIndex) => {
@@ -691,6 +795,7 @@ const AddItem: FunctionComponent<{
               <View style={{ flex: weightUnit === "%" ? 2 : 1 }}>
                 <VerticalPicker
                   key={"rest"}
+                  itemDisplayIndex={restDurationUnit}
                   data={DURATION_UNITS}
                   testID={TestIDs.VerticalPickerGestureHandlerRestUnit.name()}
                   onChange={(itemIndex) => {
@@ -703,15 +808,46 @@ const AddItem: FunctionComponent<{
           </View>
         </View>
 
-        <View style={{}}>
-          <RegularButton
-            onPress={_addItem}
-            testID={TestIDs.CreateWorkoutAddItemBtn.name()}
-            btnStyles={{
-              backgroundColor: theme.palette.darkGray,
-            }}
-            text="Add Item"
-          />
+        <View style={{ flex: 1, width: "100%", justifyContent: "center" }}>
+          {props.itemToUpdate ? (
+            <View
+              style={{
+                flexDirection: "row",
+                height: "100%",
+              }}
+            >
+              <View style={{ flex: 1, justifyContent: "center" }}>
+                <RegularButton
+                  onPress={() => props.requestUpdate(null)}
+                  testID={TestIDs.CreateWorkoutAddItemBtn.name()}
+                  btnStyles={{
+                    backgroundColor: theme.palette.darkGray,
+                  }}
+                  text="Clear"
+                />
+              </View>
+
+              <View style={{ flex: 1, justifyContent: "center" }}>
+                <RegularButton
+                  onPress={() => _addItem(true)}
+                  testID={TestIDs.CreateWorkoutAddItemBtn.name()}
+                  btnStyles={{
+                    backgroundColor: theme.palette.darkGray,
+                  }}
+                  text="Update"
+                />
+              </View>
+            </View>
+          ) : (
+            <RegularButton
+              onPress={() => _addItem()}
+              testID={TestIDs.CreateWorkoutAddItemBtn.name()}
+              btnStyles={{
+                backgroundColor: theme.palette.darkGray,
+              }}
+              text="Add Item"
+            />
+          )}
         </View>
       </View>
     </View>

@@ -150,6 +150,9 @@ export const displayJList = (weights: string) => {
 };
 // Converts string of nums to stringified number[]
 export const jList = (str: string): string => {
+  if (!str) {
+    return JSON.stringify([]);
+  }
   const S = str.trim();
   if (!S) {
     return JSON.stringify([]);

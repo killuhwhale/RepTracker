@@ -31,6 +31,8 @@ import {
   WorkoutDualItemProps,
   WorkoutGroupCardProps,
   WorkoutGroupProps,
+  WorkoutItemProps,
+  WorkoutItems,
 } from "../src/app_components/Cards/types";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -60,6 +62,7 @@ import { TestIDs } from "../src/utils/constants";
 import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import FinishDualWorkoutItems from "../src/app_components/modals/finishDualWorkoutItems";
 import { router, useLocalSearchParams } from "expo-router";
+import DuplicateWorkoutGroupModal from "@/src/app_components/modals/DuplicateWorkoutGroupModal";
 export type Props = StackScreenProps<RootStackParamList, "WorkoutScreen">;
 
 const Row = styled.View`
@@ -93,6 +96,7 @@ type WSHeaderProps = {
   workoutGroup: WorkoutGroupCardProps;
   setShowingOGWorkoutGroup: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirmDelete(): void;
+  setShowDuplicateModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
@@ -106,6 +110,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
   WGOwner,
   setShowingOGWorkoutGroup,
   onConfirmDelete,
+  setShowDuplicateModal,
 }) => {
   const theme = useTheme();
   return (
@@ -187,12 +192,20 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
           )}
 
           {WGOwner ? (
-            <Icon
-              style={{ fontSize: 24, marginRight: 12 }}
-              name="remove-circle-sharp"
-              color="red"
-              onPress={onConfirmDelete}
-            />
+            <View style={{ flexDirection: "row" }}>
+              <Icon
+                style={{ fontSize: 24, marginRight: 12 }}
+                name="remove-circle-sharp"
+                color={theme.palette.primary.main}
+                onPress={() => setShowDuplicateModal(true)}
+              />
+              <Icon
+                style={{ fontSize: 24, marginRight: 12 }}
+                name="remove-circle-sharp"
+                color="red"
+                onPress={onConfirmDelete}
+              />
+            </View>
           ) : (
             <></>
           )}
@@ -392,6 +405,37 @@ const WorkoutScreen: FunctionComponent = () => {
       workoutGroup.owned_by_class) ||
     Object.keys(workoutGroup).indexOf("completed_workouts") >= 0;
 
+  // TODO() Only show duplicate once this is done.
+  // TODO() Create a second NavToWorkoutScreenWithItems
+  // Click this when Clicking Duplicate Workout
+  // TODO() Add a duplicate workout Button
+  const navToWorkoutScreenWithItems = (
+    workoutGroupID: string,
+    workoutGroupTitle: string,
+    workoutID: string,
+    schemeType: number,
+    items: WorkoutItems,
+    workoutTitle: string,
+    workoutDesc: string,
+    scheme_rounds: string,
+    instruction: string
+  ) => {
+    router.navigate({
+      pathname: "/input_pages/gyms/CreateWorkoutScreen",
+      params: {
+        workoutGroupID,
+        workoutGroupTitle,
+        workoutID,
+        schemeType,
+        initItems: JSON.stringify(items),
+        workoutTitle,
+        workoutDesc,
+        scheme_rounds,
+        instruction,
+      },
+    });
+  };
+
   const navToWorkoutScreen = (
     workoutGroupID: string,
     workoutGroupTitle: string,
@@ -403,6 +447,9 @@ const WorkoutScreen: FunctionComponent = () => {
         workoutGroupID,
         workoutGroupTitle,
         schemeType,
+        workoutTitle: "",
+        workoutDesc: "",
+        initItems: JSON.stringify([]),
       },
     });
   };
@@ -504,6 +551,8 @@ const WorkoutScreen: FunctionComponent = () => {
     }
   };
 
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+
   return (
     <View
       style={{
@@ -537,6 +586,7 @@ const WorkoutScreen: FunctionComponent = () => {
               setShowingOGWorkoutGroup={setShowingOGWorkoutGroup}
               showingOGWorkoutGroup={showingOGWorkoutGroup}
               workoutGroup={workoutGroup}
+              setShowDuplicateModal={setShowDuplicateModal}
             />
           </View>
 
@@ -798,6 +848,7 @@ const WorkoutScreen: FunctionComponent = () => {
                       data={workouts}
                       editable={editable}
                       group={workoutGroup}
+                      navToWorkoutScreenWithItems={navToWorkoutScreenWithItems}
                     />
                   ) : (showingOGWorkoutGroup && oGIsError) ||
                     (!showingOGWorkoutGroup && completedIsError) ? (
@@ -860,6 +911,16 @@ const WorkoutScreen: FunctionComponent = () => {
         </LargeText>
       </View>
 
+      <DuplicateWorkoutGroupModal
+        owner_id={owner_id as string}
+        actionText="Duplicate"
+        closeText="Cancel"
+        modalText="Duplicate Workout Group"
+        modalVisible={showDuplicateModal}
+        onRequestClose={() => setShowDuplicateModal(false)}
+        key={"duplicatemodal"}
+        workouts={workouts}
+      />
       {workoutGroup.workouts && workoutGroup.workouts?.length > 0 ? (
         <FinishDualWorkoutItems
           bodyText="How many did you do?"

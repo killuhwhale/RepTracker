@@ -119,6 +119,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   const [title, setTitle] = useState("");
   const [forDate, setForDate] = useState<Date>(new Date());
   const [showAlert, setShowAlert] = useState(false);
+  const [caption, setCaption] = useState("");
   // Need to set ownedByClass somehow......
   // 1. User has classes, use a picker || Deciding to not use a picker. We will just go to the class and add from there...
   // 2. User does not have classes, no picker.
@@ -129,7 +130,6 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   //     From a class w/ its ID to add a workout to it.
   //     From profile, for class, use a picker to choose ID of class
   //     From profile, for user, no picker
-  const [caption, setCaption] = useState("");
 
   const [createWorkoutGroup, { isLoading }] = useCreateWorkoutGroupMutation();
   // useGet... workoutNames

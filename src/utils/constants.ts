@@ -3,7 +3,7 @@ const nodeEnv = process.env.NODE_ENV || "";
 const DOMAIN_NAME = "reptrackrr.com";
 
 const BASEURL =
-  ["development", "test"].indexOf(nodeEnv) < 0
+  ["development", "test"].indexOf(nodeEnv) >= 0
     ? "http://localhost:8000/"
     : `https://${DOMAIN_NAME}/ffapi/`;
 
