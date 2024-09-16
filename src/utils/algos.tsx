@@ -17,17 +17,32 @@ export const DAYSOFWEEK = [
   "Saturday",
 ];
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 export const dateFormat = (dd: Date) => {
   // return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   const d = new Date(dd);
-  return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
 export const dateFormatDayOfWeek = (dd: Date) => {
   // return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   const d = new Date(dd);
-  return `${DAYSOFWEEK[d.getUTCDay()]} ${
-    d.getUTCMonth() + 1
-  }/${d.getUTCDate()}/${d.getUTCFullYear()}`;
+  return `${DAYSOFWEEK[d.getDay()]} ${
+    MONTHS[d.getMonth()]
+  } ${d.getDate()}, ${d.getFullYear()}`;
 };
 
 export const jListToNumStr = (jsonListStr: string) => {

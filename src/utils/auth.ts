@@ -2,14 +2,10 @@
 
 import { BASEURL } from "./constants";
 import { post } from "./fetchAPI";
-import {
-  storeToken,
-  getToken,
-  clearToken,
-  apiSlice,
-} from "../redux/api/apiSlice";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+
+// import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { UserProps } from "@/app/types";
+import { clearToken, storeToken } from "./tokenUtils";
 
 // The interface for the functions to be given, take no arguments and returns nothing
 interface OnLogoutProps {

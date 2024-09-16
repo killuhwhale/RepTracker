@@ -1,12 +1,5 @@
 // Import the RTK Query methods from the React-specific entry point
-import {
-  BaseQueryFn,
-  createApi,
-  fetchBaseQuery,
-} from "@reduxjs/toolkit/query/react";
-
-// import EncryptedStorage from 'react-native-encrypted-storage';
-import RNSecureStorage, { ACCESSIBLE } from "killuhwhal3-rn-secure-storage";
+import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
 
 import { BASEURL } from "../../utils/constants";
 import {
@@ -18,9 +11,7 @@ import {
 import auth from "../../utils/auth";
 import { Member } from "../../app_components/modals/types";
 import { navigate } from "../../navigators/RootNavigation";
-
-const JWT_ACCESS_TOKEN_KEY = "__jwttoken_access";
-const JWT_REFRESH_TOKEN_KEY = "__jwttoken_refresh";
+import { getToken, storeToken } from "@/src/utils/tokenUtils";
 
 // Dump Asyn Storage
 // EncryptedStorage.getAllKeys((err, keys) => {
@@ -33,50 +24,6 @@ const JWT_REFRESH_TOKEN_KEY = "__jwttoken_refresh";
 //     });
 //   }
 // });
-
-export const clearToken = async () => {
-  try {
-    await RNSecureStorage.remove(JWT_ACCESS_TOKEN_KEY);
-    await RNSecureStorage.remove(JWT_REFRESH_TOKEN_KEY);
-    return true;
-  } catch (e) {
-    // saving error
-    console.log("Error clearing from storage: ", e);
-    return false;
-  }
-};
-export const storeToken = async (value, access = true) => {
-  try {
-    if (access) {
-      await RNSecureStorage.set(JWT_ACCESS_TOKEN_KEY, value, {
-        accessible: ACCESSIBLE.WHEN_UNLOCKED,
-      });
-    } else {
-      await RNSecureStorage.set(JWT_REFRESH_TOKEN_KEY, value, {
-        accessible: ACCESSIBLE.WHEN_UNLOCKED,
-      });
-    }
-    return true;
-  } catch (e) {
-    // saving error
-    console.log("Errorsaving to storage: ", e);
-    return false;
-  }
-};
-
-export const getToken = async (access = true) => {
-  try {
-    if (access) {
-      return await RNSecureStorage.get(JWT_ACCESS_TOKEN_KEY);
-    } else {
-      return await RNSecureStorage.get(JWT_REFRESH_TOKEN_KEY);
-    }
-  } catch (e) {
-    // error reading value
-    console.log("Error getting from storage: ", e);
-    return null;
-  }
-};
 
 const asyncBaseQuery =
   (
@@ -465,9 +412,10 @@ export const apiSlice = createApi({
       invalidatesTags: (result, err, arg) => {
         const data = new Map<string, string>(arg._parts);
 
-        return data.get("owned_by_class")
-          ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
-          : ["UserWorkoutGroups"];
+        return ["UserWorkoutGroups"];
+        // return data.get("owned_by_class")
+        //   ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
+        //   : ["UserWorkoutGroups"];
       },
     }),
     duplicateWorkoutGroup: builder.mutation({
@@ -479,10 +427,10 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (result, err, arg) => {
         const data = new Map<string, string>(arg._parts);
-
-        return data.get("owned_by_class")
-          ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
-          : ["UserWorkoutGroups"];
+        return ["UserWorkoutGroups"];
+        // return data.get("owned_by_class")
+        //   ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
+        //   : ["UserWorkoutGroups"];
       },
     }),
     finishWorkoutGroup: builder.mutation({
@@ -804,8 +752,15 @@ export const apiSlice = createApi({
     }),
     // Expanded Profile data view
     getProfileWorkoutGroups: builder.query({
-      query: () => {
-        return { url: "profile/workout_groups/" };
+      query: (page: number = 1) => {
+        // console.log("Long running operation start");
+        // let s = 0;
+        // for (let i = 0; i < 50_000_000; i++) {
+        //   s += 2.3;
+        // }
+        // console.log("Long running operation done: ", s);
+
+        return { url: `profile/workout_groups/?page=${page}` };
       },
       providesTags: ["UserWorkoutGroups"],
     }),

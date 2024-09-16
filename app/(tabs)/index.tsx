@@ -1,7 +1,16 @@
-import React, { FunctionComponent } from "react";
-import { TouchableOpacity, View } from "react-native";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useTheme } from "styled-components";
-import { WorkoutGroupCardProps } from "@/src/app_components/Cards/types";
+import {
+  WorkoutGroupCardProps,
+  WorkoutGroupProps,
+} from "@/src/app_components/Cards/types";
 
 import FilterGrid from "@/src/app_components/Grids/FilterGrid";
 import { WorkoutGroupSquares } from "@/src/app_components/Grids/GymClasses/WorkoutGroupSquares";
@@ -17,35 +26,71 @@ import { RegularButton } from "@/src/app_components/Buttons/buttons";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import BannerAddMembership from "@/src/app_components/ads/BannerAd";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
+import twrnc from "twrnc";
+
+/** Must match backend!!!
+ *
+ * class WorkoutGroupPagination(PageNumberPagination):
+    page_size = 1
+
+ */
+const PAGE_SIZE = 12;
 
 const UserWorkoutsScreen: FunctionComponent = (props) => {
   const theme = useTheme();
 
+  const [page, setPage] = useState(1);
   const {
     data: dataWG,
     isLoading: isLoadingWG,
     isSuccess: isSuccessWG,
     isError: isErrorWG,
     error: errorWG,
-  } = useGetProfileWorkoutGroupsQuery("");
+  } = useGetProfileWorkoutGroupsQuery(page);
+
+  const [workouts, setWorkouts] = useState<WorkoutGroupProps[]>([]);
+  const maxPage = Math.ceil((dataWG?.count ? dataWG.count : 1) / PAGE_SIZE);
+
+  const loadMore = () => {
+    if (!isLoadingWG && dataWG.next) {
+      console.log("Loading more: maxPage: ", maxPage, dataWG?.count, PAGE_SIZE);
+      setPage(Math.min(maxPage, page + 1));
+    }
+  };
+
+  const currentWorkoutGroupsRef = useRef<{ [key: number]: number }>({});
+  // Update workout list when new data arrives
+  useEffect(() => {
+    if (dataWG) {
+      setWorkouts((prevWorkouts) => {
+        const newWorkouts: WorkoutGroupProps[] = [];
+
+        [...dataWG.results].map((wgRes: WorkoutGroupProps) => {
+          if (!(wgRes.id in currentWorkoutGroupsRef.current)) {
+            newWorkouts.push(wgRes);
+            currentWorkoutGroupsRef.current[wgRes.id] = 1;
+          }
+
+          return wgRes;
+        });
+
+        return [...prevWorkouts, ...newWorkouts].sort((a, b) =>
+          a.for_date > b.for_date ? -1 : 1
+        );
+      });
+    }
+  }, [dataWG]);
+
+  let userWorkouts =
+    !isLoadingWG && isSuccessWG && dataWG && dataWG.results
+      ? ([...dataWG.results] as WorkoutGroupCardProps[])
+      : [];
+
+  // console.log("dataWG: ", dataWG);
 
   const { data, isLoading, isSuccess, isError, error } =
     useGetProfileViewQuery("");
-
-  const _userWorkouts =
-    !isLoadingWG && isSuccessWG
-      ? ([
-          ...dataWG.workout_groups?.created_workout_groups,
-          ...dataWG.workout_groups?.completed_workout_groups,
-        ] as WorkoutGroupCardProps[])
-      : [];
-
-  const userWorkouts = _userWorkouts.sort((a, b) =>
-    a.for_date > b.for_date ? -1 : 1
-  );
-
-  const navigation = useNavigation();
 
   const handleNavCreateWorkoutGroupScreen = () => {
     console.log("Navigating to CreateWorkoutGroupScreen");
@@ -68,48 +113,68 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       }}
     >
       <BannerAddMembership />
-      {userWorkouts.length ? (
-        <View style={{ padding: 12, flex: 1, height: "100%", width: "100%" }}>
-          <View
+      <View style={{ padding: 12, flex: 10, height: "100%", width: "100%" }}>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.69}
+            onPress={handleNavCreateWorkoutGroupScreen}
             style={{
-              width: "100%",
-              flexDirection: "row",
-              justifyContent: "flex-end",
+              backgroundColor: theme.palette.accent,
+              padding: 4,
+              borderRadius: 112,
             }}
           >
-            <TouchableOpacity
-              activeOpacity={0.69}
-              onPress={handleNavCreateWorkoutGroupScreen}
-              style={{
-                backgroundColor: theme.palette.accent,
-                padding: 4,
-                borderRadius: 112,
-              }}
-            >
-              <Icon
-                name="add"
-                color={theme.palette.text}
-                style={{ fontSize: 24 }}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{ flex: 10 }}>
-            <FilterGrid
-              searchTextPlaceHolder="Search Workouts"
-              uiView={WorkoutGroupSquares}
-              items={userWorkouts}
-              extraProps={{
-                editable: true,
-              }}
+            <Icon
+              name="add"
+              color={theme.palette.text}
+              style={{ fontSize: 24 }}
             />
-          </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1 }}>
+          <FilterGrid
+            searchTextPlaceHolder="Search Workouts"
+            uiView={WorkoutGroupSquares}
+            items={workouts}
+            loadMore={loadMore}
+            extraProps={{
+              editable: true, // not useful, not going to use
+            }}
+          />
+        </View>
+      </View>
+      {userWorkouts.length ? (
+        <></>
+      ) : isLoadingWG || dataWG.count > 0 ? (
+        <View
+          style={{
+            flex: 10,
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator size="small" color={theme.palette.text} />
         </View>
       ) : (
         <View
-          style={{ height: "100%", width: "100%", justifyContent: "center" }}
+          style={{
+            flex: 10,
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+          }}
         >
           <TSCaptionText textStyles={{ textAlign: "center", marginBottom: 22 }}>
-            No workouts!
+            No workouts! isLoadingWG: {isLoadingWG ? "t" : "f"}, isSuccessWG:{" "}
+            {isSuccessWG ? "t" : "f"} dataWG: {dataWG.count}{" "}
+            userWorkouts.length: {userWorkouts.length}
           </TSCaptionText>
           {data && !isLoading ? (
             <View style={{ width: "50%", alignSelf: "center" }}>

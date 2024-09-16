@@ -1,22 +1,22 @@
-import {getToken} from '../redux/api/apiSlice';
+import { getToken } from "./tokenUtils";
 
 const get = (url: string) => {
-  return fetch(url).then(res => res.json());
+  return fetch(url).then((res) => res.json());
 };
 
 const post = async (
   url: string,
   data: any,
-  contentType = 'application/json',
+  contentType = "application/json"
 ) => {
   const _data =
-    contentType === 'application/json' ? JSON.stringify(data) : data;
-  console.log('Posting data: ', url, contentType, _data);
+    contentType === "application/json" ? JSON.stringify(data) : data;
+  console.log("Posting data: ", url, contentType, _data);
   return fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       // Accept: 'application/json',
-      'Content-Type': contentType,
+      "Content-Type": contentType,
     },
     body: _data,
   });
@@ -25,18 +25,18 @@ const post = async (
 const authPost = async (
   url: string,
   data: any,
-  contentType = 'application/json',
+  contentType = "application/json"
 ) => {
   const token = await getToken();
   const body: any =
-    contentType === 'multipart/form-data' ? data : JSON.stringify(data);
+    contentType === "multipart/form-data" ? data : JSON.stringify(data);
 
   return fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
       // Accept: 'multipart/form-data',
       Authorization: `Bearer ${token}`,
-      'Content-Type': contentType,
+      "Content-Type": contentType,
     },
     body: body,
   });
@@ -45,29 +45,29 @@ const authPost = async (
 const authDelete = async (
   url: string,
   data: any,
-  contentType = 'application/json',
+  contentType = "application/json"
 ) => {
   const token = await getToken();
 
   const body: any =
-    contentType === 'multipart/form-data' ? data : JSON.stringify(data);
+    contentType === "multipart/form-data" ? data : JSON.stringify(data);
 
   const options: RequestInit = {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       // Accept: 'application/json',
       Authorization: `Bearer ${token}`,
-      'Content-Type': contentType,
+      "Content-Type": contentType,
     },
     body: body,
   };
 
   return fetch(url, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       // Accept: 'application/json',
       Authorization: `Bearer ${token}`,
-      'Content-Type': contentType,
+      "Content-Type": contentType,
     },
     body: data,
   });
@@ -76,11 +76,11 @@ const authGet = async (url: string) => {
   const token = await getToken();
 
   return fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      Accept: 'application/json',
+      Accept: "application/json",
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 };
@@ -89,11 +89,11 @@ const refreshAccessToken = async (url: string) => {
   const token = await getToken(false);
 
   return fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      Accept: 'application/json',
+      Accept: "application/json",
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       refresh: token,
@@ -101,4 +101,4 @@ const refreshAccessToken = async (url: string) => {
   });
 };
 
-export {post, authPost, refreshAccessToken, authGet, authDelete};
+export { post, authPost, refreshAccessToken, authGet, authDelete };

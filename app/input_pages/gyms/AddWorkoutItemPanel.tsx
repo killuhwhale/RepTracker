@@ -36,6 +36,7 @@ import { TestIDs } from "../../../src/utils/constants";
 import FilterItemsModal from "../../../src/app_components/modals/filterItemsModal";
 import PickerFilterListView from "../../../src/app_components/modals/pickerFilterListView";
 import { numberInputStyle } from "@/src/utils/algos";
+import AlertModal from "@/src/app_components/modals/AlertModal";
 
 interface AddWorkoutItemProps {
   success: boolean;
@@ -83,7 +84,7 @@ const AddItem: FunctionComponent<{
   // TODO() Need to update horizontal item picker to change its position with a useEffect.... quanitity Type, distance_unit, duration_unit, rest_unit
   //  Need to change the Slider to display the correct unit type and also the underlying data variable that stores the value (already set with useEffect)...
   useEffect(() => {
-    if (!props.itemToUpdate) return resetDefaultItem();
+    if (!props.itemToUpdate || !workoutNamesMap) return resetDefaultItem();
 
     const updateRowOne = async () => {
       console.log("AddItem useEffect: ", props.itemToUpdate);
@@ -153,7 +154,8 @@ const AddItem: FunctionComponent<{
   const theme = useTheme();
   const { data, isLoading, isSuccess, isError, error } =
     useGetWorkoutNamesQuery("");
-  const workoutNames = data as [WorkoutNameProps];
+  const workoutNames = data as WorkoutNameProps[];
+
   const workoutNamesMap: Map<string, number> = workoutNames
     ? new Map<string, number>(
         workoutNames.map((workoutName, idx) => [workoutName.name, idx])
@@ -169,6 +171,7 @@ const AddItem: FunctionComponent<{
   const [weight, setWeight] = useState(initWeight); // Json string list of numbers.
   const [weightUnit, setWeightUnit] = useState(initWeightUnit); // Json string list of numbers.
   const [weightError, setWeightError] = useState("");
+  const [showWeightAlertModal, setShowWeightAlertModal] = useState(false);
 
   const [percentOfWeightUnit, setPercentOfWeightUnit] = useState(
     initPercentOfWeightUnit
@@ -313,6 +316,7 @@ const AddItem: FunctionComponent<{
     } else if (errorType == 3) {
       // Invalid Weights
       setWeightError(errorMsg);
+      setShowWeightAlertModal(true);
     }
   };
 
@@ -337,9 +341,19 @@ const AddItem: FunctionComponent<{
             <View
               style={{ justifyContent: "flex-start", flex: 4, height: "100%" }}
             >
-              <View style={{ flex: 1, flexDirection: "row" }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                }}
+              >
                 <View style={{ flex: 4 }}>
-                  <TSCaptionText textStyles={{ textAlign: "center" }}>
+                  <TSCaptionText
+                    textStyles={{
+                      textAlign: "center",
+                      backgroundColor: theme.palette.gray,
+                    }}
+                  >
                     Workout Items
                   </TSCaptionText>
                   <View
@@ -382,33 +396,41 @@ const AddItem: FunctionComponent<{
                     <TSCaptionText
                       textStyles={{
                         textAlign: "center",
+                        backgroundColor: theme.palette.gray,
                       }}
                     >
                       Paused
                     </TSCaptionText>
-                    <Input
-                      containerStyle={[
-                        numberInputStyle.containerStyle,
-                        {
-                          alignItems: "center",
-                          borderRightWidth: 1,
-                          borderColor: theme.palette.text,
-                        },
-                      ]}
-                      testID={TestIDs.AddItemPauseDurField.name()}
-                      label=""
-                      placeholder="time"
-                      centerInput
-                      keyboardType="decimal-pad"
-                      fontSize={AddItemFontsize}
-                      value={pauseDuration}
-                      inputStyles={{ textAlign: "center" }}
-                      isError={repsSchemeRoundsError}
-                      helperText={repSchemeRoundsErrorText}
-                      onChangeText={(text: string) => {
-                        setPauseDuration(numFilter(text));
+                    <View
+                      style={{
+                        flex: 1,
+                        backgroundColor: theme.palette.primary.main,
                       }}
-                    />
+                    >
+                      <Input
+                        containerStyle={[
+                          numberInputStyle.containerStyle,
+                          {
+                            alignItems: "center",
+                            borderRightWidth: 1,
+                            borderColor: theme.palette.text,
+                          },
+                        ]}
+                        testID={TestIDs.AddItemPauseDurField.name()}
+                        label=""
+                        placeholder="time"
+                        centerInput
+                        keyboardType="decimal-pad"
+                        fontSize={AddItemFontsize}
+                        value={pauseDuration}
+                        inputStyles={{ textAlign: "center" }}
+                        isError={repsSchemeRoundsError}
+                        helperText={repSchemeRoundsErrorText}
+                        onChangeText={(text: string) => {
+                          setPauseDuration(numFilter(text));
+                        }}
+                      />
+                    </View>
                   </View>
                 ) : (
                   <></>
@@ -420,7 +442,12 @@ const AddItem: FunctionComponent<{
           )}
 
           <View style={{ flex: 2 }}>
-            <TSCaptionText textStyles={{ textAlign: "center" }}>
+            <TSCaptionText
+              textStyles={{
+                textAlign: "center",
+                backgroundColor: theme.palette.gray,
+              }}
+            >
               Quantity type
             </TSCaptionText>
             <View style={{ flex: 1, width: "100%" }}>
@@ -683,7 +710,7 @@ const AddItem: FunctionComponent<{
                   centerInput={true}
                   fontSize={AddItemFontsize}
                   value={weight}
-                  isError={weightError.length > 0}
+                  // isError={weightError.length > 0}
                   helperText={weightError}
                   inputStyles={{ textAlign: "center" }}
                   onChangeText={(t) => {
@@ -703,7 +730,12 @@ const AddItem: FunctionComponent<{
                 />
               </View>
 
-              <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: theme.palette.backgroundColor,
+                }}
+              >
                 <VerticalPicker
                   key={"wts"}
                   itemDisplayIndex={WEIGHT_UNITS.indexOf(weightUnit)}
@@ -850,6 +882,13 @@ const AddItem: FunctionComponent<{
           )}
         </View>
       </View>
+      <AlertModal
+        bodyText={weightError}
+        modalVisible={showWeightAlertModal}
+        onRequestClose={() => setShowWeightAlertModal(false)}
+        closeText="Close"
+        key={`AlertWeightErrorModal`}
+      />
     </View>
   );
 };

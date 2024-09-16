@@ -33,9 +33,6 @@ const WorkoutGroupGridItem: FunctionComponent<{
       pathname: "/WorkoutScreen",
       params: {
         id: props.card.id,
-        owned_by_class: props.card.owned_by_class ? 1 : 0,
-        owner_id: props.card.owner_id ?? "",
-        params_editable: props.editable ? 1 : 0,
       },
     });
   };
@@ -90,13 +87,15 @@ const WorkoutGroupGridItem: FunctionComponent<{
               </View>
             </View>
             <View style={{ flex: 1, alignItems: "center" }}>
-              {/* <Icon
-                name={
-                  props.card.completed ? "checkmark-circle-outline" : "locate"
-                }
-                color={props.card.completed ? green : theme.palette.text}
-                style={{ fontSize: 24, marginRight: 8 }}
-              /> */}
+              {!props.card.finished ? (
+                <Icon
+                  name={"locate"}
+                  color={green}
+                  style={{ fontSize: 24, marginRight: 8 }}
+                />
+              ) : (
+                <></>
+              )}
             </View>
           </View>
         </LinearGradient>

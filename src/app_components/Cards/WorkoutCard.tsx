@@ -13,8 +13,9 @@ import {
   useDeleteCompletedWorkoutMutation,
   useDeleteWorkoutMutation,
 } from "../../redux/api/apiSlice";
-import { WorkoutItemPreviewHorizontalList } from "./cardList";
+
 import { router, useNavigation } from "expo-router";
+import WorkoutItemPreviewHorizontalList from "./WorkoutItemPreviewHorizontalList";
 
 const CardRow = styled.View`
   flex-direction: row;

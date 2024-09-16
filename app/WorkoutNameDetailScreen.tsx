@@ -55,16 +55,9 @@ const WorkoutNameDetailScreen: FunctionComponent = () => {
           <MediumText
             textStyles={{ marginBottom: 32, color: theme.palette.primary.main }}
           >
-            Primary category: {primary}
+            Category: {primary}
           </MediumText>
-          <MediumText
-            textStyles={{
-              marginBottom: 32,
-              color: theme.palette.secondary.main,
-            }}
-          >
-            Secondary category: {secondary}
-          </MediumText>
+
           <MediumText
             textStyles={{ marginBottom: 32, color: theme.palette.text }}
           >

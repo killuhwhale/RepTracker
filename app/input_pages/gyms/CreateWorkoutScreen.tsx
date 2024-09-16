@@ -107,7 +107,8 @@ const verifyWorkoutItem = (
       return {
         success: false,
         errorType: 3,
-        errorMsg: "Weights must match sets",
+        errorMsg:
+          "The weights must match the number of sets \n\nFor Example\n1 set  ==> 50\n2 sets ==> 50 (same wt ea set)\n2 sets ==> 50 60\n3 sets ==> 50 60 70\n3 sets ==> 40 (same wt ea set)",
       };
     }
   }

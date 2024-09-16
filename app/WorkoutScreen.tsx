@@ -63,6 +63,7 @@ import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import FinishDualWorkoutItems from "../src/app_components/modals/finishDualWorkoutItems";
 import { router, useLocalSearchParams } from "expo-router";
 import DuplicateWorkoutGroupModal from "@/src/app_components/modals/DuplicateWorkoutGroupModal";
+import { dateFormatDayOfWeek } from "@/src/utils/algos";
 export type Props = StackScreenProps<RootStackParamList, "WorkoutScreen">;
 
 const Row = styled.View`
@@ -114,7 +115,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
 }) => {
   const theme = useTheme();
   return (
-    <Row style={{}}>
+    <View style={{ flex: 1, width: "100%", height: "100%" }}>
       <View
         style={{
           flexDirection: "row",
@@ -190,58 +191,76 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
           ) : (
             <></>
           )}
+        </View>
+      </View>
 
-          {WGOwner ? (
-            <View style={{ flexDirection: "row" }}>
+      {WGOwner ? (
+        <View
+          style={{
+            flex: 2,
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              flex: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          ></View>
+          {isFinished ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Icon
-                style={{ fontSize: 24, marginRight: 12 }}
-                name="remove-circle-sharp"
+                style={{ fontSize: 24 }}
+                name="copy-outline"
                 color={theme.palette.primary.main}
                 onPress={() => setShowDuplicateModal(true)}
               />
-              <Icon
-                style={{ fontSize: 24, marginRight: 12 }}
-                name="remove-circle-sharp"
-                color="red"
-                onPress={onConfirmDelete}
-              />
+              <TSCaptionText textStyles={{ textAlign: "center" }}>
+                Duplicate
+              </TSCaptionText>
             </View>
           ) : (
             <></>
           )}
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Icon
+              style={{ fontSize: 24 }}
+              name="close-circle-outline"
+              color="red"
+              onPress={onConfirmDelete}
+            />
+            <TSCaptionText textStyles={{ textAlign: "center" }}>
+              Delete
+            </TSCaptionText>
+          </View>
         </View>
-      </View>
-    </Row>
+      ) : (
+        <></>
+      )}
+    </View>
   );
 };
 
 const WorkoutScreen: FunctionComponent = () => {
   const params = useLocalSearchParams();
-  const { id, _owned_by_class, owner_id, params_editable } = params || {}; // Workout group
-  // const {  } = params;
+  const { id } = params || {}; // Workout group
 
   const theme = useTheme();
   const [showClassIsDeleted, setShowClassIsDeleted] = useState(false);
+  const [curGroupID, setCurGroupID] = useState(id);
   const [showFinishDualWorkoutItems, setShowFinishDualWorkoutItems] =
     useState(false);
-
-  const owned_by_class = parseInt(_owned_by_class as string);
-
-  // Fetch workout from redux via ID.
-
-  // We are currently only getting users workouts, lets fetch users workouts
-
-  // const {
-  //   id,
-  //   title,
-  //   caption,
-  //   owned_by_class,
-  //   owner_id,
-  //   media_ids,
-  //   user_id,
-  //   completed,
-  //   workout_group,
-  // } = params || {}; // Workout group
 
   const {
     data: userData,
@@ -261,86 +280,97 @@ const WorkoutScreen: FunctionComponent = () => {
   let oGIsError = false;
   let oGError: any = "";
 
+  const {
+    data,
+    isLoading: dataIsLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetWorkoutsForUsersWorkoutGroupQuery(curGroupID);
+
+  oGData = data;
+  oGIsLoading = dataIsLoading;
+  oGIsSuccess = isSuccess;
+  oGIsError = isError;
+  oGError = error;
+
   let completedData = {} as WorkoutGroupProps;
   let completedIsLoading = true;
   let completedIsSuccess = false;
   let completedIsError = false;
   let completedError: any = "";
 
-  const [finishWorkoutGroup, isLoading] = useFinishWorkoutGroupMutation();
+  const [finishWorkoutGroup, _isLoading] = useFinishWorkoutGroupMutation();
 
-  if (owned_by_class == undefined) {
-    // WE have a completed workout group
-    console.log("WE have a completed workout group");
-    const { data, isLoading, isSuccess, isError, error } =
-      useGetCompletedWorkoutQuery(id);
-    completedData = data;
-    completedIsLoading = isLoading;
-    completedIsSuccess = isSuccess;
-    completedIsError = isError;
-    completedError = error;
+  // if (owned_by_class == undefined) {
+  //   // WE have a completed workout group
+  //   // console.log("WE have a completed workout group");
+  //   // const { data, isLoading, isSuccess, isError, error } =
+  //   //   useGetCompletedWorkoutQuery(id);
+  //   // completedData = data;
+  //   // completedIsLoading = isLoading;
+  //   // completedIsSuccess = isSuccess;
+  //   // completedIsError = isError;
+  //   // completedError = error;
 
-    if (workout_group) {
-      const { data, isLoading, isSuccess, isError, error } =
-        useGetWorkoutsForGymClassWorkoutGroupQuery(workout_group);
-      oGData = data;
-      // console.log('Getting OG data...', data);
-      if (data !== undefined) {
-        console.log("Getting OG data...", data);
-        if (data.err_type >= 0 && !showClassIsDeleted) {
-          setShowClassIsDeleted(true);
-          isShowingOGWorkoutGroup = false;
-        }
-      }
+  //   // if (workout_group) {
+  //   //   const { data, isLoading, isSuccess, isError, error } =
+  //   //     useGetWorkoutsForGymClassWorkoutGroupQuery(workout_group);
+  //   //   oGData = data;
+  //   //   // console.log('Getting OG data...', data);
+  //   //   if (data !== undefined) {
+  //   //     console.log("Getting OG data...", data);
+  //   //     if (data.err_type >= 0 && !showClassIsDeleted) {
+  //   //       setShowClassIsDeleted(true);
+  //   //       isShowingOGWorkoutGroup = false;
+  //   //     }
+  //   //   }
 
-      // WHen OG workout is deleted {"err_type": 0, "error": "Failed get Gym class's workouts."}
-      oGIsLoading = isLoading;
-      oGIsSuccess = isSuccess;
-      oGIsError = isError;
-      oGError = error;
-    }
+  //   //   // WHen OG workout is deleted {"err_type": 0, "error": "Failed get Gym class's workouts."}
+  //   //   oGIsLoading = isLoading;
+  //   //   oGIsSuccess = isSuccess;
+  //   //   oGIsError = isError;
+  //   //   oGError = error;
+  //   // }
 
-    // Fetch OG Workout by ID
-  } else if (owned_by_class) {
-    // we have OG workout owneed by class
-    // console.log('OG workout owneed by class');
-    const { data, isLoading, isSuccess, isError, error } =
-      useGetWorkoutsForGymClassWorkoutGroupQuery(id);
-    // console.log('Owned by class, data: ', data);
-    oGData = data;
-    oGIsLoading = isLoading;
-    oGIsSuccess = isSuccess;
-    oGIsError = isError;
-    oGError = error;
+  //   // Fetch OG Workout by ID
+  // } else if (owned_by_class) {
+  //   // we have OG workout owneed by class
+  //   // console.log('OG workout owneed by class');
+  //   // const { data, isLoading, isSuccess, isError, error } =
+  //   //   useGetWorkoutsForGymClassWorkoutGroupQuery(id);
+  //   // // console.log('Owned by class, data: ', data);
+  //   // oGData = data;
+  //   // oGIsLoading = isLoading;
+  //   // oGIsSuccess = isSuccess;
+  //   // oGIsError = isError;
+  //   // oGError = error;
 
-    // This 'completed' should come from ogData query.
-    const {
-      data: dataCompleted,
-      isLoading: isLoadingCompleted,
-      isSuccess: isSuccessCompleted,
-      isError: isErrorCompleted,
-      error: errorCompleted,
-    } = useGetCompletedWorkoutByWorkoutIDQuery(id);
+  //   // // This 'completed' should come from ogData query.
+  //   // const {
+  //   //   data: dataCompleted,
+  //   //   isLoading: isLoadingCompleted,
+  //   //   isSuccess: isSuccessCompleted,
+  //   //   isError: isErrorCompleted,
+  //   //   error: errorCompleted,
+  //   // } = useGetCompletedWorkoutByWorkoutIDQuery(id);
 
-    // console.log('Completed data: ', dataCompleted);
+  //   // console.log('Completed data: ', dataCompleted);
 
-    if (dataCompleted && dataCompleted.completed_workouts?.length > 0) {
-      completedData = dataCompleted;
-      completedIsLoading = isLoadingCompleted;
-      completedIsSuccess = isSuccessCompleted;
-      completedIsError = isErrorCompleted;
-      completedError = errorCompleted;
-    }
-  } else {
-    console.log("With this version, we only get owned_by_class == False....");
-    const { data, isLoading, isSuccess, isError, error } =
-      useGetWorkoutsForUsersWorkoutGroupQuery(id);
-    oGData = data;
-    oGIsLoading = isLoading;
-    oGIsSuccess = isSuccess;
-    oGIsError = isError;
-    oGError = error;
-  }
+  //   // if (dataCompleted && dataCompleted.completed_workouts?.length > 0) {
+  //   //   completedData = dataCompleted;
+  //   //   completedIsLoading = isLoadingCompleted;
+  //   //   completedIsSuccess = isSuccessCompleted;
+  //   //   completedIsError = isErrorCompleted;
+  //   //   completedError = errorCompleted;
+  //   // }
+  // } else {
+  //   // console.log("With this version, we only get owned_by_class == False....");
+  //   // const { data, isLoading, isSuccess, isError, error } =
+  //   //   useGetWorkoutsForUsersWorkoutGroupQuery(curGroupID);
+
+  // }
+
   const title = oGData?.title ?? "";
   const [showingOGWorkoutGroup, setShowingOGWorkoutGroup] = useState(
     isShowingOGWorkoutGroup
@@ -384,10 +414,6 @@ const WorkoutScreen: FunctionComponent = () => {
     return calc.getStats();
   }, [workouts]);
 
-  // console.log('Stats: ', tags, names);
-  // console.log('WorkoutScreen data: ', oGData);
-  // console.log('Workout Screen Params: ', params);
-  // console.log(oGData, completedData);
   // Show when:
   //  - OgWorkout is Finished
   //  - The oGworkout is not personally created by the current user
@@ -405,10 +431,6 @@ const WorkoutScreen: FunctionComponent = () => {
       workoutGroup.owned_by_class) ||
     Object.keys(workoutGroup).indexOf("completed_workouts") >= 0;
 
-  // TODO() Only show duplicate once this is done.
-  // TODO() Create a second NavToWorkoutScreenWithItems
-  // Click this when Clicking Duplicate Workout
-  // TODO() Add a duplicate workout Button
   const navToWorkoutScreenWithItems = (
     workoutGroupID: string,
     workoutGroupTitle: string,
@@ -531,7 +553,7 @@ const WorkoutScreen: FunctionComponent = () => {
 
     // Allow user to submit finish to WorkoutGroup for class.
     const data = new FormData();
-    data.append("group", oGData.id);
+    data.append("group", oGData.id.toString());
     try {
       const res = await finishWorkoutGroup(data).unwrap();
       console.log("res finsih", res);
@@ -552,6 +574,16 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+
+  const onDuplicateGroup = (groupID: number) => {
+    // setCurGroupID(groupID.toString());
+    router.push({
+      pathname: "/WorkoutScreen",
+      params: {
+        id: groupID,
+      },
+    });
+  };
 
   return (
     <View
@@ -615,7 +647,7 @@ const WorkoutScreen: FunctionComponent = () => {
             }}
           >
             <TSDateText>
-              {formatLongDate(new Date(workoutGroup.for_date))}
+              {dateFormatDayOfWeek(new Date(workoutGroup.for_date))}
             </TSDateText>
           </View>
 
@@ -634,109 +666,104 @@ const WorkoutScreen: FunctionComponent = () => {
           </View>
 
           <View style={{ flexShrink: 1, flexGrow: 5, flexBasis: 0 }}>
-            {params_editable ? (
-              <>
-                {oGData &&
-                showingOGWorkoutGroup &&
-                oGData.finished === false ? (
+            {oGData && showingOGWorkoutGroup && oGData.finished === false ? (
+              <View
+                style={{
+                  flex: 2,
+                  flexDirection: "row",
+                  marginBottom: 12,
+                  justifyContent: "flex-end",
+                  alignContent: "flex-end",
+                  alignItems: "flex-end",
+                  width: "100%",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "column",
+
+                    width: "80%",
+                  }}
+                >
                   <View
                     style={{
-                      flex: 2,
+                      display: showCreate ? "flex" : "none",
                       flexDirection: "row",
-                      marginBottom: 12,
-                      justifyContent: "flex-end",
-                      alignContent: "flex-end",
-                      alignItems: "flex-end",
-                      width: "100%",
+                      justifyContent: "space-evenly",
                     }}
                   >
-                    <View
-                      style={{
-                        flexDirection: "column",
-                        // backgroundColor: "red",
-                        width: "80%",
-                      }}
-                    >
-                      <View
-                        style={{
-                          display: showCreate ? "flex" : "none",
-                          flexDirection: "row",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <View style={{ width: "30%", padding: 6 }}>
-                          <RegularButton
-                            onPress={openCreateWorkoutScreenForStandard.bind(
-                              this
-                            )}
-                            testID={TestIDs.CreateRegularWorkoutBtn.name()}
-                            btnStyles={{
-                              backgroundColor: "#4285F4",
-                            }}
-                            text="Standard"
-                          />
-                        </View>
-                        <View style={{ width: "30%", padding: 6 }}>
-                          <RegularButton
-                            onPress={openCreateWorkoutScreenForReps.bind(this)}
-                            btnStyles={{
-                              backgroundColor: "#DB4437",
-                            }}
-                            text="Reps"
-                          />
-                        </View>
-                      </View>
-
-                      <View
-                        style={{
-                          display: showCreate ? "flex" : "none",
-                          flexDirection: "row",
-                          justifyContent: "space-evenly",
-                        }}
-                      >
-                        <View style={{ width: "30%", padding: 6 }}>
-                          <RegularButton
-                            onPress={openCreateWorkoutScreenForRounds.bind(
-                              this
-                            )}
-                            btnStyles={{
-                              backgroundColor: "#F4B400",
-                            }}
-                            text="Rounds"
-                          />
-                        </View>
-                        <View style={{ width: "30%", padding: 6 }}>
-                          <RegularButton
-                            onPress={openCreateWorkoutScreenCreative.bind(this)}
-                            btnStyles={{
-                              backgroundColor: "#0F9D58",
-                            }}
-                            text="Creative"
-                          />
-                        </View>
-                      </View>
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: showCreate ? "column" : "row",
-                        justifyContent: "center",
-                        height: "100%",
-                        marginRight: 8,
-                        paddingRight: 8,
-                      }}
-                    >
+                    <View style={{ width: "30%", padding: 6 }}>
                       <RegularButton
-                        onPress={() => setShowCreate(!showCreate)}
-                        testID={TestIDs.ToggleShowCreateWorkoutBtns.name()}
+                        onPress={openCreateWorkoutScreenForStandard.bind(this)}
+                        testID={TestIDs.CreateRegularWorkoutBtn.name()}
                         btnStyles={{
-                          backgroundColor: showCreate
-                            ? theme.palette.gray
-                            : green,
+                          backgroundColor: "#4285F4",
                         }}
-                        text={showCreate ? "X" : "Add Workout"}
+                        text="Standard"
                       />
+                    </View>
+                    <View style={{ width: "30%", padding: 6 }}>
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForReps.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#DB4437",
+                        }}
+                        text="Reps"
+                      />
+                    </View>
+                  </View>
 
+                  <View
+                    style={{
+                      display: showCreate ? "flex" : "none",
+                      flexDirection: "row",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    <View style={{ width: "30%", padding: 6 }}>
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenForRounds.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#F4B400",
+                        }}
+                        text="Rounds"
+                      />
+                    </View>
+                    <View style={{ width: "30%", padding: 6 }}>
+                      <RegularButton
+                        onPress={openCreateWorkoutScreenCreative.bind(this)}
+                        btnStyles={{
+                          backgroundColor: "#0F9D58",
+                        }}
+                        text="Creative"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: showCreate ? "column" : "row",
+                    justifyContent: "center",
+                    height: "100%",
+                    marginRight: 8,
+                    paddingRight: 8,
+                  }}
+                >
+                  <View style={{ marginHorizontal: 6 }}>
+                    <RegularButton
+                      onPress={() => setShowCreate(!showCreate)}
+                      testID={TestIDs.ToggleShowCreateWorkoutBtns.name()}
+                      btnStyles={{
+                        backgroundColor: showCreate
+                          ? theme.palette.gray
+                          : green,
+                      }}
+                      text={showCreate ? "X" : "Add Workout"}
+                    />
+                  </View>
+                  {workouts.length > 0 ? (
+                    <View style={{ marginHorizontal: 6 }}>
                       <RegularButton
                         onPress={() => setShowFinishWorkoutGroupModal(true)}
                         textStyles={{ marginHorizontal: 12 }}
@@ -747,60 +774,58 @@ const WorkoutScreen: FunctionComponent = () => {
                         text="Finish"
                       />
                     </View>
-                  </View>
-                ) : (
-                  <></>
-                )}
-
-                {oGData && oGData.finished ? (
-                  <></>
-                ) : (
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      width: "100%",
-                      marginBottom: 12,
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                    }}
-                  >
-                    {workouts.length ? (
-                      <TouchableWithoutFeedback
-                        onPress={() => setEditable(!editable)}
-                      >
-                        <View
-                          style={{ alignItems: "flex-end", marginRight: 16 }}
-                        >
-                          <Switch
-                            value={editable}
-                            onValueChange={(v) => {
-                              setEditable(!editable);
-                            }}
-                            trackColor={{
-                              true: theme.palette.primary.contrastText,
-                              false: theme.palette.primary.contrastText,
-                            }}
-                            thumbColor={editable ? red : theme.palette.gray}
-                          />
-                          <TSCaptionText
-                            textStyles={{ color: editable ? red : "white" }}
-                          >
-                            Delete mode
-                            {editable
-                              ? ": hold title of workout below to remove."
-                              : ""}
-                          </TSCaptionText>
-                        </View>
-                      </TouchableWithoutFeedback>
-                    ) : (
-                      <></>
-                    )}
-                  </View>
-                )}
-              </>
+                  ) : (
+                    <></>
+                  )}
+                </View>
+              </View>
             ) : (
               <></>
+            )}
+
+            {oGData && oGData.finished ? (
+              <></>
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  width: "100%",
+                  marginBottom: 12,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                {workouts.length ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => setEditable(!editable)}
+                  >
+                    <View style={{ alignItems: "flex-end", marginRight: 16 }}>
+                      <Switch
+                        value={editable}
+                        onValueChange={(v) => {
+                          setEditable(!editable);
+                        }}
+                        trackColor={{
+                          true: theme.palette.primary.contrastText,
+                          false: theme.palette.primary.contrastText,
+                        }}
+                        thumbColor={editable ? red : theme.palette.gray}
+                      />
+                      <TSCaptionText
+                        textStyles={{ color: editable ? red : "white" }}
+                      >
+                        Delete mode
+                        {editable
+                          ? ": hold title of workout below to remove."
+                          : ""}
+                      </TSCaptionText>
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : (
+                  <></>
+                )}
+              </View>
             )}
           </View>
 
@@ -912,7 +937,7 @@ const WorkoutScreen: FunctionComponent = () => {
       </View>
 
       <DuplicateWorkoutGroupModal
-        owner_id={owner_id as string}
+        owner_id={oGData?.owner_id}
         actionText="Duplicate"
         closeText="Cancel"
         modalText="Duplicate Workout Group"
@@ -920,6 +945,7 @@ const WorkoutScreen: FunctionComponent = () => {
         onRequestClose={() => setShowDuplicateModal(false)}
         key={"duplicatemodal"}
         workouts={workouts}
+        onDuplicateGroup={onDuplicateGroup}
       />
       {workoutGroup.workouts && workoutGroup.workouts?.length > 0 ? (
         <FinishDualWorkoutItems

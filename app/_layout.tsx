@@ -18,7 +18,7 @@ import { useColorScheme, View } from "react-native";
 import { store } from "../src/redux/store";
 import { Provider } from "react-redux";
 import Header from "../src/app_components/Header/header";
-import { apiSlice, getToken } from "../src/redux/api/apiSlice";
+import { apiSlice } from "../src/redux/api/apiSlice";
 
 import AuthScreen from "@/app/AuthScreen";
 import Uploady from "@rpldy/native-uploady";
@@ -27,6 +27,7 @@ import { BASEURL } from "../src/utils/constants";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import auth from "../src/utils/auth";
 import twrnc from "twrnc";
+import { getToken } from "@/src/utils/tokenUtils";
 
 const primaryColor = twrnc.color("bg-blue-600");
 // const secondaryColor = twrnc.color('bg-emerald-900');

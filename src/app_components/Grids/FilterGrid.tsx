@@ -12,6 +12,8 @@ const FilterGrid: FunctionComponent<{
   uiView: any;
   extraProps?: any;
   searchTextPlaceHolder: string;
+  loadMore?: () => void;
+  handleOnScroll?: (ev: any) => void;
 }> = (props) => {
   const theme = useTheme();
 
@@ -76,8 +78,10 @@ const FilterGrid: FunctionComponent<{
           />
         </View>
       </View>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, height: "100%" }}>
         <props.uiView
+          loadMore={props.loadMore}
+          handleOnScroll={props.handleOnScroll}
           extraProps={props.extraProps}
           data={props.items.filter((_, i) => filterResult.indexOf(i) >= 0)}
         />

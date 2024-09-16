@@ -188,7 +188,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
       const workoutGroup = await createWorkoutGroup(data).unwrap();
       console.log("Gym class res", workoutGroup.status);
       if (workoutGroup.id) {
-        router.back();
+        router.navigate("/");
       } else if (workoutGroup.err_type === 1 || workoutGroup.detail) {
         setShowAlert(true);
       }

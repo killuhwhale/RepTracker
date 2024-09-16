@@ -5,19 +5,15 @@ import {
   Container,
   displayJList,
   formatLongDate,
-  SCREEN_HEIGHT,
   WORKOUT_TYPES,
 } from "../src/app_components/shared";
 import {
   TSCaptionText,
   TSParagrapghText,
-  LargeText,
   TSTitleText,
   TSDateText,
   TSSnippetText,
 } from "../src/app_components/Text/Text";
-import { useTheme } from "styled-components";
-import { WorkoutItemPreviewHorizontalList } from "../src/app_components/Cards/cardList";
 
 import { RootStackParamList } from "../src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -25,8 +21,8 @@ import { View } from "react-native";
 import { StatsPanel } from "../src/app_components/Stats/StatsPanel";
 import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import { useLocalSearchParams } from "expo-router";
-import { WorkoutItemProps } from "@/src/app_components/Cards/types";
 import { useGetWorkoutByIDQuery } from "@/src/redux/api/apiSlice";
+import WorkoutItemPreviewHorizontalList from "@/src/app_components/Cards/WorkoutItemPreviewHorizontalList";
 
 export type Props = StackScreenProps<RootStackParamList, "WorkoutDetailScreen">;
 
@@ -133,7 +129,7 @@ const WorkoutDetailScreen: FunctionComponent = () => {
           </TSTitleText>
         </View>
 
-        <View style={{ flexGrow: 3, flexShrink: 1, flexBasis: 0 }}>
+        <View style={{ flexGrow: 2, flexShrink: 1, flexBasis: 0 }}>
           <TSTitleText>
             {title.length < 1 ? "Title here..." : title}
           </TSTitleText>
@@ -142,7 +138,7 @@ const WorkoutDetailScreen: FunctionComponent = () => {
             {desc.length < 1 ? "Description here..." : desc}
           </TSCaptionText>
 
-          {instruction ? (
+          {instruction && instruction !== "undefined" ? (
             <TSSnippetText textStyles={{ padding: 6 }}>
               {instruction}
             </TSSnippetText>
