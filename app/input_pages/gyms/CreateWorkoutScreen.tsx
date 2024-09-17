@@ -253,7 +253,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     workoutData.append("group", workoutGroupID);
     workoutData.append("title", title);
     workoutData.append("desc", desc);
-    workoutData.append("instruction", instruction);
+    workoutData.append("instruction", instruction ?? "");
     workoutData.append("scheme_type", schemeType.toString());
     workoutData.append("scheme_rounds", schemeRounds);
 

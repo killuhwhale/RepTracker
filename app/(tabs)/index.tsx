@@ -35,7 +35,7 @@ import twrnc from "twrnc";
     page_size = 1
 
  */
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 
 const UserWorkoutsScreen: FunctionComponent = (props) => {
   const theme = useTheme();
@@ -62,7 +62,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
   const currentWorkoutGroupsRef = useRef<{ [key: number]: number }>({});
   // Update workout list when new data arrives
   useEffect(() => {
-    if (dataWG) {
+    if (dataWG && dataWG.results) {
       setWorkouts((prevWorkouts) => {
         const newWorkouts: WorkoutGroupProps[] = [];
 
@@ -165,16 +165,15 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       ) : (
         <View
           style={{
-            flex: 10,
+            flex: 60,
             height: "100%",
             width: "100%",
             justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <TSCaptionText textStyles={{ textAlign: "center", marginBottom: 22 }}>
-            No workouts! isLoadingWG: {isLoadingWG ? "t" : "f"}, isSuccessWG:{" "}
-            {isSuccessWG ? "t" : "f"} dataWG: {dataWG.count}{" "}
-            userWorkouts.length: {userWorkouts.length}
+            No workouts!
           </TSCaptionText>
           {data && !isLoading ? (
             <View style={{ width: "50%", alignSelf: "center" }}>

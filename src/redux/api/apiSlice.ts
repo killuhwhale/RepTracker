@@ -1,7 +1,7 @@
 // Import the RTK Query methods from the React-specific entry point
 import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
 
-import { BASEURL } from "../../utils/constants";
+import { BASEURL, devLog, isDevEnv, nodeEnv } from "../../utils/constants";
 import {
   authDelete,
   authGet,
@@ -18,7 +18,7 @@ import { getToken, storeToken } from "@/src/utils/tokenUtils";
 //   if (keys) {
 //     EncryptedStorage.multiGet(keys, (error, stores) => {
 //       stores?.map((result, i, store) => {
-//         console.log('EncryptedStorage: ', {[store[i][0]]: store[i][1]});
+//         devLog('EncryptedStorage: ', {[store[i][0]]: store[i][1]});
 //         return true;
 //       });
 //     });
@@ -57,7 +57,7 @@ const asyncBaseQuery =
           },
         };
       }
-      console.log("Has init req token: ", authToken);
+      devLog("Has init req token: ", authToken);
       let options: { method: string; headers: any; body: any } = {
         method: method,
         headers: {
@@ -67,10 +67,10 @@ const asyncBaseQuery =
         },
         body: "",
       };
-      console.log("ApiSlice");
-      console.log("ApiSlice");
-      console.log("Data: ", data);
-      console.log("url/ method: ", baseUrl, url, method);
+      devLog("ApiSlice");
+      devLog("ApiSlice");
+      devLog("Data: ", data);
+      devLog("url/ method: ", baseUrl, url, method);
 
       /**
        *  Problem is that APISlice will trigger 5 actions on a page load.
@@ -85,36 +85,36 @@ const asyncBaseQuery =
       }
 
       if (data && params?.contentType !== "multipart/form-data") {
-        console.log("Stringifying body for JSON data: ", baseUrl + url);
+        devLog("Stringifying body for JSON data: ", baseUrl + url);
         options.body = JSON.stringify(data);
       } else {
         options.body = data;
       }
-      console.log("BODY: ", baseUrl + url, options);
+      devLog("BODY: ", baseUrl + url, options);
       // We make the first auth request using access token
       const result = await fetch(baseUrl + url, options);
 
-      console.log("BaseQuery fetch response pre-: ", result);
+      devLog("BaseQuery fetch response pre-: ", result);
       const jResult = await result.json();
-      console.log("BaseQuery fetch response: ", jResult);
+      devLog("BaseQuery fetch response: ", jResult);
 
       // if token is expired:
       if (result.status === 401 || jResult.code === "token_not_valid") {
         // Hit API w/ Refresh Token and update token.
         const refreshToken = await getToken(false);
 
-        console.log("refreshToken: ", refreshToken);
+        devLog("refreshToken: ", refreshToken);
 
         const res = await refreshAccessToken(`${BASEURL}token/refresh/`);
-        console.log("\n\n refreshAccessToken resp status: ", res.status);
+        devLog("\n\n refreshAccessToken resp status: ", res.status);
         if (res.status === 400 || res.status === 401) {
-          console.log("refreshAccessToken resp BAD!", res);
+          devLog("refreshAccessToken resp BAD!", res);
 
           navigate("AuthScreen", {});
           auth.logout();
           return { error: { status: 400, data: "Refresh token is bad" } };
         } else {
-          console.log("refreshAccessToken resp good:", res, url, method);
+          devLog("refreshAccessToken resp good:", res, url, method);
           const accessTokenResult = await res.json();
           await storeToken(accessTokenResult.access);
 
@@ -398,7 +398,7 @@ export const apiSlice = createApi({
         return { url: `workoutGroups/${id}/user_workouts/` };
       },
       providesTags: (result, error, arg) => {
-        console.log("Provides tag, WorkoutGroupWorkouts: ", arg);
+        devLog("Provides tag, WorkoutGroupWorkouts: ", arg);
         return [{ type: "WorkoutGroupWorkouts", id: arg }];
       },
     }),
@@ -498,7 +498,7 @@ export const apiSlice = createApi({
     updateWorkout: builder.mutation({
       query: (arg = {}) => {
         const data = new Map<string, string>(arg._parts);
-        console.log("Update workout data: ", data);
+        devLog("Update workout data: ", data);
         return {
           url: `workouts/${data.get("id")}/`,
           method: "PUT",
@@ -508,7 +508,7 @@ export const apiSlice = createApi({
       },
       invalidatesTags: (result, error, arg) => {
         const data = new Map<string, string>(arg._parts);
-        console.log("Invalidates tag, Workouts: ", data);
+        devLog("Invalidates tag, Workouts: ", data);
         return [{ type: "WorkoutGroupWorkouts", id: data.get("group") }];
       },
     }),
@@ -518,7 +518,7 @@ export const apiSlice = createApi({
         return { url: `workouts/${id}/` };
       },
       providesTags: (result, error, arg) => {
-        console.log("Provides tag, Workouts: ", arg);
+        devLog("Provides tag, Workouts: ", arg);
         return [{ type: "Workouts", id: arg }];
       },
     }),
@@ -553,7 +553,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (resut, error, arg) => {
         const data = new Map<string, string>(arg._parts);
-        console.log(
+        devLog(
           "Invalidating create normal Item: ",
           data.get("workout_group"),
           data
@@ -577,7 +577,7 @@ export const apiSlice = createApi({
 
       invalidatesTags: (resut, error, arg) => {
         const data = new Map<string, string>(arg._parts);
-        // console.log(
+        // devLog(
         //   "Invalidating create normal Item: ",
         //   data.get("workout_group"),
         //   data
@@ -600,7 +600,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (resut, error, arg) => {
         const data = new Map<string, string>(arg._parts);
-        console.log(
+        devLog(
           "Invalidating create Dual Item: ",
           data.get("workout_group"),
           data
@@ -753,12 +753,12 @@ export const apiSlice = createApi({
     // Expanded Profile data view
     getProfileWorkoutGroups: builder.query({
       query: (page: number = 1) => {
-        // console.log("Long running operation start");
+        // devLog("Long running operation start");
         // let s = 0;
         // for (let i = 0; i < 50_000_000; i++) {
         //   s += 2.3;
         // }
-        // console.log("Long running operation done: ", s);
+        // devLog("Long running operation done: ", s);
 
         return { url: `profile/workout_groups/?page=${page}` };
       },

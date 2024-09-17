@@ -2,16 +2,23 @@ const nodeEnv = process.env.NODE_ENV || "";
 
 const DOMAIN_NAME = "reptrackrr.com";
 
-const BASEURL =
-  ["development", "test"].indexOf(nodeEnv) >= 0
-    ? "http://localhost:8000/"
-    : `https://${DOMAIN_NAME}/ffapi/`;
+const isDevEnv = ["development", "test"].indexOf(nodeEnv) >= 0;
+
+const BASEURL = !isDevEnv
+  ? "http://localhost:8000/"
+  : `https://${DOMAIN_NAME}/ffapi/`;
 
 console.log("Using Baseurl: ", BASEURL);
 console.log("Env vars: ", process.env);
 // const BASEURL = "http://10.0.2.2:8000/" // android emulator
 
 const SPACES_URL = "";
+
+const devLog = (...args: any) => {
+  if (isDevEnv) {
+    console.log(...args);
+  }
+};
 
 /*
    TestIDs
@@ -149,4 +156,4 @@ class TestIDs {
   }
 }
 
-export { BASEURL, SPACES_URL, TestIDs, nodeEnv, DOMAIN_NAME };
+export { BASEURL, SPACES_URL, TestIDs, nodeEnv, DOMAIN_NAME, isDevEnv, devLog };
