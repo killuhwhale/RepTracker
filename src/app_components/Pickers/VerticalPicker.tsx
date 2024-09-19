@@ -203,12 +203,17 @@ const VerticalPicker: FunctionComponent<{
   };
 
   return (
-    <View style={{ flex: 1, width: "100%" }} onLayout={getWidthLayout}>
+    <View
+      style={{ flex: 1, width: "100%" }}
+      testID={props.testID}
+      onLayout={getWidthLayout}
+    >
       <MaskedView
         style={{ flex: 1, height: "100%", flexDirection: "row", width: "100%" }}
         androidRenderingMode="software"
         maskElement={
           <Animated.View
+            testID={props.testID}
             style={[
               { flexDirection: "row", height: "100%", alignItems: "center" },
               uas,

@@ -27,6 +27,13 @@ const devLog = (...args: any) => {
 class TestIDs {
   // Profile
   static OpenSettingsModalBtn = new TestIDs("OpenSettingsModalBtn");
+
+  static CreateWorkoutSchemeReps = new TestIDs("CreateWorkoutSchemeReps");
+  static CreateWorkoutSchemeRounds = new TestIDs("CreateWorkoutSchemeRounds");
+  static CreateWorkoutSchemeCreative = new TestIDs(
+    "CreateWorkoutSchemeCreative"
+  );
+
   static CreatePersonalWorkoutGroupBtn = new TestIDs(
     "CreatePersonalWorkoutGroupBtn"
   );

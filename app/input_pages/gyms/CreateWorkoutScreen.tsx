@@ -17,6 +17,7 @@ import {
   TSCaptionText,
   TSListTitleText,
   TSParagrapghText,
+  TSTitleText,
 } from "../../../src/app_components/Text/Text";
 import {
   Container,
@@ -315,6 +316,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       if (createdWorkout["err_type"] >= 0) {
         console.log("Failed to create workout", createdWorkout.error);
         setCreateWorkoutError("Workout with this name already exists.");
+        setIsCreating(false);
         return;
       }
 
@@ -508,7 +510,9 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         </View>
 
         {createWorkoutError.length ? (
-          <TSCaptionText>{createWorkoutError}</TSCaptionText>
+          <TSTitleText textStyles={{ color: "red" }}>
+            {createWorkoutError}
+          </TSTitleText>
         ) : (
           <></>
         )}
@@ -606,6 +610,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
           <View style={{ width: "20%" }}>
             {!isCreating ? (
               <TouchableHighlight
+                testID={TestIDs.CreateWorkoutCreateBtn.name()}
                 style={{ marginBottom: 6 }}
                 onPress={() => _createWorkoutWithItems(isUpdateMode)}
               >

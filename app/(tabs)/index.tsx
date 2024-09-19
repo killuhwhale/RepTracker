@@ -28,6 +28,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import BannerAddMembership from "@/src/app_components/ads/BannerAd";
 import { router } from "expo-router";
 import twrnc from "twrnc";
+import { TestIDs } from "@/src/utils/constants";
 
 /** Must match backend!!!
  *
@@ -132,6 +133,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
           >
             <Icon
               name="add"
+              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               color={theme.palette.text}
               style={{ fontSize: 24 }}
             />

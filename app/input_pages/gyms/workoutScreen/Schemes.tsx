@@ -17,6 +17,7 @@ import React, { FunctionComponent } from "react";
 import Input from "../../../../src/app_components/Input/input";
 import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
+import { TestIDs } from "@/src/utils/constants";
 
 const RepSheme: FunctionComponent<{
   onSchemeRoundChange(scheme: string);
@@ -26,7 +27,10 @@ const RepSheme: FunctionComponent<{
   const theme = useTheme();
 
   return (
-    <View style={{ marginBottom: 15, height: 35 }}>
+    <View
+      style={{ marginBottom: 15, height: 35 }}
+      testID={TestIDs.CreateWorkoutSchemeReps.name()}
+    >
       <Input
         placeholder="Reps"
         editable={props.editable}
@@ -65,9 +69,13 @@ const RoundSheme: FunctionComponent<{
       }
     : {};
   return (
-    <View style={{ marginBottom: 15, height: 35 }}>
+    <View
+      style={{ marginBottom: 15, height: 35 }}
+      testID={TestIDs.CreateWorkoutSchemeRounds.name()}
+    >
       <Input
         placeholder="Rounds"
+        testID={TestIDs.CreateWorkoutSchemeRounds.name()}
         onChangeText={props.onSchemeRoundChange}
         value={props.schemeRounds}
         label=""
@@ -98,9 +106,13 @@ const CreativeScheme: FunctionComponent<{
 }> = (props) => {
   const theme = useTheme();
   return (
-    <View style={{ marginBottom: 15, height: 35 }}>
+    <View
+      style={{ marginBottom: 15, height: 35 }}
+      testID={TestIDs.CreateWorkoutSchemeCreative.name()}
+    >
       <Input
         placeholder="20 min AMRAP"
+        testID={TestIDs.CreateWorkoutSchemeCreative.name()}
         onChangeText={props.onSchemeInstructionChange}
         value={props.instruction}
         label="Instructions"

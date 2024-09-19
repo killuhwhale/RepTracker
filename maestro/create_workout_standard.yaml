@@ -1,0 +1,195 @@
+appId: com.killuhwhale.reptracker # This is an example app id. Replace it with your app id.
+---
+- launchApp
+- tapOn: "Test Diane"
+- tapOn: "Add Workout"
+# - tapOn: "Standard"
+
+
+# Create Standard Workout
+# - tapOn:
+#     id: "CreateWorkoutTitleField"
+# - inputText: "Test Standard"
+# - tapOn:
+#     id: "CreateWorkoutDescField"
+# - inputText: "Testing"
+
+# - tapOn:
+#     id: "AddItemChooseWorkoutNameField"
+
+# - tapOn:
+#     id: "AddItemFilterModalInputField"
+
+# - inputText: "Deadlift"
+
+# - tapOn:
+#     text: "Deadlift"
+#     index: 2
+
+# - tapOn:
+#     id: "AddItemSetsField"
+
+# - inputText: "2"
+
+# - tapOn:
+#     id: "AddItemRepsField"
+
+# - inputText: "10"
+
+# - tapOn:
+#     id: "AddItemWeightField"
+
+# - inputText: "135 205"
+
+
+
+# - swipe:
+#     start: 96%, 41%
+#     end: 90%, 41%
+
+
+# - tapOn: "Add Item"
+
+
+# - tapOn:
+#     id: "CreateWorkoutCreateBtn"
+
+
+# Create Reps Workout
+
+# - tapOn: Reps
+# - tapOn:
+#     id: CreateWorkoutTitleField
+# - inputText: "Diane"
+# - tapOn:
+#     id: CreateWorkoutDescField
+# - inputText: "Testing Diane"
+
+# - tapOn:
+#     id: CreateWorkoutSchemeReps
+# - inputText: "21 15 9"
+
+# - tapOn:
+#     id: "AddItemChooseWorkoutNameField"
+
+# - tapOn:
+#     id: AddItemFilterModalInputField
+# - inputText: "Deadlift"
+
+# - tapOn:
+#     text: Deadlift
+#     index: 2
+
+# - tapOn:
+#     id: AddItemWeightField
+# - inputText: "225"
+
+# # - tapOn:
+# #   point: 93%,49%
+
+# - swipe:
+#     start: 94%, 49%
+#     end: 90%, 49%
+
+# - tapOn: Add Item
+
+# - tapOn:
+#     id: "AddItemChooseWorkoutNameField"
+
+# - tapOn:
+#     id: AddItemFilterModalInputField
+# - inputText: "hspu"
+
+# - tapOn:
+#     text: Handstand Push Up
+#     index: 1
+# - tapOn: Add Item
+
+# - tapOn:
+#     id: CreateWorkoutCreateBtn
+
+
+# Create Rounds
+
+- tapOn: Rounds
+- tapOn:
+    id: CreateWorkoutTitleField
+- inputText: "RFT"
+- tapOn:
+    id: CreateWorkoutDescField
+- inputText: "RFT Desc"
+- tapOn:
+    id: CreateWorkoutSchemeRounds
+    index: 1
+- inputText: "3"
+
+- tapOn:
+    id: AddItemChooseWorkoutNameField
+- tapOn:
+    id: AddItemFilterModalInputField
+- inputText: "sprint"
+- tapOn:
+    text: Sprint
+    index: 3
+
+# Swipe distance
+- swipe:
+    start: 83%, 43%
+    end: 10%, 43%
+
+- tapOn:
+    id: AddItemDistanceField
+- inputText: "40"
+
+# Swipe distance to yd
+
+- swipe:
+    start: 38%, 49%
+    end: 5%, 49%
+
+- tapOn: Add Item
+
+- tapOn:
+    id: AddItemChooseWorkoutNameField
+- tapOn:
+    id: AddItemFilterModalInputField
+- inputText: "plank"
+- tapOn:
+    text: Plank
+    index: 3
+
+# Swipe to Duration
+- swipe:
+    start: 83%, 43%
+    end: 88%, 43%
+
+- tapOn:
+    id: AddItemDurationField
+- inputText: "1"
+
+# Swipe to min
+- swipe:
+    start: 38%, 49%
+    end: 10%, 49%
+
+# 1
+- tapOn:
+    text: Rest
+    index: 1
+- inputText: "1"
+
+# Swipe to min on rest
+- swipe:
+    start: 75%, 55%
+    end: 10%, 55%
+
+- tapOn:
+    id: CreateWorkoutAddItemBtn
+- tapOn:
+    id: CreateWorkoutCreateBtn
+
+
+
+
+# Create Creative
+

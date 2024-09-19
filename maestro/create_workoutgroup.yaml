@@ -1,0 +1,19 @@
+appId: com.killuhwhale.reptracker # This is an example app id. Replace it with your app id.
+---
+
+- launchApp
+
+- tapOn:
+    id: 'CreateWorkoutGroupScreenBtn'
+
+- tapOn: 'Title'
+- inputText: "Test Diane"
+
+- tapOn: Caption
+
+- inputText: 'Testing via Maestro!'
+
+- tapOn:
+    id: 'WorkoutGroupCreateBtn'
+
+- assertVisible: "Test Diane"

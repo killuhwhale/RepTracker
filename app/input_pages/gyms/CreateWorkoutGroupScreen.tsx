@@ -322,6 +322,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
               {!isCreating ? (
                 isDateInFuture(userData.user.sub_end_date) ? (
                   <RegularButton
+                    testID={TestIDs.WorkoutGroupCreateBtn.name()}
                     onPress={() => {
                       setReadyToCreate(true); // Trigger useEffect
                     }}
