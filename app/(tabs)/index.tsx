@@ -63,7 +63,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
   const currentWorkoutGroupsRef = useRef<{ [key: number]: number }>({});
   // Update workout list when new data arrives
   useEffect(() => {
-    if (dataWG && dataWG.results) {
+    if (dataWG && dataWG.results && dataWG.results.length > 0) {
       setWorkouts((prevWorkouts) => {
         const newWorkouts: WorkoutGroupProps[] = [];
 
@@ -80,6 +80,8 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
           a.for_date > b.for_date ? -1 : 1
         );
       });
+    } else {
+      setWorkouts([]);
     }
   }, [dataWG]);
 

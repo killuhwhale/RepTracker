@@ -540,7 +540,7 @@ const EditWorkoutDualItem: FunctionComponent<{
         }}
       >
         <TSCaptionText textStyles={{ textAlign: "center" }}>
-          Weight Unit ({oldWeightUnit})
+          Weight Unit ({newWeightUnit})
         </TSCaptionText>
         <View
           style={{

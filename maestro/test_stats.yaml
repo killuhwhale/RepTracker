@@ -1,0 +1,6 @@
+appId: com.killuhwhale.reptracker # This is an example app id. Replace it with your app id.
+---
+- launchApp
+
+- tapOn: "Stats"
+- assertVisible: "Found 1 workout"

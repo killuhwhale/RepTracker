@@ -71,7 +71,7 @@ export interface WorkoutNameSimpleProps {
   date: string;
 }
 
-export type AnyWorkoutItem = WorkoutItemProps | WorkoutDualItemProps;
+export type AnyWorkoutItem = WorkoutItemProps & WorkoutDualItemProps;
 export type WorkkoutItemsList = Array<AnyWorkoutItem>;
 
 export interface WorkoutItemProps {

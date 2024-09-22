@@ -547,14 +547,21 @@ const AddItem: FunctionComponent<{
                       setRepsSchemeRoundsError(false);
                       setRepsSchemeRoundsErrorText("");
                     }
+
+                    // When we update this field, reps,
+                    // We should also reset duration and distance...
                     if (
                       WORKOUT_TYPES[props.schemeType] == STANDARD_W ||
                       WORKOUT_TYPES[props.schemeType] == REPS_W ||
                       WORKOUT_TYPES[props.schemeType] == CREATIVE_W
                     ) {
                       setReps(numFilter(text));
+                      setDistance(numFilter("0"));
+                      setDuration(numFilter("0"));
                     } else {
                       setReps(numFilterWithSpaces(text));
+                      setDistance(numFilterWithSpaces("0"));
+                      setDuration(numFilterWithSpaces("0"));
                     }
                   }}
                 />
@@ -593,8 +600,12 @@ const AddItem: FunctionComponent<{
                           WORKOUT_TYPES[props.schemeType] == CREATIVE_W
                         ) {
                           setDuration(numFilter(t));
+                          setReps(numFilter("0"));
+                          setDistance(numFilter("0"));
                         } else {
                           setDuration(numFilterWithSpaces(t));
+                          setReps(numFilterWithSpaces("0"));
+                          setDistance(numFilterWithSpaces("0"));
                         }
                       }}
                     />
@@ -649,8 +660,12 @@ const AddItem: FunctionComponent<{
                           WORKOUT_TYPES[props.schemeType] == CREATIVE_W
                         ) {
                           setDistance(numFilter(t));
+                          setReps(numFilter("0"));
+                          setDuration(numFilter("0"));
                         } else {
                           setDistance(numFilterWithSpaces(t));
+                          setReps(numFilterWithSpaces("0"));
+                          setDuration(numFilterWithSpaces("0"));
                         }
                       }}
                     />
@@ -861,7 +876,10 @@ const AddItem: FunctionComponent<{
 
               <View style={{ flex: 1, justifyContent: "center" }}>
                 <RegularButton
-                  onPress={() => _addItem(true)}
+                  onPress={() => {
+                    _addItem(true);
+                    props.requestUpdate(null);
+                  }}
                   testID={TestIDs.CreateWorkoutAddItemBtn.name()}
                   btnStyles={{
                     backgroundColor: theme.palette.darkGray,

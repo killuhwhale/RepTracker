@@ -4,7 +4,7 @@ const DOMAIN_NAME = "reptrackrr.com";
 
 const isDevEnv = ["development", "test"].indexOf(nodeEnv) >= 0;
 
-const BASEURL = !isDevEnv
+const BASEURL = isDevEnv
   ? "http://localhost:8000/"
   : `https://${DOMAIN_NAME}/ffapi/`;
 
@@ -27,6 +27,8 @@ const devLog = (...args: any) => {
 class TestIDs {
   // Profile
   static OpenSettingsModalBtn = new TestIDs("OpenSettingsModalBtn");
+  static ProfileEditUsernameBtn = new TestIDs("ProfileEditUsernameBtn");
+  static ProfileEditUsernameField = new TestIDs("ProfileEditUsernameField");
 
   static CreateWorkoutSchemeReps = new TestIDs("CreateWorkoutSchemeReps");
   static CreateWorkoutSchemeRounds = new TestIDs("CreateWorkoutSchemeRounds");
@@ -89,6 +91,7 @@ class TestIDs {
 
   // Workout Screen
   static CreateRegularWorkoutBtn = new TestIDs("CreateRegularWorkoutBtn");
+  static DeleteWorkoutBtn = new TestIDs("DeleteWorkoutBtn");
   static ToggleShowCreateWorkoutBtns = new TestIDs(
     "ToggleShowCreateWorkoutBtns"
   );

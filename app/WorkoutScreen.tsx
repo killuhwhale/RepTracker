@@ -239,6 +239,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
               name="close-circle-outline"
               color="red"
               onPress={onConfirmDelete}
+              testID={TestIDs.DeleteWorkoutBtn.name()}
             />
             <TSCaptionText textStyles={{ textAlign: "center" }}>
               Delete

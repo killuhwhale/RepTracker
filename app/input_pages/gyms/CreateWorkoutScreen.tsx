@@ -52,6 +52,7 @@ import {
 import { RootStackParamList } from "../../../src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 import {
+  AnyWorkoutItem,
   WorkoutDualItemProps,
   WorkoutItemProps,
   WorkoutItems,
@@ -381,7 +382,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   };
 
   const addWorkoutItem = (
-    item: WorkoutItemProps | WorkoutDualItemProps,
+    item: AnyWorkoutItem,
     shouldUpdateItem: boolean
   ): AddWorkoutItemProps => {
     const _item = { ...item };
@@ -402,19 +403,33 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       setSchemeRoundsError(false);
     }
 
-    console.log("Weight check: ", _item.weights);
-    console.log("Reps check: ", _item.reps);
-
     _item.weights = jList(_item.weights);
     _item.reps = jList(_item.reps);
     _item.duration = jList(_item.duration);
     _item.distance = jList(_item.distance);
 
-    console.log("Weight jList check: ", _item.weights);
-    console.log("Reps jList check: ", _item.reps);
+    // Set recorded info from default values given by user reps => r_reps etc...
+
+    if (schemeType > 2) {
+      // Creative workouts w/ dual items. Pre fill recorded values...
+      _item.r_weights = _item.weights;
+      _item.r_reps = _item.reps;
+      _item.r_duration = _item.duration;
+      _item.r_distance = _item.distance;
+
+      _item.r_percent_of = _item.percent_of;
+      _item.r_weight_unit = _item.weight_unit;
+      _item.r_distance_unit = _item.distance_unit;
+      _item.r_duration_unit = _item.duration_unit;
+      _item.r_pause_duration = _item.pause_duration;
+      _item.r_rest_duration = _item.rest_duration;
+      _item.r_rest_duration_unit = _item.rest_duration_unit;
+      _item.r_sets = _item.sets;
+    }
+
+    console.log("Add item, Recorded info: ", _item);
 
     // we can do an update here instead.....
-    console.log("\n shouldUpdateItem: ", shouldUpdateItem, "\n\n");
     if (shouldUpdateItem) {
       const updatedItems = items.map((itemState) => {
         if (itemState.uuid === _item.uuid) {

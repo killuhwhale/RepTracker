@@ -162,6 +162,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
       >
         <Icon
           name={showEditusername ? "close" : "pencil"}
+          testID={TestIDs.ProfileEditUsernameBtn.name()}
           style={{
             fontSize: 24,
             marginRight: 8,
@@ -176,6 +177,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
 
         {showEditusername ? (
           <Input
+            testID={TestIDs.ProfileEditUsernameField.name()}
             containerStyle={{
               backgroundColor: theme.palette.transparent,
               height: 35,

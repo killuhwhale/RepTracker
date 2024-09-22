@@ -318,7 +318,10 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
               />
               {files && files.length > 0 ? <MediaSlider data={files} /> : <></>}
             </View> */}
-            <View style={{ flex: 2, marginTop: 48 }}>
+            <View
+              style={{ flex: 2, marginTop: 48 }}
+              testID={TestIDs.WorkoutGroupCreateBtn.name()}
+            >
               {!isCreating ? (
                 isDateInFuture(userData.user.sub_end_date) ? (
                   <RegularButton

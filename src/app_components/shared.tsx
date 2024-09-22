@@ -176,6 +176,7 @@ export const defaultStats = {
 
   // Total Distance Meters
   totalDistanceM: 0,
+  totalDistanceY: 0,
   totalKgM: 0,
   totalLbM: 0,
   key: "",
@@ -310,6 +311,12 @@ export class CalcWorkoutStats {
   ) {
     // If unit is in seconds, our value is already in seconds, else it is in mins, multiple to convert to seconds.
     const durUnitMultiplier = item.duration_unit === 0 ? 1 : 60;
+    console.log(
+      "Calc w/ duration multiplier: ",
+      durUnitMultiplier,
+      item.duration_unit
+    );
+
     if (sets && quantity) {
       this.tags[pCat].totalTime += quantity * sets * durUnitMultiplier;
       this.names[workoutName].totalTime += quantity * sets * durUnitMultiplier;
@@ -489,9 +496,9 @@ export class CalcWorkoutStats {
   calcRoundsScheme(item: AnyWorkoutItem, pCat: string, workoutName: string) {
     const rounds = parseInt(this.schemeRounds);
     const reps = JSON.parse(item.reps);
-    const distance = JSON.parse(item.reps);
-    const duration = JSON.parse(item.reps);
-    const _weights = JSON.parse(item.reps);
+    const distance = JSON.parse(item.distance);
+    const duration = JSON.parse(item.duration);
+    const _weights = JSON.parse(item.weights);
 
     const itemReps = reps.length === 1 ? expandArray(reps, rounds) : reps;
     const itemDistance =
@@ -512,19 +519,42 @@ export class CalcWorkoutStats {
       this.calcItemReps(item, pCat, workoutName, null, totalVol, null);
     } else if (itemDuration[0]) {
       const totalVol = dotProd(itemDuration, weights);
-      this.tags[pCat].totalTime += itemDuration.reduce((p, c) => p + c, 0);
-      this.names[workoutName].totalTime += itemDuration.reduce(
-        (p, c) => p + c,
-        0
+      const total = itemDuration.reduce((p, c) => p + c, 0);
+
+      console.log(
+        "Calculate duration: ",
+        itemDuration,
+        weights,
+        totalVol,
+        total
       );
+      const durUnitMultiplier = item.duration_unit === 0 ? 1 : 60;
+      this.tags[pCat].totalTime += total * durUnitMultiplier;
+      this.names[workoutName].totalTime += total * durUnitMultiplier;
+
       this.calcItemDuration(item, pCat, workoutName, null, totalVol, null);
     } else if (itemDistance[0]) {
       const totalVol = dotProd(itemDistance, weights);
-      this.tags[pCat].totalDistanceM += itemDistance.reduce((p, c) => p + c, 0);
-      this.names[workoutName].totalDistanceM += itemDistance.reduce(
-        (p, c) => p + c,
-        0
-      );
+      const total = itemDistance.reduce((p, c) => p + c, 0);
+
+      let totalMeters = 0;
+      let totalYards = 0;
+      //  meter = 0
+      if (item.distance_unit == 0) {
+        totalMeters = total;
+        totalYards = total * 0.9144;
+      } else {
+        totalMeters = total * 1.09361;
+        totalYards = total;
+      }
+
+      this.tags[pCat].totalDistanceM += totalMeters;
+      this.names[workoutName].totalDistanceM += totalMeters;
+
+      this.tags[pCat].totalDistanceY += totalYards;
+      this.names[workoutName].totalDistanceY += totalYards;
+
+      console.log("Calculating Distance for Item: ", workoutName);
       this.calcItemDistance(item, pCat, workoutName, null, totalVol, null);
     }
   }

@@ -2,7 +2,7 @@
   "expo": {
     "name": "RepTracker",
     "slug": "RepTracker",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "platforms": [
@@ -31,7 +31,7 @@
       }
     },
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "runtimeVersion": "34",
       "package": "com.killuhwhale.reptracker",
       "permissions": [

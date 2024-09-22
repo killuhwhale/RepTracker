@@ -17,6 +17,7 @@ export interface WorkoutStats {
 
   // Total Distance Meters
   totalDistanceM: number;
+  totalDistanceY: number;
   totalKgM: number;
   totalLbM: number;
   key?: string;
@@ -62,6 +63,11 @@ export const TagPanelItem: FunctionComponent<{ tag: WorkoutStats }> = ({
 
       {tag.totalDistanceM ? (
         <TSCaptionText>Distance: {tag.totalDistanceM} m </TSCaptionText>
+      ) : (
+        <></>
+      )}
+      {tag.totalDistanceY ? (
+        <TSCaptionText>Distance: {tag.totalDistanceY} yd </TSCaptionText>
       ) : (
         <></>
       )}
@@ -120,6 +126,11 @@ export const NamePanelItem: FunctionComponent<{ name: WorkoutStats }> = ({
 
       {name.totalDistanceM ? (
         <TSCaptionText>Distance: {name.totalDistanceM} m </TSCaptionText>
+      ) : (
+        <></>
+      )}
+      {name.totalDistanceM ? (
+        <TSCaptionText>Distance: {name.totalDistanceY} yd </TSCaptionText>
       ) : (
         <></>
       )}

@@ -29,7 +29,6 @@ const itemDescKeys = [
   "distance",
   // 'weights', // we will render weight no matter what since its possible somone added weights to their workout.
   "rest_duration",
-  "percent_of",
 ];
 
 const isItemFieldEmpty = (key: string, value: any) => {
@@ -51,7 +50,7 @@ const isRecordedItemFieldEmpty = (key: string, value: any) => {
     case "r_reps":
     case "r_duration":
     case "r_distance":
-      console.log("isRecordedItemFieldEmpty", key, value[0]);
+      console.log("isRecordedItemFieldEmpty", key, JSON.parse(value)[0]);
       return JSON.parse(value)[0] == 0;
     case "r_pause_duration":
     case "r_rest_duration":
@@ -78,14 +77,14 @@ const DualItemUpdateFields: FunctionComponent<{
     <View style={{ flex: 1 }}>
       {itemDescKeys.map((key) => {
         const isEmpty = isItemFieldEmpty(key, item[key]);
-        // console.log('\n\n\n\n');
-        // console.log(
-        //   'DualItemUpdate is empty: ',
-        //   isEmpty,
-        //   item.name.name,
-        //   key,
-        //   item[key],
-        // );
+        console.log("\n\n\n\n");
+        console.log(
+          "DualItemUpdate is empty: ",
+          isEmpty,
+          item.name.name,
+          key,
+          item[key]
+        );
 
         return (
           <View key={`${item.id}_${key}_${item.order}`} style={{ flex: 1 }}>
@@ -125,6 +124,12 @@ const FinishDualWorkoutItems: FunctionComponent<{
 }) => {
   const theme = useTheme();
   let initGroup = jsonCopy(workoutGroup) as WorkoutGroupProps;
+  console.log("Initial WG: ");
+
+  initGroup.workouts?.map((workout) =>
+    workout.workout_items?.map((item) => console.log("Init Item: ", item))
+  );
+
   const [editedWorkoutGroup, setEditedWorkoutGroup] =
     useState<WorkoutGroupProps>(initGroup);
 
@@ -205,12 +210,13 @@ const FinishDualWorkoutItems: FunctionComponent<{
           const updatedItems = workout.workout_items?.map(
             (_item: WorkoutDualItemProps, idx: number) => {
               const item = { ..._item };
+              console.log("Pre item: ", item);
 
               // keys that have values fields provided by the workout, reps, weights, etc
               const keys = itemDescKeys.filter((key: string) => {
                 return !isItemFieldEmpty(key, item[key]);
               });
-              // console.log('Item has these fields to fill out: ', keys);
+              console.log("Item has these fields to fill out: ", keys);
 
               keys.forEach((key: string) => {
                 const rKey = `r_${key}`;
@@ -218,6 +224,7 @@ const FinishDualWorkoutItems: FunctionComponent<{
                   item[rKey] = item[key]; // when recorded field is empty, update it with the instructed field aka default
                 }
               });
+              console.log("Post item: ", item);
               return item;
             }
           );

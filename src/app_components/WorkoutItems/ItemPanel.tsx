@@ -67,36 +67,43 @@ const WorkoutItemRest: FunctionComponent<{
     </TSCaptionText>
   );
 };
+
+const recordedTextColor = "#f0abfc";
+
 const WorkoutItemWeights: FunctionComponent<{
   item: AnyWorkoutItem;
   ownedByClass: boolean;
-}> = ({ item, ownedByClass }) => {
-  const weights =
-    (ownedByClass ? item.weights : item["r_weights"]) ?? item.weights;
-  const weightUnit =
-    (ownedByClass ? item.weight_unit : item["r_weight_unit"]) ??
-    item.weight_unit;
-  const percentOf =
-    (ownedByClass ? item.percent_of : item["r_percent_of"]) ?? item.percent_of;
-  // console.log('WorkoutItemWeights: ', item.weights, item['r_weights'], item);
+  showRecorded: boolean;
+}> = ({ item, ownedByClass, showRecorded }) => {
+  const weights = showRecorded ? item.r_weights ?? "[0]" : item.weights;
+  const weightUnit = showRecorded ? item.r_weight_unit : item.weight_unit;
+  const percentOf = showRecorded ? item.r_percent_of : item.percent_of;
+
+  console.log(
+    "WorkoutItemWeights:  ",
+    item.name.name,
+    weights,
+    weightUnit,
+    percentOf,
+    item
+  );
+  const theme = useTheme();
   return (
     <>
       {weights &&
       JSON.parse(weights).length > 0 &&
       JSON.parse(weights)[0] > 0 ? (
-        <TSCaptionText>
-          {`@ ${displayJList(weights)} ${
-            item.weight_unit === "%" ? "" : weightUnit
+        <TSCaptionText
+          textStyles={{
+            color: showRecorded ? recordedTextColor : theme.palette.text,
+          }}
+        >
+          {`@ ${displayJList(weights)}${
+            item.weight_unit === "%" ? "% of " : weightUnit
           }`}
-        </TSCaptionText>
-      ) : (
-        <></>
-      )}
 
-      {weightUnit === "%" &&
-      JSON.parse(weights)[0] > 0 &&
-      JSON.parse(weights).legnth > 1 ? (
-        <TSCaptionText>{`Percent of ${percentOf}`}</TSCaptionText>
+          {item.weight_unit === "%" ? percentOf : ""}
+        </TSCaptionText>
       ) : (
         <></>
       )}
@@ -104,38 +111,42 @@ const WorkoutItemWeights: FunctionComponent<{
   );
 };
 
-const recordedTextColor = "#f0abfc";
 const WorkoutItemRepsDurDistance: FunctionComponent<{
   item: AnyWorkoutItem;
   ownedByClass: boolean;
   schemeType: number;
 }> = ({ item, ownedByClass, schemeType }) => {
+  if (item.name.name === "Hill Sprints") {
+    console.log("Displaying item: ", schemeType, item, item.distance !== "[0]");
+  }
+
   return (
     <>
-      {schemeType === 1 && !item.constant ? (
-        <></>
-      ) : item.reps !== "[0]" ? (
+      {item.reps !== "[0]" ? (
         <>
-          {displayJList(item.reps)}
-          {` `}
+          <TSCaptionText>{displayJList(item.reps)} Reps </TSCaptionText>
+
           <TSCaptionText textStyles={{ color: recordedTextColor }}>
-            {recordedInfo("reps", item, ownedByClass)}
+            {recordedInfo("reps", item, ownedByClass)} Reps
           </TSCaptionText>
         </>
       ) : item.distance !== "[0]" ? (
         <>
-          {displayJList(item.distance)}
-          {DISTANCE_UNITS[item.distance_unit]}
-          {` `}
+          <TSCaptionText>
+            {displayJList(item.distance)} {DISTANCE_UNITS[item.distance_unit]}{" "}
+          </TSCaptionText>
+
           <TSCaptionText textStyles={{ color: recordedTextColor }}>
             {recordedInfo("distance", item, ownedByClass)}
           </TSCaptionText>
         </>
       ) : item.duration !== "[0]" ? (
         <>
-          {displayJList(item.duration)}
-          {DISTANCE_UNITS[item.duration_unit]}
-          {` `}
+          <TSCaptionText>
+            {displayJList(item.duration)} {` `}
+            {DURATION_UNITS[item.duration_unit]}
+            {` `}
+          </TSCaptionText>
           <TSCaptionText textStyles={{ color: recordedTextColor }}>
             {recordedInfo("duration", item, ownedByClass)}
           </TSCaptionText>
@@ -144,7 +155,7 @@ const WorkoutItemRepsDurDistance: FunctionComponent<{
         ""
       )}
 
-      {item.constant ? <TSCaptionText>per round</TSCaptionText> : <></>}
+      {item.constant ? <TSCaptionText> per round</TSCaptionText> : <></>}
     </>
   );
 };
@@ -335,8 +346,17 @@ const WorkoutItemPanel: FunctionComponent<{
         </TSCaptionText>
       </View>
       <View style={{ alignItems: "center", flex: 5, width: "100%" }}>
-        <WorkoutItemWeights item={item} ownedByClass={ownedByClass} />
-        <WorkoutItemRest item={item} ownedByClass={ownedByClass} />
+        <WorkoutItemWeights
+          item={item}
+          ownedByClass={false}
+          showRecorded={false}
+        />
+        <WorkoutItemWeights
+          item={item}
+          ownedByClass={false}
+          showRecorded={true}
+        />
+        <WorkoutItemRest item={item} ownedByClass={false} />
       </View>
       <PenaltyDisplayModal
         closeText="Close"
