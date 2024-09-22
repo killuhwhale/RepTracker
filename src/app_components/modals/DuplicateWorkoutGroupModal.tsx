@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 
 import {
   Modal,
@@ -10,7 +10,12 @@ import {
 } from "react-native";
 
 import { LargeButton, RegularButton } from "../Buttons/buttons";
-import { TSCaptionText, TSParagrapghText, TSSnippetText } from "../Text/Text";
+import {
+  TSCaptionText,
+  TSParagrapghText,
+  TSSnippetText,
+  TSTitleText,
+} from "../Text/Text";
 import { centeredViewStyle, modalViewStyle } from "./modalStyles";
 import { useTheme } from "styled-components";
 import DatePicker from "react-native-date-picker";
@@ -40,6 +45,7 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
 }> = (props) => {
   const theme = useTheme();
 
+  const [dupError, setDupError] = useState("");
   const [title, setTitle] = useState("");
   const [forDate, setForDate] = useState<Date>(new Date());
   const [caption, setCaption] = useState("");
@@ -67,12 +73,24 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
 
       if ("id" in res) {
         props.onDuplicateGroup(res.id);
+        props.onRequestClose();
       }
-      props.onRequestClose();
+      if ("detail" in res) {
+        console.log("Alert, group not duplicated!");
+        setDupError("Error duplicating: daily workout creation limit reached.");
+      }
     } catch (err) {
       console.log("Error duplicating workout: ", err);
     }
   };
+
+  useEffect(() => {
+    setDupError("");
+    setTitle("");
+    setCaption("");
+    setTitleError("");
+    setShowDatePicker(false);
+  }, [props.modalVisible]);
 
   return (
     <Modal
@@ -101,7 +119,6 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
           <View style={{ flex: 1, width: "100%", height: "100%" }}>
             <View
               style={{
-                flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
                 paddingVertical: 6,
@@ -110,9 +127,22 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
                 width: "100%",
               }}
             >
-              <TSSnippetText textStyles={{ textAlign: "center" }}>
+              {dupError ? (
+                <TSSnippetText
+                  textStyles={{
+                    textAlign: "center",
+                    marginBottom: 8,
+                    color: theme.palette.accent,
+                  }}
+                >
+                  {dupError}
+                </TSSnippetText>
+              ) : (
+                <></>
+              )}
+              <TSTitleText textStyles={{ textAlign: "center" }}>
                 {props.modalText}
-              </TSSnippetText>
+              </TSTitleText>
             </View>
 
             <View style={{ flex: 5 }}>
