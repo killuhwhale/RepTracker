@@ -4,7 +4,7 @@ const DOMAIN_NAME = "reptrackrr.com";
 
 const isDevEnv = ["development", "test"].indexOf(nodeEnv) >= 0;
 
-const BASEURL = !isDevEnv
+const BASEURL = isDevEnv
   ? "http://localhost:8000/"
   : `https://${DOMAIN_NAME}/ffapi/`;
 

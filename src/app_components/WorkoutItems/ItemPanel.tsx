@@ -334,6 +334,8 @@ const WorkoutItemPanel: FunctionComponent<{
           flex: 2,
           width: "100%",
           justifyContent: "center",
+          alignContent: "center",
+          alignItems: "center",
         }}
       >
         <TSCaptionText textStyles={{ textAlign: "center" }}>
