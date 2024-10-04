@@ -27,7 +27,8 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": false,
           "NSExceptionDomains": {}
-        }
+        },
+        "NSPhotoLibraryUsageDescription": "Allow use of photos?"
       }
     },
     "android": {
