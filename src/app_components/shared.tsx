@@ -11,6 +11,7 @@ import {
 } from "./Cards/types";
 
 import twrnc from "twrnc";
+import { UserProps } from "@/app/types";
 
 export const Container = styled.View`
   flex: 1;
@@ -749,7 +750,15 @@ export const formatLongDate = (date: Date) => {
   return monthNames[monthIndex] + " " + day + ", " + year;
 };
 
-export function isDateInFuture(date: Date): boolean {
+export function isDateInFuture(user: UserProps): boolean {
+  const date = user.sub_end_date;
+  const membership_on = user.membership_on;
+
+  // membership_on == false => membersip features are not turned 'on'
+  if (!membership_on) {
+    return true;
+  }
+
   if (typeof date == typeof "") {
     return new Date(date) > new Date();
   }

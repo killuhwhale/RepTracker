@@ -12,6 +12,7 @@ export interface UserProps {
   sub_end_date: Date;
   subscribed: boolean;
   username: string;
+  membership_on: boolean;
 }
 
 // {"customer_id": "cus_O9ot3Dfd0gseUi", "email": "andayac@gmail.com",

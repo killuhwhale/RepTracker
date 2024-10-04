@@ -25,9 +25,7 @@ const BannerAddMembership: FunctionComponent = () => {
     <View style={{ width: "100%" }}>
       {userIsloading ? (
         <></>
-      ) : !userIsloading &&
-        userData &&
-        isDateInFuture(userData.sub_end_date) ? (
+      ) : !userIsloading && userData && isDateInFuture(userData) ? (
         <></>
       ) : (
         <GAMBannerAd

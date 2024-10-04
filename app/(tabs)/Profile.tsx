@@ -123,6 +123,12 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
     email: "",
     username: "",
   };
+  const user = props.user || {
+    id: 0,
+    email: "",
+    username: "",
+    membership_on: false,
+  };
   const [showEditusername, setShowEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState(username);
   const [_updateUsername, { isLoading }] = useUpdateUsernameMutation();
@@ -211,9 +217,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
             <View style={{ flexBasis: 0, flexShrink: 1, flexGrow: 2 }}>
               <TSCaptionText
                 textStyles={{
-                  color: `${
-                    isDateInFuture(sub_end_date) ? "#FFD700" : "#C0C000"
-                  }`,
+                  color: `${isDateInFuture(user) ? "#FFD700" : "#C0C000"}`,
                   marginLeft: 10,
                   textAlign: "left",
                   textAlignVertical: "center",
@@ -221,7 +225,7 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
                   alignItems: "center",
                 }}
               >
-                {isDateInFuture(sub_end_date) ? "Member" : "Non-member"}
+                {isDateInFuture(user) ? "Member" : "Non-member"}
               </TSCaptionText>
             </View>
           </View>
@@ -491,9 +495,9 @@ const Profile: FunctionComponent<Props> = () => {
     }).start();
   };
 
-  if (isSuccess && isDateInFuture(data.user.sub_end_date)) {
+  if (isSuccess && isDateInFuture(data.user)) {
     startThankYouFadeIn();
-  } else if (isSuccess && !isDateInFuture(data.user.sub_end_date)) {
+  } else if (isSuccess && !isDateInFuture(data.user)) {
     fadeAnim.setValue(0);
   }
 
@@ -553,7 +557,7 @@ const Profile: FunctionComponent<Props> = () => {
                 justifyContent: "flex-start",
               }}
             >
-              {!isDateInFuture(data.user.sub_end_date) ? (
+              {!isDateInFuture(data.user) ? (
                 <View style={{ width: "100%" }}>
                   <TSTitleText>In App Purchase</TSTitleText>
                   {makePurchaseLoading ? (

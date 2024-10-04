@@ -323,7 +323,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
               testID={TestIDs.WorkoutGroupCreateBtn.name()}
             >
               {!isCreating ? (
-                isDateInFuture(userData.user.sub_end_date) ? (
+                isDateInFuture(userData.user) ? (
                   <RegularButton
                     testID={TestIDs.WorkoutGroupCreateBtn.name()}
                     onPress={() => {

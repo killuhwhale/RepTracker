@@ -172,8 +172,15 @@ export const apiSlice = createApi({
     "GymClassFavs",
     "StatsQuery",
     "DailySnapshot",
+    "AppControl",
   ],
   endpoints: (builder) => ({
+    appControlMembershipOn: builder.query({
+      query: (id) => {
+        return { url: "appcontrol/membership_on/" };
+      },
+      providesTags: ["AppControl"],
+    }),
     // Users, Coaches and Members
     createUser: builder.mutation({
       query: (data = {}) => ({
@@ -814,6 +821,7 @@ export const apiSlice = createApi({
 
 // Export the auto-generated hook for the `getPosts` query endpoint
 export const {
+  useAppControlMembershipOnQuery,
   useCreateUserMutation,
   useUpdateUsernameMutation,
   useCreateCoachMutation,
