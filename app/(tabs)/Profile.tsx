@@ -557,7 +557,7 @@ const Profile: FunctionComponent<Props> = () => {
                 justifyContent: "flex-start",
               }}
             >
-              {!isDateInFuture(data.user) ? (
+              {!isDateInFuture(data.user, true) ? (
                 <View style={{ width: "100%" }}>
                   <TSTitleText>In App Purchase</TSTitleText>
                   {makePurchaseLoading ? (

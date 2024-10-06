@@ -750,12 +750,12 @@ export const formatLongDate = (date: Date) => {
   return monthNames[monthIndex] + " " + day + ", " + year;
 };
 
-export function isDateInFuture(user: UserProps): boolean {
+export function isDateInFuture(user: UserProps, ignoreFlag = false): boolean {
   const date = user.sub_end_date;
   const membership_on = user.membership_on;
 
   // membership_on == false => membersip features are not turned 'on'
-  if (!membership_on) {
+  if (!membership_on && !ignoreFlag) {
     return true;
   }
 
