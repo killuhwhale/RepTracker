@@ -597,6 +597,7 @@ const Profile: FunctionComponent<Props> = () => {
                             flex: 1,
                             justifyContent: "flex-start",
                             alignItems: "center",
+                            width: "100%",
                           }}
                         >
                           {curProducts ? (
