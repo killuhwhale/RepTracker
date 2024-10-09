@@ -601,7 +601,7 @@ const Profile: FunctionComponent<Props> = () => {
                           }}
                         >
                           {curProducts ? (
-                            <View>
+                            <View style={{ width: "100%" }}>
                               {curProducts.map((product) => {
                                 return (
                                   <View
