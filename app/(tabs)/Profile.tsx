@@ -558,80 +558,123 @@ const Profile: FunctionComponent<Props> = () => {
               }}
             >
               {!isDateInFuture(data.user, true) ? (
-                <View style={{ width: "100%" }}>
-                  <TSTitleText>In App Purchase</TSTitleText>
-                  {makePurchaseLoading ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={theme.palette.text}
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        width: "100%",
-                        height: 32,
-                        marginTop: 12,
+                <View
+                  style={{
+                    width: "100%",
+                    flex: 1,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <TSTitleText>In App Purchase</TSTitleText>
+                  </View>
 
-                        borderRadius: 8,
-                        justifyContent: "center",
-                      }}
-                    >
+                  <View
+                    style={{
+                      flex: 9,
+                      justifyContent: "flex-start",
+                      alignContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    {makePurchaseLoading ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={theme.palette.text}
+                      />
+                    ) : (
                       <View
                         style={{
-                          alignContent: "center",
-                          justifyContent: "center",
-                          alignItems: "center",
                           width: "100%",
+                          flex: 1,
+                          marginTop: 12,
+
+                          borderRadius: 8,
+                          justifyContent: "center",
                         }}
                       >
-                        {curProducts ? (
-                          curProducts.map((product) => {
-                            return (
-                              <View
-                                style={{
-                                  width: "80%",
-                                  backgroundColor: twrnc.color("bg-blue-600"),
-                                  borderRadius: 8,
-                                }}
-                                key={product.identifier}
-                              >
-                                <TouchableHighlight
-                                  onPress={() =>
-                                    makePurchase(product).catch((err) =>
-                                      console.error("Error makePurchase: ", err)
-                                    )
-                                  }
-                                >
+                        <View
+                          style={{
+                            flex: 1,
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                          }}
+                        >
+                          {curProducts ? (
+                            <View>
+                              {curProducts.map((product) => {
+                                return (
                                   <View
                                     style={{
-                                      marginVertical: 12,
-                                      paddingHorizontal: 12,
+                                      width: "80%",
+                                      backgroundColor:
+                                        twrnc.color("bg-blue-600"),
+                                      borderRadius: 8,
                                     }}
+                                    key={product.identifier}
                                   >
-                                    <TSButtonText
-                                      textStyles={{ textAlign: "center" }}
+                                    <TouchableHighlight
+                                      onPress={() =>
+                                        makePurchase(product).catch((err) =>
+                                          console.error(
+                                            "Error makePurchase: ",
+                                            err
+                                          )
+                                        )
+                                      }
                                     >
-                                      {product.title}
-                                    </TSButtonText>
-                                    <TSSnippetText
-                                      textStyles={{ textAlign: "center" }}
-                                    >
-                                      {product.description}
-                                    </TSSnippetText>
+                                      <View
+                                        style={{
+                                          marginVertical: 12,
+                                          paddingHorizontal: 12,
+                                        }}
+                                      >
+                                        <TSButtonText
+                                          textStyles={{ textAlign: "center" }}
+                                        >
+                                          Remove Ads!
+                                        </TSButtonText>
+                                        <TSSnippetText
+                                          textStyles={{ textAlign: "center" }}
+                                        >
+                                          {product.description}
+                                        </TSSnippetText>
+                                        <TSSnippetText
+                                          textStyles={{ textAlign: "center" }}
+                                        >
+                                          {product.price} {product.currencyCode}{" "}
+                                          / Month
+                                        </TSSnippetText>
+                                      </View>
+                                    </TouchableHighlight>
                                   </View>
-                                </TouchableHighlight>
-                              </View>
-                            );
-                          })
-                        ) : (
-                          <ActivityIndicator
-                            size="small"
-                            color={theme.palette.text}
-                          />
-                        )}
+                                );
+                              })}
+                              <TSCaptionText>
+                                With a Subscription:
+                              </TSCaptionText>
+                              <TSCaptionText>- remove all ads</TSCaptionText>
+                              <TSCaptionText>
+                                - create unlimited workouts{" "}
+                                <TSCaptionText
+                                  textStyles={{ color: "red", fontSize: 9 }}
+                                >
+                                  (limit 1 per day without membersip)
+                                </TSCaptionText>
+                              </TSCaptionText>
+                              <TSCaptionText>
+                                - support an independent developer
+                              </TSCaptionText>
+                            </View>
+                          ) : (
+                            <ActivityIndicator
+                              size="small"
+                              color={theme.palette.text}
+                            />
+                          )}
+                        </View>
                       </View>
-                    </View>
-                  )}
+                    )}
+                  </View>
                 </View>
               ) : (
                 <View style={{ flex: 4 }}>
