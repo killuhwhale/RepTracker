@@ -602,7 +602,11 @@ const Profile: FunctionComponent<Props> = () => {
                         >
                           {curProducts ? (
                             <View
-                              style={{ width: "100%", alignItems: "center" }}
+                              style={{
+                                width: "100%",
+                                alignItems: "center",
+                                flex: 1,
+                              }}
                             >
                               {curProducts.map((product) => {
                                 return (
@@ -652,21 +656,25 @@ const Profile: FunctionComponent<Props> = () => {
                                   </View>
                                 );
                               })}
-                              <TSCaptionText>
-                                With a Subscription:
-                              </TSCaptionText>
-                              <TSCaptionText>- remove all ads</TSCaptionText>
-                              <TSCaptionText>
-                                - create unlimited workouts{" "}
-                                <TSCaptionText
-                                  textStyles={{ color: "red", fontSize: 9 }}
-                                >
-                                  (limit 1 per day without membersip)
+                              <View
+                                style={{ flex: 1, alignItems: "flex-start" }}
+                              >
+                                <TSCaptionText>
+                                  With a Subscription:
                                 </TSCaptionText>
-                              </TSCaptionText>
-                              <TSCaptionText>
-                                - support an independent developer
-                              </TSCaptionText>
+                                <TSCaptionText>- remove all ads</TSCaptionText>
+                                <TSCaptionText>
+                                  - create unlimited workouts{" "}
+                                  <TSCaptionText
+                                    textStyles={{ color: "red", fontSize: 9 }}
+                                  >
+                                    (limit 1 per day without membersip)
+                                  </TSCaptionText>
+                                </TSCaptionText>
+                                <TSCaptionText>
+                                  - support an independent developer
+                                </TSCaptionText>
+                              </View>
                             </View>
                           ) : (
                             <ActivityIndicator
