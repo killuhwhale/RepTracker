@@ -38,13 +38,15 @@ const InterstitialAdMembership: FunctionComponent<{
 
   const { data, isLoading } = useGetAdUnitsQuery("");
   const interstitialRef = useRef<InterstitialAd | null>(null);
-  console.log("Ad data: ", data);
 
   const [loaded, setLoaded] = useState(false);
   const adUnit =
-    !isLoading && data[INTERSTITIAL_AD_UNIT].length > 0
+    !isLoading && data && data[INTERSTITIAL_AD_UNIT].length > 0
       ? data[INTERSTITIAL_AD_UNIT]
       : TestIds.INTERSTITIAL;
+
+  console.log("adUnit: ", adUnit);
+
   useEffect(() => {
     if (!interstitialRef.current) {
       interstitialRef.current = InterstitialAd.createForAdRequest(adUnit, {
