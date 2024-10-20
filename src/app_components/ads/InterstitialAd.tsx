@@ -1,4 +1,7 @@
-import { useGetUserInfoQuery } from "../../redux/api/apiSlice";
+import {
+  useGetAdUnitsQuery,
+  useGetUserInfoQuery,
+} from "../../redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,
@@ -6,17 +9,15 @@ import {
   InterstitialAd,
   AdEventType,
 } from "react-native-google-mobile-ads";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import { useTheme } from "styled-components";
 import { RegularButton } from "../Buttons/buttons";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { UserProps } from "@/app/types";
 
-const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
-  requestNonPersonalizedAdsOnly: true,
-  keywords: ["fashion", "clothing"],
-});
+const INTERSTITIAL_AD_UNIT =
+  Platform.OS == "ios" ? "ios_interstitial" : "android_interstitial";
 
 const InterstitialAdMembership: FunctionComponent<{
   onClose?(): void;
@@ -35,12 +36,26 @@ const InterstitialAdMembership: FunctionComponent<{
 
   const userData = _userData as UserProps;
 
-  const [loaded, setLoaded] = useState(false);
+  const { data, isLoading } = useGetAdUnitsQuery("");
+  const interstitialRef = useRef<InterstitialAd | null>(null);
+  console.log("Ad data: ", data);
 
+  const [loaded, setLoaded] = useState(false);
+  const adUnit =
+    !isLoading && data[INTERSTITIAL_AD_UNIT].length > 0
+      ? data[INTERSTITIAL_AD_UNIT]
+      : TestIds.INTERSTITIAL;
   useEffect(() => {
+    if (!interstitialRef.current) {
+      interstitialRef.current = InterstitialAd.createForAdRequest(adUnit, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ["fitness", "fashion", "clothing"],
+      });
+    }
+
     const onAdLoaded = () => setLoaded(true);
 
-    const unsubscribe = interstitial.addAdEventListener(
+    const unsubscribe = interstitialRef.current.addAdEventListener(
       AdEventType.LOADED,
       onAdLoaded
     );
@@ -48,16 +63,17 @@ const InterstitialAdMembership: FunctionComponent<{
     // Event listener for ad closed
     const onAdClosed = () => {
       setLoaded(false);
-      interstitial.load(); // Reload the ad when it is closed
+      interstitialRef.current?.load(); // Reload the ad when it is closed
       if (props.onClose) props.onClose(); // Execute onClose prop if provided
     };
-    const unsubscribeClosed = interstitial.addAdEventListener(
+    const unsubscribeClosed = interstitialRef.current.addAdEventListener(
       AdEventType.CLOSED,
       onAdClosed
     );
 
     // Start loading the interstitial straight away
-    interstitial.load();
+
+    interstitialRef.current.load();
 
     // Unsubscribe from events on unmount
     return () => {
@@ -69,7 +85,7 @@ const InterstitialAdMembership: FunctionComponent<{
   // Function to show the ad if loaded
   const showAd = () => {
     if (loaded) {
-      interstitial.show();
+      interstitialRef.current?.show();
     }
   };
 

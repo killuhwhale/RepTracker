@@ -1,4 +1,7 @@
-import { useGetUserInfoQuery } from "../../redux/api/apiSlice";
+import {
+  useGetAdUnitsQuery,
+  useGetUserInfoQuery,
+} from "../../redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,
@@ -8,7 +11,9 @@ import React, { FunctionComponent } from "react";
 
 import { isDateInFuture } from "../shared";
 import { UserProps } from "@/app/types";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
+
+const BANNER_AD_UNIT = Platform.OS == "ios" ? "ios_banner" : "android_banner";
 
 const BannerAddMembership: FunctionComponent = () => {
   const {
@@ -20,7 +25,13 @@ const BannerAddMembership: FunctionComponent = () => {
   } = useGetUserInfoQuery("");
 
   const userData = _userData as UserProps;
+  const { data, isLoading } = useGetAdUnitsQuery("");
 
+  const adUnit =
+    !isLoading && data[BANNER_AD_UNIT].length > 0
+      ? data[BANNER_AD_UNIT]
+      : TestIds.BANNER;
+  console.log("Ad data: ", data);
   return (
     <View style={{ width: "100%" }}>
       {userIsloading ? (
@@ -29,7 +40,7 @@ const BannerAddMembership: FunctionComponent = () => {
         <></>
       ) : (
         <GAMBannerAd
-          unitId={TestIds.BANNER}
+          unitId={adUnit}
           sizes={[BannerAdSize.FULL_BANNER]}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,

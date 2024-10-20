@@ -173,6 +173,7 @@ export const apiSlice = createApi({
     "StatsQuery",
     "DailySnapshot",
     "AppControl",
+    "AD_UNITS",
   ],
   endpoints: (builder) => ({
     appControlMembershipOn: builder.query({
@@ -816,6 +817,13 @@ export const apiSlice = createApi({
       },
       providesTags: ["DailySnapshot"],
     }),
+
+    getAdUnits: builder.query({
+      query: (id) => {
+        return { url: "snapshot/ads/" };
+      },
+      providesTags: ["AD_UNITS"],
+    }),
   }),
 });
 
@@ -884,5 +892,6 @@ export const {
   useCreateCompletedWorkoutMutation,
   useGetCompletedWorkoutGroupsForUserByDateRangeQuery,
   useGetDailySnapshotQuery,
+  useGetAdUnitsQuery,
   // usesTagLabelsGroupsForUserByDateRangeQuery,
 } = apiSlice;

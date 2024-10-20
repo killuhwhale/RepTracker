@@ -668,7 +668,7 @@ const Profile: FunctionComponent<Props> = () => {
                                   <TSCaptionText
                                     textStyles={{ color: "red", fontSize: 9 }}
                                   >
-                                    (limit 1 per day without membersip)
+                                    (limit 1 per day without subscription)
                                   </TSCaptionText>
                                 </TSCaptionText>
                                 <TSCaptionText>
