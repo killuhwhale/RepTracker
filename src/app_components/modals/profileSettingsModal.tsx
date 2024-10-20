@@ -54,6 +54,14 @@ const ProfileSettingsModalRow: FunctionComponent<{
       borderRadius: 8,
       paddingLeft: 8,
     },
+    ,
+    {
+      width: "75%",
+      height: "60%",
+      justifyContent: "center",
+      borderRadius: 8,
+      paddingLeft: 8,
+    },
   ] as ViewStyle[];
 
   const variant = props.variant ? props.variant : 0;
@@ -80,7 +88,11 @@ const ProfileSettingsModalRow: FunctionComponent<{
           textStyles={{
             textAlign: variant === 0 ? "left" : "center",
             color:
-              variant === 0 ? theme.palette.text : theme.palette.secondary.main,
+              variant === 0
+                ? theme.palette.text
+                : variant === 1
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main,
           }}
         >
           {props.title}
@@ -270,7 +282,28 @@ const ProfileSettingsModal: FunctionComponent<{
               }}
             />
             <ProfileSettingsModalRow
-              testID={TestIDs.ResetPasswordScreenBtn.name()}
+              onAction={() => {
+                Linking.openURL(
+                  `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+                );
+                props.onRequestClose();
+              }}
+              variant={2}
+              color={theme.palette.primary.main}
+              title="Terms of Use (EULA)"
+            />
+            <ProfileSettingsModalRow
+              onAction={() => {
+                Linking.openURL(
+                  `https://gist.github.com/killuhwhale/1613abbf3258807a5bc78e5fc5e569fb`
+                );
+                props.onRequestClose();
+              }}
+              variant={2}
+              color={theme.palette.primary.main}
+              title="Privacy Policy"
+            />
+            <ProfileSettingsModalRow
               onAction={() => {
                 Linking.openURL(`https://${DOMAIN_NAME}/removeAccount`);
                 props.onRequestClose();
