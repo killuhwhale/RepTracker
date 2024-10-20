@@ -12,7 +12,6 @@ const ItemString: FunctionComponent<{
   color?: string;
 }> = ({ item, schemeType, prefix, color }) => {
   const theme = useTheme();
-  console.log("Diplaying item weights: ", item.weights);
 
   let isWeightsCorrect = false;
   try {

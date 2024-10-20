@@ -215,8 +215,6 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const _items: WorkoutItems = appendUUID(JSON.parse(initItems as string));
   const [items, setItems] = useState(_items);
 
-  console.log("Workout title: ", workoutTitle, workoutDesc);
-
   const [title, setTitle] = useState(workoutTitle as string);
   const [desc, setDesc] = useState(workoutDesc as string);
   const [schemeRounds, setSchemeRounds] = useState(scheme_rounds as string);
@@ -686,6 +684,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
                 schemeType={schemeType}
                 curColor={curColor}
                 showAddSSID={showAddSSID}
+                itemToUpdate={itemToUpdate}
                 setShowAddSSID={setShowAddSSID}
                 setCurColor={setCurColor}
                 removeItemSSID={removeItemSSID}
@@ -698,6 +697,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               <CreateWorkoutDualItemList
                 items={items as WorkoutDualItemProps[]}
                 schemeType={schemeType}
+                itemToUpdate={itemToUpdate}
                 removeItem={removeItem}
                 addPenalty={addPenalty}
                 requestUpdate={requestUpdate}

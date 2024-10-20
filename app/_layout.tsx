@@ -116,7 +116,6 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
       console.log("Listened for logout, setLoggedIn");
       setLoggedIn(false);
     });
-    console.log("Use effect is being called!!!");
 
     auth.listenLogin((loggedIn, msg) => {
       console.log("App.tsx listenLogin: ", loggedIn, msg);

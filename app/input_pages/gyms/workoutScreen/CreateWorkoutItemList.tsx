@@ -31,6 +31,7 @@ const ItemRowButton: FunctionComponent<{
   idx: number;
   item: WorkoutItemProps | WorkoutDualItemProps;
   children: ReactNode;
+  isCurrentUpdateItem: boolean;
   RowItemOnPress: (
     idx: number,
     item: WorkoutItemProps | WorkoutDualItemProps,
@@ -45,6 +46,7 @@ const ItemRowButton: FunctionComponent<{
   idx,
   item,
   children,
+  isCurrentUpdateItem,
   RowItemOnPress,
 }) => {
   return showAddSSID || allowMarkConstant || allowDeleteInUpdateMode ? (
@@ -61,7 +63,14 @@ const ItemRowButton: FunctionComponent<{
         );
       }}
     >
-      {children}
+      <View
+        style={{
+          borderWidth: isCurrentUpdateItem ? 1 : 0,
+          borderColor: "white",
+        }}
+      >
+        {children}
+      </View>
     </TouchableWithoutFeedback>
   ) : (
     <AnimatedButton
@@ -239,6 +248,8 @@ const CreateWorkoutItemList: FunctionComponent<{
   schemeType: number;
   curColor: number;
   showAddSSID: boolean;
+  itemToUpdate: WorkoutItemProps | WorkoutDualItemProps | null;
+
   setShowAddSSID(n: boolean): void;
   setCurColor(n: number): void;
   removeItemSSID(n: number): void;
@@ -251,6 +262,8 @@ const CreateWorkoutItemList: FunctionComponent<{
   schemeType,
   curColor,
   showAddSSID,
+  itemToUpdate,
+
   setShowAddSSID,
   setCurColor,
   removeItemSSID,
@@ -296,16 +309,14 @@ const CreateWorkoutItemList: FunctionComponent<{
     }
   };
 
-  //TODO() Create a switch to go into update mode
-  // Set item when pressed to stage for update
-  // Populate AddItemPanel with item info
-  // Change button "Add Item" to "Update Item" and change behavior of btn
-  // Add cancel button to clear Panel next to update button
-  // After pressing update clear Panel and make it ready
-  // Give props to component for initial items to edit in the list....
-
   return (
-    <View style={{ flex: 4, width: "100%", height: "100%" }}>
+    <View
+      style={{
+        flex: 4,
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <ListToggles
         allowDeleteInUpdateMode={allowDeleteInUpdateMode}
         schemeType={schemeType}
@@ -321,11 +332,14 @@ const CreateWorkoutItemList: FunctionComponent<{
       <View>
         <ScrollView>
           {items.map((item, idx) => {
+            const isCurrentUpdateItem = itemToUpdate?.uuid === item.uuid;
+
             return (
               <ItemRowButton
                 key={`item_test_${Math.random()}`}
                 idx={idx}
                 item={item}
+                isCurrentUpdateItem={isCurrentUpdateItem}
                 showAddSSID={showAddSSID}
                 allowMarkConstant={allowMarkConstant}
                 RowItemOnPress={RowItemOnPress}

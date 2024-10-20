@@ -59,10 +59,18 @@ const ItemRowButton: FunctionComponent<{
 const CreateWorkoutDualItemList: FunctionComponent<{
   items: WorkoutDualItemProps[];
   schemeType: number;
+  itemToUpdate: WorkoutItemProps | WorkoutDualItemProps | null;
   removeItem(n: number): void;
   addPenalty(penalty: string, selectedIdx: number): void;
   requestUpdate: (item: WorkoutItemProps | WorkoutDualItemProps | null) => void;
-}> = ({ items, schemeType, removeItem, addPenalty, requestUpdate }) => {
+}> = ({
+  items,
+  schemeType,
+  itemToUpdate,
+  removeItem,
+  addPenalty,
+  requestUpdate,
+}) => {
   const theme = useTheme();
   const [showPenaltyModal, setShowPenaltyModal] = useState(false);
   const [curItem, setCurItem] = useState(0);
