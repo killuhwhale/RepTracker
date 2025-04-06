@@ -6,16 +6,16 @@ import {
   SCREEN_WIDTH,
   darkRed,
   withSpaceURL,
-} from "../src/app_components/shared";
+} from "@/src/app_components/shared";
 import {
   SmallText,
   TSCaptionText,
   TSParagrapghText,
   TSTitleText,
-} from "../src/app_components/Text/Text";
+} from "@/src/app_components/Text/Text";
 import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
-import { RootStackParamList } from "../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Image, View } from "react-native";
 import {
@@ -26,21 +26,21 @@ import {
   useGetMembersForGymClassQuery,
   useGetProfileGymClassFavsQuery,
   useUnfavoriteGymClassMutation,
-} from "../src/redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 
-import { GymClassCardProps } from "../src/app_components/Cards/types";
+import { GymClassCardProps } from "@/src/app_components/Cards/types";
 
-import ManageMembersModal from "../src/app_components/modals/memberModal";
-import ManageCoachesModal from "../src/app_components/modals/coachModal";
+import ManageMembersModal from "@/src/app_components/modals/memberModal";
+import ManageCoachesModal from "@/src/app_components/modals/coachModal";
 
-import DeleteActionCancelModal from "../src/app_components/modals/deleteByNameModal";
+import DeleteActionCancelModal from "@/src/app_components/modals/deleteByNameModal";
 
 import { TouchableHighlight } from "react-native-gesture-handler";
-import FilterGrid from "../src/app_components/Grids/FilterGrid";
-import { WorkoutGroupSquares } from "../src/app_components/Grids/GymClasses/WorkoutGroupSquares";
-import { TestIDs } from "../src/utils/constants";
-import moc from "../src/../assets/bgs/moc.png";
-import BannerAddMembership from "../src/app_components/ads/BannerAd";
+import FilterGrid from "@/src/app_components/Grids/FilterGrid";
+import { WorkoutGroupSquares } from "@/src/app_components/Grids/WorkoutGroups/WorkoutGroupSquares";
+import { TestIDs } from "@/src/utils/constants";
+import moc from "@/assets/bgs/moc.png";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
 export type Props = StackScreenProps<RootStackParamList, "GymClassScreen">;
 
 const GymClassScreenContainer = styled(Container)`

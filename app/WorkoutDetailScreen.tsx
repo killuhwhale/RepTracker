@@ -23,6 +23,7 @@ import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import { useLocalSearchParams } from "expo-router";
 import { useGetWorkoutByIDQuery } from "@/src/redux/api/apiSlice";
 import WorkoutItemPreviewHorizontalList from "@/src/app_components/Cards/WorkoutItemPreviewHorizontalList";
+import { useTheme } from "styled-components";
 
 export type Props = StackScreenProps<RootStackParamList, "WorkoutDetailScreen">;
 
@@ -115,27 +116,39 @@ const WorkoutDetailScreen: FunctionComponent = () => {
   const [tags, names] = stats.getStats();
   // const tags = stats.tags;
   // const names = stats.names;
+  const theme = useTheme();
 
   return (
     <ScreenContainer>
       <BannerAddMembership />
 
       <View style={{ flex: 1, width: "100%" }}>
-        <View style={{ flex: 1 }}>
-          <TSTitleText>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            width: "100%",
+            flexDirection: "row",
+          }}
+        >
+          <TSSnippetText textStyles={{ color: theme.palette.accent }}>
             {isSuccess && !isLoading
-              ? `${workout.workout_items.length} items`
+              ? `Exercises (${workout.workout_items.length})`
               : "no items"}
-          </TSTitleText>
+          </TSSnippetText>
         </View>
 
         <View style={{ flexGrow: 2, flexShrink: 1, flexBasis: 0 }}>
           <TSTitleText>
-            {title.length < 1 ? "Title here..." : title}
+            {title.length < 1
+              ? "Title here... (you didnt give a title)"
+              : title}
           </TSTitleText>
 
           <TSCaptionText textStyles={{ padding: 6 }}>
-            {desc.length < 1 ? "Description here..." : desc}
+            {desc.length < 1
+              ? "Description here... (you didnt give a description)"
+              : desc}
           </TSCaptionText>
 
           {instruction && instruction !== "undefined" ? (
@@ -167,7 +180,11 @@ const WorkoutDetailScreen: FunctionComponent = () => {
         >
           <View style={{ marginTop: 8, padding: 6 }}>
             <TSParagrapghText>
-              {WORKOUT_TYPES[scheme_type]} {displayJList(scheme_rounds)}
+              Type: {WORKOUT_TYPES[scheme_type]}{" "}
+              {scheme_rounds.length > 0 &&
+              scheme_rounds.indexOf("undefined") == -1
+                ? displayJList(scheme_rounds)
+                : ""}
             </TSParagrapghText>
           </View>
 
@@ -176,7 +193,7 @@ const WorkoutDetailScreen: FunctionComponent = () => {
               testID={""}
               data={workout.workout_items}
               schemeType={scheme_type}
-              itemWidth={200}
+              itemWidth={120}
               ownedByClass={ownedByClass == 1 ? true : false}
             />
           ) : (

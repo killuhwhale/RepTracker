@@ -13,25 +13,25 @@ import {
   GymTitleLimit,
   limitTextLength,
   mdFontSize,
-} from "../../../src/app_components/shared";
-import { LargeText } from "../../../src/app_components/Text/Text";
+} from "@/src/app_components/shared";
+import { LargeText } from "@/src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 import { launchImageLibrary, Asset } from "react-native-image-picker/src";
 
 import DocumentPicker from "react-native-document-picker";
 
 import { useTheme } from "styled-components";
-import { useAppDispatch } from "../../../src/redux/hooks";
-import { useCreateGymMutation } from "../../../src/redux/api/apiSlice";
+import { useAppDispatch } from "@/src/redux/hooks";
+import { useCreateGymMutation } from "@/src/redux/api/apiSlice";
 
-import { RootStackParamList } from "../../../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
-import Input from "../../../src/app_components/Input/input";
-import { RegularButton } from "../../../src/app_components/Buttons/buttons";
-import { TestIDs, nodeEnv } from "../../../src/utils/constants";
-import AlertModal from "../../../src/app_components/modals/AlertModal";
-import BannerAddMembership from "../../../src/app_components/ads/BannerAd";
-import InterstitialAdMembership from "../../../src/app_components/ads/InterstitialAd";
+import Input from "@/src/app_components/Input/input";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import { TestIDs, nodeEnv } from "@/src/utils/constants";
+import AlertModal from "@/src/app_components/modals/AlertModal";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
+import InterstitialAdMembership from "@/src/app_components/ads/InterstitialAd";
 export type Props = StackScreenProps<RootStackParamList, "CreateGymScreen">;
 
 const PageContainer = styled(Container)`

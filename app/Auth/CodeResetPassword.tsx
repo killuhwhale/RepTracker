@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { RegularButton } from "../../src/app_components/Buttons/buttons";
-import Input, { AutoCaptilizeEnum } from "../../src/app_components/Input/input";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import Input, { AutoCaptilizeEnum } from "@/src/app_components/Input/input";
 import {
   TSParagrapghText,
   TSCaptionText,
-} from "../../src/app_components/Text/Text";
+} from "@/src/app_components/Text/Text";
 import { useTheme } from "styled-components";
 
 interface CodeResetPasswordProps {

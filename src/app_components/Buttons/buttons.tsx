@@ -50,15 +50,13 @@ const RegularButton: FunctionComponent<ButtonProps> = (props) => {
       onPress={props.disabled ? () => {} : props.onPress}
       underlayColor={props.underlayColor || theme.palette.backgroundColor}
       style={[
+        { backgroundColor: theme.palette.darkGray },
+        props.btnStyles,
         {
           paddingVertical: 4,
           alignItems: "center",
-          backgroundColor: theme.palette.darkGray,
-          paddingLeft: 8,
-          paddingRight: 8,
           borderRadius: 8,
         },
-        props.btnStyles,
       ]}
     >
       {props.text ? (
@@ -81,18 +79,20 @@ const LargeButton: FunctionComponent<ButtonProps> = (props) => {
       underlayColor={props.underlayColor || theme.palette.backgroundColor}
       style={[
         {
-          paddingVertical: 4,
+          paddingVertical: 3,
           alignItems: "center",
           backgroundColor: theme.palette.darkGray,
-          paddingLeft: 8,
-          paddingRight: 8,
+          paddingHorizontal: 24,
+
           borderRadius: 8,
         },
         props.btnStyles,
       ]}
     >
       {props.text ? (
-        <TSInputText textStyles={props.textStyles}>{props.text}</TSInputText>
+        <TSCaptionText textStyles={[props.textStyles, { fontWeight: "bold" }]}>
+          {props.text}
+        </TSCaptionText>
       ) : (
         <>{props.children}</>
       )}

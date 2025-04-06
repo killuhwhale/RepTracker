@@ -20,34 +20,34 @@ import {
   SCREEN_HEIGHT,
   WorkoutGroupDescLimit,
   WorkoutGroupTitleLimit,
-} from "../../../src/app_components/shared";
+} from "@/src/app_components/shared";
 import {
   TSCaptionText,
   TSParagrapghText,
   TSTitleText,
-} from "../../../src/app_components/Text/Text";
+} from "@/src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 import ImagePicker, { ImageOrVideo } from "react-native-image-crop-picker";
 import DocumentPicker from "react-native-document-picker";
 
 import { useTheme } from "styled-components";
-import { useAppDispatch } from "../../../src/redux/hooks";
+import { useAppDispatch } from "@/src/redux/hooks";
 import {
   useCreateWorkoutGroupMutation,
   useGetProfileViewQuery,
-} from "../../../src/redux/api/apiSlice";
-import { MediaSlider } from "../../../src/app_components/MediaSlider/MediaSlider";
+} from "@/src/redux/api/apiSlice";
+// import { MediaSlider } from "@/src/app_components/MediaSlider/MediaSlider";
 
-import { RootStackParamList } from "../../../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 import DatePicker from "react-native-date-picker";
 
-import { RegularButton } from "../../../src/app_components/Buttons/buttons";
-import Input from "../../../src/app_components/Input/input";
-import { TestIDs, nodeEnv } from "../../../src/utils/constants";
-import AlertModal from "../../../src/app_components/modals/AlertModal";
-import BannerAddMembership from "../../../src/app_components/ads/BannerAd";
-import InterstitialAdMembership from "../../../src/app_components/ads/InterstitialAd";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import Input from "@/src/app_components/Input/input";
+import { TestIDs, nodeEnv } from "@/src/utils/constants";
+import AlertModal from "@/src/app_components/modals/AlertModal";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
+import InterstitialAdMembership from "@/src/app_components/ads/InterstitialAd";
 import { dateFormat } from "@/src/utils/algos";
 import { router, useLocalSearchParams } from "expo-router";
 export type Props = StackScreenProps<
@@ -104,7 +104,9 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   const theme = useTheme();
   const params = useLocalSearchParams();
 
-  const { ownerID } = params;
+  const { ownerID: _ownerID } = params;
+  const ownerID: string = _ownerID as string;
+
   const ownedByClass = false;
   const {
     data: userData,
@@ -119,6 +121,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   const [title, setTitle] = useState("");
   const [forDate, setForDate] = useState<Date>(new Date());
   const [showAlert, setShowAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
   const [caption, setCaption] = useState("");
   // Need to set ownedByClass somehow......
   // 1. User has classes, use a picker || Deciding to not use a picker. We will just go to the class and add from there...
@@ -165,32 +168,39 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
     // Need to get file from the URI
     const data = new FormData();
     data.append("owner_id", ownerID);
-    data.append("owned_by_class", ownedByClass);
+    data.append("owned_by_class", ownedByClass ? "True" : "False");
 
     data.append("title", title);
     data.append("caption", caption);
     data.append("for_date", dateFormat(forDate));
-    data.append("media_ids", []);
-    if (files && files.length) {
-      files.forEach((file) =>
-        data.append("files", {
-          uri: file.path,
-          name: file.path,
-          type: file.mime,
-        })
-      );
-    }
+    // data.append("media_ids", []);
+    // if (files && files.length) {
+    //   files.forEach((file) =>
+    //     data.append("files", {
+    //       uri: file.path,
+    //       name: file.path,
+    //       type: file.mime,
+    //     })
+    //   );
+    // }
 
     console.log("_createWorkout FOrmdata");
     console.log("_createWorkout FOrmdata", data);
 
     try {
       const workoutGroup = await createWorkoutGroup(data).unwrap();
-      console.log("Gym class res", workoutGroup.status);
+      console.log("Create WorkoutGroup res", workoutGroup.status);
+
       if (workoutGroup.id) {
         router.navigate("/");
+      } else if (workoutGroup.err_type === 0 || workoutGroup.error) {
+        setShowAlert(true);
+        setAlertMsg(`"${title}" already exists. Please choose a new Title.`);
       } else if (workoutGroup.err_type === 1 || workoutGroup.detail) {
         setShowAlert(true);
+        setAlertMsg(
+          "Failed to create workoutGroup: members are limited to 15 workouts per day and non members 1 workout per day including Completed workouts."
+        );
       }
     } catch (err) {
       console.log("Error creating  WorkoutGroup", err);
@@ -200,6 +210,15 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
   };
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const CREATE_TEXT_STYLE = { paddingVertical: 2 };
+  const CREATE_BTN_STYLE = {
+    paddingVertical: 12,
+    marginHorizontal: 24,
+    backgroundColor: theme.palette.transparent,
+    borderWidth: 1,
+    border: "",
+    borderColor: "white",
+  };
 
   return (
     <PageContainer>
@@ -209,8 +228,8 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
       >
         <View style={{ height: "100%", width: "100%", flex: 1 }}>
           <BannerAddMembership />
-          <View style={{ flex: 20 }}>
-            <View style={{ flex: 1 }}>
+          <View style={{ flex: 20, marginTop: 12 }}>
+            <View style={{ flex: 1, marginBottom: 6 }}>
               <TSTitleText
                 textStyles={{ marginBottom: 8, textAlign: "center" }}
               >
@@ -274,22 +293,27 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
               <View
                 style={{
                   flexDirection: "row",
+                  flex: 1,
                   height: 35,
                   width: "100%",
-                  backgroundColor: theme.palette.darkGray,
+
                   justifyContent: "center",
                   alignItems: "center",
+                  marginTop: 12,
                 }}
               >
                 <TouchableHighlight
                   style={{
-                    height: "100%",
-                    width: "100%",
+                    flex: 1,
                     justifyContent: "center",
+                    marginHorizontal: 48,
+                    paddingVertical: 6,
+                    borderRadius: 12,
+                    backgroundColor: theme.palette.primary.main,
                   }}
                   onPress={() => setShowDatePicker(!showDatePicker)}
                 >
-                  <>
+                  <View>
                     <TSCaptionText
                       textStyles={{ textAlign: "center", paddingLeft: 16 }}
                     >
@@ -307,7 +331,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
                       buttonColor={theme.palette.text}
                       title={"For Date"}
                     />
-                  </>
+                  </View>
                 </TouchableHighlight>
               </View>
             </View>
@@ -329,10 +353,8 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
                     onPress={() => {
                       setReadyToCreate(true); // Trigger useEffect
                     }}
-                    btnStyles={{
-                      backgroundColor: theme.palette.darkGray,
-                      paddingVertical: 8,
-                    }}
+                    btnStyles={CREATE_BTN_STYLE}
+                    textStyles={CREATE_TEXT_STYLE}
                     text="Create"
                   />
                 ) : (
@@ -341,7 +363,8 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
                       onPress={() => {
                         setShowAd(true);
                       }}
-                      btnStyles={{ backgroundColor: theme.palette.darkGray }}
+                      btnStyles={CREATE_BTN_STYLE}
+                      textStyles={CREATE_TEXT_STYLE}
                       text="Create"
                     />
                     <InterstitialAdMembership
@@ -362,7 +385,7 @@ const CreateWorkoutGroupScreen: FunctionComponent = () => {
           </View>
           <AlertModal
             closeText="Close"
-            bodyText="Failed to create workoutGroup: members are limited to 15 workouts per day and non members 1 workout per day including Completed workouts."
+            bodyText={alertMsg}
             modalVisible={showAlert}
             onRequestClose={() => setShowAlert(false)}
           />

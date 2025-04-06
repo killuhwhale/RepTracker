@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { TestIDs } from "../../src/utils/constants";
-import { TSCaptionText } from "../../src/app_components/Text/Text";
+import { TestIDs } from "@/src/utils/constants";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
 import { useTheme } from "styled-components";
 import { Style } from "twrnc/dist/esm/types";
 

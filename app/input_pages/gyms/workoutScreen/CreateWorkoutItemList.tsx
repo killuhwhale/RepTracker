@@ -8,20 +8,20 @@ import {
 import { useTheme } from "styled-components";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import { TSCaptionText } from "../../../../src/app_components/Text/Text";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
 import {
   SCREEN_HEIGHT,
   WORKOUT_TYPES,
   STANDARD_W,
   REPS_W,
-} from "../../../../src/app_components/shared";
+} from "@/src/app_components/shared";
 
 import {
   WorkoutDualItemProps,
   WorkoutItemProps,
-} from "../../../../src/app_components/Cards/types";
-import ItemString from "../../../../src/app_components/WorkoutItems/ItemString";
-import { AnimatedButton } from "../../../../src/app_components/Buttons/buttons";
+} from "@/src/app_components/Cards/types";
+import ItemString from "@/src/app_components/WorkoutItems/ItemString";
+import { AnimatedButton } from "@/src/app_components/Buttons/buttons";
 import { ColorPalette, COLORSPALETTE } from "@/src/utils/algos";
 
 const ItemRowButton: FunctionComponent<{

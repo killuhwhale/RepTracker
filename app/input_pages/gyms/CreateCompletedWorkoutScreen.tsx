@@ -23,7 +23,7 @@ import {
   limitTextLength,
   CompletedWorkoutGroupCaptionLimit,
   MaxDigits,
-} from "../../../src/app_components/shared";
+} from "@/src/app_components/shared";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import RNPickerSelect from "react-native-picker-select";
@@ -35,30 +35,30 @@ import { ImageOrVideo } from "react-native-image-crop-picker";
 import {
   TSCaptionText,
   TSParagrapghText,
-} from "../../../src/app_components/Text/Text";
-import { useAppDispatch } from "../../../src/redux/hooks";
-import { useCreateCompletedWorkoutMutation } from "../../../src/redux/api/apiSlice";
+} from "@/src/app_components/Text/Text";
+import { useAppDispatch } from "@/src/redux/hooks";
+import { useCreateCompletedWorkoutMutation } from "@/src/redux/api/apiSlice";
 
-import { RootStackParamList } from "../../../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 // import {MediaPicker} from './CreateWorkoutGroupScreen';
-// import {MediaSlider} from '../../../src/app_components/MediaSlider/MediaSlider';
+// import {MediaSlider} from '@/src/app_components/MediaSlider/MediaSlider';
 import {
   WorkoutCardProps,
   WorkoutGroupProps,
   WorkoutItemProps,
-} from "../../../src/app_components/Cards/types";
+} from "@/src/app_components/Cards/types";
 import { verifyWorkoutItem } from "./CreateWorkoutScreen";
-import ActionCancelModal from "../../../src/app_components/modals/ActionCancelModal";
+import ActionCancelModal from "@/src/app_components/modals/ActionCancelModal";
 
 export type Props = StackScreenProps<
   RootStackParamList,
   "CreateCompletedWorkoutScreen"
 >;
-import Input from "../../../src/app_components/Input/input";
-import ItemString from "../../../src/app_components/WorkoutItems/ItemString";
-import { RegularButton } from "../../../src/app_components/Buttons/buttons";
-import AlertModal from "../../../src/app_components/modals/AlertModal";
-import { isDual } from "../../../src/app_components/WorkoutItems/ItemPanel";
+import Input from "@/src/app_components/Input/input";
+import ItemString from "@/src/app_components/WorkoutItems/ItemString";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import AlertModal from "@/src/app_components/modals/AlertModal";
+import { isDual } from "@/src/app_components/WorkoutItems/ItemPanel";
 import EditWorkoutDualItem from "./workoutScreen/EditWorkoutDualItem";
 import { dateFormat, jListToNumStr, numberInputStyle } from "@/src/utils/algos";
 

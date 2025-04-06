@@ -6,10 +6,10 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import HomePage from "../app_pages/home";
-import GymScreen from "../app_pages/GymScreen";
-import GymClassScreen from "../app_pages/GymClassScreen";
-import WorkoutScreen from "../app_pages/WorkoutScreen";
+import HomePage from "@/app/home";
+import GymScreen from "@/app/GymScreen";
+import GymClassScreen from "@/app/GymClassScreen";
+import WorkoutScreen from "@/app/WorkoutScreen";
 import {
   AnyWorkoutItem,
   GymCardProps,
@@ -21,27 +21,27 @@ import {
   WorkoutNameSimpleProps,
 } from "../app_components/Cards/types";
 import { DefaultTheme, useTheme } from "styled-components";
-import Profile from "../app_pages/Profile";
-import AuthScreen from "../app_pages/AuthScreen";
-import CreateGymScreen from "../app_pages/input_pages/gyms/CreateGymScreen";
-import CreateGymClassScreen from "../app_pages/input_pages/gyms/CreateGymClassScreen";
-import CreateWorkoutGroupScreen from "../app_pages/input_pages/gyms/CreateWorkoutGroupScreen";
-import CreateWorkoutScreen from "../app_pages/input_pages/gyms/CreateWorkoutScreen";
-import WorkoutDetailScreen from "../app_pages/WorkoutDetailScreen";
-import WorkoutNameDetailScreen from "../app_pages/WorkoutNameDetailScreen";
-import CreateCompletedWorkoutScreen from "../app_pages/input_pages/gyms/CreateCompletedWorkoutScreen";
-import StatsScreen from "../app_pages/StatsScreen";
+import Profile from "@/app/(tabs)/Profile";
+import AuthScreen from "@/app/AuthScreen";
+import CreateGymScreen from "@/app/input_pages/gyms/CreateGymScreen";
+import CreateGymClassScreen from "@/app/input_pages/gyms/CreateGymClassScreen";
+import CreateWorkoutGroupScreen from "@/app/input_pages/gyms/CreateWorkoutGroupScreen";
+import CreateWorkoutScreen from "@/app/input_pages/gyms/CreateWorkoutScreen";
+import WorkoutDetailScreen from "@/app/WorkoutDetailScreen";
+import WorkoutNameDetailScreen from "@/app/WorkoutNameDetailScreen";
+import CreateCompletedWorkoutScreen from "@/app/input_pages/gyms/CreateCompletedWorkoutScreen";
+import StatsScreen from "@/app/(tabs)/StatsScreen";
 import Icon from "react-native-vector-icons/Ionicons";
 import { XSmallText } from "../app_components/Text/Text";
-import ResetPasswordScreen from "../app_pages/input_pages/users/ResetPassword";
+import ResetPasswordScreen from "@/app/input_pages/users/ResetPassword";
 import { SCREEN_HEIGHT } from "../app_components/shared";
-import UserWorkoutsScreen from "../app_pages/UserWorkoutsScreen";
+// import UserWorkoutsScreen from "@/app/UserWorkoutsScreen";
 import { TestIDs } from "../utils/constants";
-import GymSearchScreen from "../app_pages/GymSearchScreen";
+import GymSearchScreen from "@/app/(tabs)/GymSearchScreen";
 import { Platform, StyleSheet, View } from "react-native";
 import twrnc from "twrnc";
-import DailySnapshotScreen from "../app_pages/DailySnapshot";
-import { UserProps } from "../app_pages/types";
+import DailySnapshotScreen from "@/app/DailySnapshot";
+import { UserProps } from "@/app/types";
 // Screens and props each screen expects...
 
 export type RootStackParamList = {

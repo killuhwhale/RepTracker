@@ -3,11 +3,11 @@ import React, { FunctionComponent, useState } from "react";
 import { View } from "react-native";
 import { TSParagrapghText, TSCaptionText } from "../Text/Text";
 import { RegularButton } from "../Buttons/buttons";
-import { post } from "../../utils/fetchAPI";
-import { BASEURL } from "../../utils/constants";
+import { post } from "@/src/utils/fetchAPI";
+import { BASEURL } from "@/src/utils/constants";
 import Input, { AutoCaptilizeEnum } from "../Input/input";
 import { useTheme } from "styled-components";
-import { validEmailRegex } from "../../utils/algos";
+import { validEmailRegex } from "@/src/utils/algos";
 
 const ResetPasswordViaEmail: FunctionComponent = () => {
   const theme = useTheme();

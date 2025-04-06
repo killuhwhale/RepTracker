@@ -19,6 +19,7 @@ import {
   LargeText,
   TSTitleText,
   TSDateText,
+  TSSnippetText,
 } from "../src/app_components/Text/Text";
 
 import { useTheme } from "styled-components";
@@ -641,29 +642,31 @@ const WorkoutScreen: FunctionComponent = () => {
           <View
             style={{
               width: "100%",
-              alignItems: "flex-end",
+              alignItems: "flex-start",
+
+              marginBottom: 12,
               flexShrink: 1,
               flexGrow: 2,
               flexBasis: 0,
+              marginLeft: 12,
             }}
           >
-            <TSDateText>
-              {dateFormatDayOfWeek(new Date(workoutGroup.for_date))}
-            </TSDateText>
+            <TSSnippetText>{workoutGroup.caption}</TSSnippetText>
           </View>
 
           <View
             style={{
               width: "100%",
-              alignItems: "flex-start",
-              padding: 6,
-              marginBottom: 12,
+              alignItems: "flex-end",
               flexShrink: 1,
               flexGrow: 2,
               flexBasis: 0,
+              marginLeft: 12,
             }}
           >
-            <TSCaptionText>{workoutGroup.caption}</TSCaptionText>
+            <TSDateText>
+              {dateFormatDayOfWeek(new Date(workoutGroup.for_date))}
+            </TSDateText>
           </View>
 
           <View style={{ flexShrink: 1, flexGrow: 5, flexBasis: 0 }}>
@@ -700,6 +703,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         btnStyles={{
                           backgroundColor: "#4285F4",
                         }}
+                        textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Standard"
                       />
                     </View>
@@ -709,6 +713,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         btnStyles={{
                           backgroundColor: "#DB4437",
                         }}
+                        textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Reps"
                       />
                     </View>
@@ -727,6 +732,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         btnStyles={{
                           backgroundColor: "#F4B400",
                         }}
+                        textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Rounds"
                       />
                     </View>
@@ -736,6 +742,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         btnStyles={{
                           backgroundColor: "#0F9D58",
                         }}
+                        textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Creative"
                       />
                     </View>
@@ -759,6 +766,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         backgroundColor: showCreate
                           ? theme.palette.gray
                           : green,
+                        padding: 6,
                       }}
                       text={showCreate ? "X" : "Add Workout"}
                     />

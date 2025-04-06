@@ -1,28 +1,28 @@
-import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
-import {TSParagrapghText} from '../Text/Text';
-import {useTheme} from 'styled-components';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {Modal, ScrollView, View} from 'react-native';
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import { TSParagrapghText } from "@/src/app_components/Text/Text";
+import { useTheme } from "styled-components";
+import Icon from "react-native-vector-icons/Ionicons";
+import { Modal, ScrollView, View } from "react-native";
 import {
   useCreateCoachMutation,
   useDeleteCoachMutation,
   useGetCoachesForGymClassQuery,
   useGetUsersQuery,
-} from '../../redux/api/apiSlice';
-import RNPickerSelect from 'react-native-picker-select';
-import {filter} from '../../utils/algos';
+} from "@/src/redux/api/apiSlice";
+import RNPickerSelect from "react-native-picker-select";
+import { filter } from "@/src/utils/algos";
 
-import ActionCancelModal from '../../app_components/modals/ActionCancelModal';
-import {centeredViewStyle, settingsModalViewStyle} from './modalStyles';
-import {mdFontSize} from '../shared';
-import Input from '../Input/input';
-import {RegularButton} from '../Buttons/buttons';
+import ActionCancelModal from "@/src/app_components/modals/ActionCancelModal";
+import { centeredViewStyle, settingsModalViewStyle } from "./modalStyles";
+import { mdFontSize } from "@/src/app_components/shared";
+import Input from "@/src/app_components/Input/input";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
 
 const ManageCoachesModal: FunctionComponent<{
   modalVisible: boolean;
   onRequestClose(): void;
   gymClassID: string | number;
-}> = props => {
+}> = (props) => {
   const theme = useTheme();
   const pickerRef = useRef<any>();
   const {
@@ -31,7 +31,7 @@ const ManageCoachesModal: FunctionComponent<{
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery('');
+  } = useGetUsersQuery("");
   // console.log('coach modal users: ', data);
   const [newCoach, setNewCoach] = useState(0); // if we have users, init to 0, the first user, else we do not have any coaches to add
   const {
@@ -41,22 +41,22 @@ const ManageCoachesModal: FunctionComponent<{
     isError: coachesIsError,
     error: coachesError,
   } = useGetCoachesForGymClassQuery(props.gymClassID);
-  const [createCoachMutation, {isLoading}] = useCreateCoachMutation();
-  const [deleteCoachMutation, {isLoading: deleteCoachIsLoading}] =
+  const [createCoachMutation, { isLoading }] = useCreateCoachMutation();
+  const [deleteCoachMutation, { isLoading: deleteCoachIsLoading }] =
     useDeleteCoachMutation();
   const [showRemoveCoach, setShowRemoveCoach] = useState(false);
   const [coachToRemove, setCoachToRemove] = useState(-1);
 
   const addNewCoach = () => {
-    console.log('Adding ', newCoach, data[newCoach]);
+    console.log("Adding ", newCoach, data[newCoach]);
     if (newCoach >= data?.length || data[newCoach] == undefined) {
-      console.log('Invalid member');
+      console.log("Invalid member");
       return;
     }
     const user = data[newCoach];
     const coachData = new FormData();
-    coachData.append('user_id', user.id);
-    coachData.append('gym_class', props.gymClassID);
+    coachData.append("user_id", user.id);
+    coachData.append("gym_class", props.gymClassID);
     createCoachMutation(coachData);
   };
 
@@ -67,12 +67,12 @@ const ManageCoachesModal: FunctionComponent<{
 
   const removeCoach = async () => {
     const coach = allCoaches[coachToRemove];
-    console.log('Reoving coach: ', coach, coachToRemove, allCoaches);
+    console.log("Reoving coach: ", coach, coachToRemove, allCoaches);
     const removeCoachData = new FormData();
-    removeCoachData.append('user_id', coach?.id);
-    removeCoachData.append('gym_class', props.gymClassID);
+    removeCoachData.append("user_id", coach?.id);
+    removeCoachData.append("gym_class", props.gymClassID);
     const res = await deleteCoachMutation(removeCoachData).unwrap();
-    console.log('del res', res);
+    console.log("del res", res);
     setCoachToRemove(-1);
     setShowRemoveCoach(false);
     if (res.data) {
@@ -84,29 +84,29 @@ const ManageCoachesModal: FunctionComponent<{
     allCoaches.legngth > 0 &&
     coachToRemove < allCoaches.length
       ? allCoaches[coachToRemove]?.username
-      : {username: ''};
+      : { username: "" };
 
-  const validData = data && Object.keys(data).indexOf('error') < 0;
-  const _data = validData ? data?.map(user => user.username) : [];
+  const validData = data && Object.keys(data).indexOf("error") < 0;
+  const _data = validData ? data?.map((user) => user.username) : [];
   const [stringData, setOgData] = useState<string[]>(_data);
 
   const [filterResult, setFilterResult] = useState<number[]>(
-    Array.from(Array(stringData.length).keys()).map(idx => idx),
+    Array.from(Array(stringData.length).keys()).map((idx) => idx)
   );
   useEffect(() => {
-    setOgData(validData ? data.map(user => user.username) : []);
+    setOgData(validData ? data.map((user) => user.username) : []);
     setFilterResult(
-      Array.from(Array(data?.length || 0).keys()).map(idx => idx),
+      Array.from(Array(data?.length || 0).keys()).map((idx) => idx)
     );
     if (data?.length <= 0) {
       setNewCoach(-1); // When new term is entered, reset coach if no items in filtered result.
     }
   }, [data]);
 
-  const [term, setTerm] = useState('');
+  const [term, setTerm] = useState("");
   const filterText = (term: string) => {
     // Updates filtered data.
-    const {items, marks} = filter(term, stringData, {word: false});
+    const { items, marks } = filter(term, stringData, { word: false });
     setFilterResult(items);
     setTerm(term);
     if (items?.length <= 0) {
@@ -120,42 +120,47 @@ const ManageCoachesModal: FunctionComponent<{
       animationType="slide"
       transparent={true}
       visible={props.modalVisible}
-      onRequestClose={props.onRequestClose}>
+      onRequestClose={props.onRequestClose}
+    >
       <View style={centeredViewStyle.centeredView}>
         <View
           style={[
             settingsModalViewStyle.settingsModalView,
 
-            {backgroundColor: theme.palette.darkGray},
-          ]}>
+            { backgroundColor: theme.palette.darkGray },
+          ]}
+        >
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: "row",
+              alignItems: "center",
               marginBottom: 12,
               flex: 1,
-            }}>
+            }}
+          >
             <TSParagrapghText>Manage Coaches</TSParagrapghText>
           </View>
 
           <View
             style={{
               flex: 3,
-              width: '100%',
-            }}>
+              width: "100%",
+            }}
+          >
             {!usersLoading ? (
               <View
                 style={{
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                  height: '100%',
-                }}>
-                <View style={{height: 40, marginTop: 16}}>
+                  justifyContent: "space-around",
+                  alignContent: "space-between",
+                  height: "100%",
+                }}
+              >
+                <View style={{ height: 40, marginTop: 16 }}>
                   <Input
                     onChangeText={filterText}
                     value={term}
                     containerStyle={{
-                      width: '100%',
+                      width: "100%",
                       backgroundColor: theme.palette.backgroundColor,
                       borderRadius: 8,
                       paddingHorizontal: 8,
@@ -163,7 +168,7 @@ const ManageCoachesModal: FunctionComponent<{
                     leading={
                       <Icon
                         name="search"
-                        style={{fontSize: mdFontSize}}
+                        style={{ fontSize: mdFontSize }}
                         color={theme.palette.text}
                       />
                     }
@@ -183,16 +188,16 @@ const ManageCoachesModal: FunctionComponent<{
                       value={newCoach}
                       style={{
                         inputAndroidContainer: {
-                          alignItems: 'center',
+                          alignItems: "center",
                           borderWidth: 1,
-                          borderColor: 'white',
+                          borderColor: "white",
                           borderRadius: 12,
                         },
                         inputAndroid: {
                           color: theme.palette.text,
                         },
                         inputIOSContainer: {
-                          alignItems: 'center',
+                          alignItems: "center",
                         },
                         inputIOS: {
                           color: theme.palette.text,
@@ -213,7 +218,7 @@ const ManageCoachesModal: FunctionComponent<{
                     />
                   </View>
                 ) : (
-                  <View style={{height: 35}} />
+                  <View style={{ height: 35 }} />
                 )}
 
                 {/* <Picker
@@ -246,7 +251,7 @@ const ManageCoachesModal: FunctionComponent<{
                 </Picker> */}
                 <RegularButton
                   onPress={addNewCoach}
-                  btnStyles={{backgroundColor: theme.palette.gray}}
+                  btnStyles={{ backgroundColor: theme.palette.gray }}
                   text="Add Coach"
                 />
               </View>
@@ -254,49 +259,53 @@ const ManageCoachesModal: FunctionComponent<{
               <></>
             )}
           </View>
-          <View style={{flex: 1, width: '100%'}}>
-            <TSParagrapghText textStyles={{alignSelf: 'flex-start'}}>
+          <View style={{ flex: 1, width: "100%" }}>
+            <TSParagrapghText textStyles={{ alignSelf: "flex-start" }}>
               Coaches
             </TSParagrapghText>
           </View>
 
           {!coachesLoading ? (
-            <View style={{flex: 2, minWidth: '100%'}}>
+            <View style={{ flex: 2, minWidth: "100%" }}>
               <ScrollView
-                style={{width: '100%', flex: 1, minWidth: '100%'}}
-                contentContainerStyle={{justifyContent: 'center'}}>
+                style={{ width: "100%", flex: 1, minWidth: "100%" }}
+                contentContainerStyle={{ justifyContent: "center" }}
+              >
                 {allCoaches?.map((coach, i) => {
-                  console.log('C :: ', coach);
+                  console.log("C :: ", coach);
                   return (
                     <View
                       key={`key_coac${coach.id}__`}
                       style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: '100%',
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
                         borderBottomWidth: 1,
                         borderTopWidth: 1,
-                        borderColor: 'white',
+                        borderColor: "white",
                         paddingVertical: 8,
-                      }}>
+                      }}
+                    >
                       <View
                         style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
                         <View
                           style={{
                             flex: 5,
-                            alignItems: 'flex-start',
+                            alignItems: "flex-start",
                             paddingLeft: 16,
-                          }}>
+                          }}
+                        >
                           <TSParagrapghText>{coach.username}</TSParagrapghText>
                         </View>
-                        <View style={{flex: 1}}>
+                        <View style={{ flex: 1 }}>
                           <Icon
                             name="remove-circle-sharp"
                             color="red"
-                            style={{fontSize: 24}}
+                            style={{ fontSize: 24 }}
                             onPress={() => {
                               onRemoveCoach(i);
                             }}
@@ -314,14 +323,15 @@ const ManageCoachesModal: FunctionComponent<{
 
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              width: '100%',
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
               flex: 1,
-            }}>
+            }}
+          >
             <RegularButton
               onPress={props.onRequestClose}
-              btnStyles={{backgroundColor: theme.palette.gray, width: '100%'}}
+              btnStyles={{ backgroundColor: theme.palette.gray, width: "100%" }}
               text="Close"
             />
           </View>

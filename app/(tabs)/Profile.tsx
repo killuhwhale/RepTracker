@@ -14,7 +14,7 @@ import {
   smFontSize,
   isDateInFuture,
   SCREEN_HEIGHT,
-} from "../../src/app_components/shared";
+} from "@/src/app_components/shared";
 import {
   TSCaptionText,
   TSParagrapghText,
@@ -23,7 +23,7 @@ import {
   TSSnippetText,
   TSTitleText,
   TSButtonText,
-} from "../../src/app_components/Text/Text";
+} from "@/src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import { useTheme } from "styled-components";
@@ -35,12 +35,12 @@ import {
   useGetProfileViewQuery,
   useGetUserGymsQuery,
   useUpdateUsernameMutation,
-} from "../../src/redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 
-import { RootStackParamList } from "../../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import twrnc from "twrnc";
 
-import * as RootNavigation from "../../src/navigators/RootNavigation";
+import * as RootNavigation from "@/src/navigators/RootNavigation";
 import { StackScreenProps } from "@react-navigation/stack";
 import {
   ActivityIndicator,
@@ -61,15 +61,15 @@ import {
   GymCardProps,
   GymClass,
   GymClassCardProps,
-} from "../../src/app_components/Cards/types";
-import Input from "../../src/app_components/Input/input";
-import { debounce } from "../../src/utils/algos";
-import DeleteActionCancelModal from "../../src/app_components/modals/deleteByNameModal";
-import { RegularButton } from "../../src/app_components/Buttons/buttons";
-import { TestIDs } from "../../src/utils/constants";
+} from "@/src/app_components/Cards/types";
+import Input from "@/src/app_components/Input/input";
+import { debounce } from "@/src/utils/algos";
+import DeleteActionCancelModal from "@/src/app_components/modals/deleteByNameModal";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import { TestIDs } from "@/src/utils/constants";
 
-import BannerAddMembership from "../../src/app_components/ads/BannerAd";
-import ProfileSettingsModal from "../../src/app_components/modals/profileSettingsModal";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
+import ProfileSettingsModal from "@/src/app_components/modals/profileSettingsModal";
 import { UserProps } from "../types";
 import Purchases, {
   PurchasesOffering,

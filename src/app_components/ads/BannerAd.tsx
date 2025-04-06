@@ -1,7 +1,7 @@
 import {
   useGetAdUnitsQuery,
   useGetUserInfoQuery,
-} from "../../redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,

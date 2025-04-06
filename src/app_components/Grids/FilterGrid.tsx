@@ -3,7 +3,7 @@ import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
 import { View } from "react-native";
 
-import { filter } from "../../utils/algos";
+import { filter } from "@/src/utils/algos";
 import Input from "../Input/input";
 import { tsCaption } from "../shared";
 

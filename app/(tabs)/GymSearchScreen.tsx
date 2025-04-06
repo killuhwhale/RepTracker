@@ -1,19 +1,19 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styled from "styled-components/native";
-import { Container } from "../../src/app_components/shared";
-import { TSCaptionText } from "../../src/app_components/Text/Text";
+import { Container } from "@/src/app_components/shared";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
-import * as RootNavigation from "../../src/navigators/RootNavigation";
+import * as RootNavigation from "@/src/navigators/RootNavigation";
 import { useTheme } from "styled-components";
-import { GymCardList } from "../../src/app_components/Cards/cardList";
-import { useGetGymsQuery } from "../../src/redux/api/apiSlice";
-import AuthManager from "../../src/utils/auth";
-import { RootStackParamList } from "../../src/navigators/RootStack";
+import { GymCardList } from "@/src/app_components/Cards/cardList";
+import { useGetGymsQuery } from "@/src/redux/api/apiSlice";
+import AuthManager from "@/src/utils/auth";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 import { View } from "react-native";
-import { filter } from "../../src/utils/algos";
-import Input from "../../src/app_components/Input/input";
-import BannerAddMembership from "../../src/app_components/ads/BannerAd";
+import { filter } from "@/src/utils/algos";
+import Input from "@/src/app_components/Input/input";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
 
 export type Props = StackScreenProps<RootStackParamList, "HomePage">;
 

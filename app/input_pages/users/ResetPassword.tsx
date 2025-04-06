@@ -2,12 +2,12 @@ import React, { FunctionComponent } from "react";
 import { useTheme } from "styled-components";
 import styled from "styled-components/native";
 
-import { Container } from "../../../src/app_components/shared";
+import { Container } from "@/src/app_components/shared";
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "../../../src/navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 export type Props = StackScreenProps<RootStackParamList, "ResetPasswordScreen">;
 
-import ResetPasswordOld from "../../../src/app_components/passwords/resetPasswordOld";
+import ResetPasswordOld from "@/src/app_components/passwords/resetPasswordOld";
 
 const PageContainer = styled(Container)`
   background-color: ${(props) => props.theme.palette.backgroundColor};

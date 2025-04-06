@@ -1,14 +1,14 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTheme } from "styled-components";
-import { RootStackParamList } from "../../navigators/RootStack";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 export type Props = StackScreenProps<RootStackParamList, "Header">;
 import { NavigationContext, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
-import * as RootNavigation from "../../navigators/RootNavigation";
+import * as RootNavigation from "@/src/navigators/RootNavigation";
 import { TouchableOpacity, View } from "react-native";
 import { TSParagrapghText } from "../Text/Text";
-import { TestIDs } from "../../utils/constants";
+import { TestIDs } from "@/src/utils/constants";
 import LinearGradient from "react-native-linear-gradient";
 import GradientText from "./gradientText";
 import { router } from "expo-router";

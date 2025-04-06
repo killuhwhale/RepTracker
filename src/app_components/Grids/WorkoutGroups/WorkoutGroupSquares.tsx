@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components/native";
-import { SCREEN_HEIGHT } from "../../shared";
+import { SCREEN_HEIGHT } from "@/src/app_components/shared";
 import { useTheme } from "styled-components";
 import { View } from "react-native";
-import { WorkoutGroupCardProps } from "../../Cards/types";
+import { WorkoutGroupCardProps } from "@/src/app_components/Cards/types";
 import WorkoutGroupGridItem from "./WorkoutGroupGridItem";
 
 export const StyledList = styled.FlatList`
@@ -25,7 +25,6 @@ const WorkoutGroupSquares: FunctionComponent<{
   return (
     <StyledList
       onEndReached={() => {
-        console.log("End Reached!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (props.loadMore) {
           props.loadMore();
         }

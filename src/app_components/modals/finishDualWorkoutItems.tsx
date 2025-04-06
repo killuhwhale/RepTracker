@@ -18,7 +18,7 @@ import ItemString from "../WorkoutItems/ItemString";
 import {
   useFinishWorkoutGroupMutation,
   useRecordWorkoutDualItemsMutation,
-} from "../../redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 import EditWorkoutDualItem from "@/app/input_pages/gyms/workoutScreen/EditWorkoutDualItem";
 
 // If these keys are not empty, we need to show them to the user to fill in, witht he correct fields for each unit, i.e. distance -> distance_unit field

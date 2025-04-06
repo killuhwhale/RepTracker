@@ -9,9 +9,9 @@ import {
 import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RegularButton } from "../Buttons/buttons";
-import * as RootNavigation from "../../navigators/RootNavigation";
+import * as RootNavigation from "@/src/navigators/RootNavigation";
 import ActionCancelModal from "./ActionCancelModal";
-import AuthManager from "../../utils/auth";
+import AuthManager from "@/src/utils/auth";
 import { centeredViewStyle, settingsModalViewStyle } from "./modalStyles";
 import {
   MediumText,
@@ -20,7 +20,7 @@ import {
   TSSnippetText,
   TSTitleText,
 } from "../Text/Text";
-import { TestIDs } from "../../utils/constants";
+import { TestIDs } from "@/src/utils/constants";
 import { router } from "expo-router";
 import { DOMAIN_NAME } from "@/src/utils/constants";
 import { apiSlice } from "@/src/redux/api/apiSlice";

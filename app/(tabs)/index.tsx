@@ -13,7 +13,7 @@ import {
 } from "@/src/app_components/Cards/types";
 
 import FilterGrid from "@/src/app_components/Grids/FilterGrid";
-import { WorkoutGroupSquares } from "@/src/app_components/Grids/GymClasses/WorkoutGroupSquares";
+import { WorkoutGroupSquares } from "@/src/app_components/Grids/WorkoutGroups/WorkoutGroupSquares";
 import {
   useGetProfileViewQuery,
   useGetProfileWorkoutGroupsQuery,
@@ -137,7 +137,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
               name="add"
               testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               color={theme.palette.text}
-              style={{ fontSize: 24 }}
+              style={{ fontSize: 20 }}
             />
           </TouchableOpacity>
         </View>

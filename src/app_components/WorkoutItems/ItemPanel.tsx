@@ -44,7 +44,7 @@ function recordedInfo(
       : "";
   }
   return isDual(item) && !ownedByClass
-    ? `(${displayJList(item[`r_${key}`])})`
+    ? `(${displayJList(item[`r_${key}`])}) Reps`
     : "";
 }
 
@@ -127,7 +127,7 @@ const WorkoutItemRepsDurDistance: FunctionComponent<{
           <TSCaptionText>{displayJList(item.reps)} Reps </TSCaptionText>
 
           <TSCaptionText textStyles={{ color: recordedTextColor }}>
-            {recordedInfo("reps", item, ownedByClass)} Reps
+            {recordedInfo("reps", item, ownedByClass)}
           </TSCaptionText>
         </>
       ) : item.distance !== "[0]" ? (
@@ -213,11 +213,10 @@ const WorkoutItemPanel: FunctionComponent<{
       style={{
         width: itemWidth,
         minWidth: itemWidth,
-        height: SCREEN_HEIGHT * 0.18,
+        height: 120,
         borderRadius: 8,
-        marginVertical: 6,
         padding: 6,
-        marginHorizontal: 8,
+        marginRight: 8,
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -258,7 +257,7 @@ const WorkoutItemPanel: FunctionComponent<{
                 <Icon
                   name="alert-circle-outline"
                   color={theme.palette.text}
-                  style={{ fontSize: 16 }}
+                  style={{ fontSize: 12 }}
                 />
               </View>
             </View>
@@ -277,6 +276,7 @@ const WorkoutItemPanel: FunctionComponent<{
           <></>
         )}
       </View>
+
       <View
         style={{
           flex: 6,
@@ -328,10 +328,11 @@ const WorkoutItemPanel: FunctionComponent<{
           </View>
         </TouchableHighlight>
       </View>
+
       <View
         style={{
           alignSelf: "center",
-          flex: 2,
+          flex: 3,
           width: "100%",
           justifyContent: "center",
           alignContent: "center",
@@ -347,7 +348,8 @@ const WorkoutItemPanel: FunctionComponent<{
           />
         </TSCaptionText>
       </View>
-      <View style={{ alignItems: "center", flex: 5, width: "100%" }}>
+
+      <View style={{ alignItems: "center", flex: 2, width: "100%" }}>
         <WorkoutItemWeights
           item={item}
           ownedByClass={false}
@@ -360,6 +362,7 @@ const WorkoutItemPanel: FunctionComponent<{
         />
         <WorkoutItemRest item={item} ownedByClass={false} />
       </View>
+
       <PenaltyDisplayModal
         closeText="Close"
         bodyText={currentPenalty}

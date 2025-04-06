@@ -6,16 +6,16 @@ import {
   TSParagrapghText,
   TSSnippetText,
   XSmallText,
-} from "../../Text/Text";
+} from "@/src/app_components/Text/Text";
 import { router } from "expo-router";
-import { WorkoutGroupCardProps } from "../../Cards/types";
+import { WorkoutGroupCardProps } from "@/src/app_components/Cards/types";
 import { Image, TouchableHighlight, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Icon from "react-native-vector-icons/Ionicons";
 import twrnc from "twrnc";
-import moc from "../../../../assets/bgs/moc.png";
+import moc from "@/assets/bgs/moc.png";
 
-import { green } from "../../shared";
+import { green } from "@/src/app_components/shared";
 import { dateFormatDayOfWeek } from "@/src/utils/algos";
 
 const startColor = twrnc.color("bg-stone-900");
@@ -62,11 +62,7 @@ const WorkoutGroupGridItem: FunctionComponent<{
               alignItems: "center",
             }}
           >
-            <Image
-              style={{ width: 40, height: 40, borderRadius: 16 }}
-              source={moc}
-            />
-            <View style={{ flex: 5 }}>
+            {/* <View style={{ flex: 5 }}>
               <View style={{ marginVertical: 4 }}>
                 <TSSnippetText
                   numberOfLines={1}
@@ -95,6 +91,73 @@ const WorkoutGroupGridItem: FunctionComponent<{
                 />
               ) : (
                 <></>
+              )}
+            </View> */}
+            <View
+              style={{
+                backgroundColor: theme.palette.backgroundColor,
+                borderRadius: 16,
+                padding: 16,
+                margin: 8,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 6,
+                elevation: 4,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {/* <Icon
+                name="barbell-outline"
+                size={28}
+                color={green}
+                style={{ marginRight: 12 }}
+              /> */}
+
+              <Image
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 16,
+                  marginRight: 12,
+                }}
+                source={moc}
+              />
+              <View style={{ flex: 1 }}>
+                <TSSnippetText
+                  numberOfLines={1}
+                  textStyles={{ fontWeight: "bold", fontSize: 16 }}
+                >
+                  {props.card.title}
+                </TSSnippetText>
+                <TSDateText
+                  numberOfLines={1}
+                  textStyles={{
+                    fontSize: 12,
+                    color: "gray",
+                    marginTop: 2,
+                  }}
+                >
+                  {dateFormatDayOfWeek(new Date(props.card.for_date))}
+                </TSDateText>
+              </View>
+
+              {props.card.finished ? (
+                <View
+                  style={{
+                    backgroundColor: "#4ade80",
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 12,
+                  }}
+                >
+                  <XSmallText textStyles={{ color: "#064e3b" }}>
+                    Done
+                  </XSmallText>
+                </View>
+              ) : (
+                <Icon name="play-circle-outline" size={24} color={green} />
               )}
             </View>
           </View>

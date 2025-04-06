@@ -12,29 +12,29 @@ import {
   TSButtonText,
   TSCaptionText,
   TSSnippetText,
-} from "../../src/app_components/Text/Text";
+} from "@/src/app_components/Text/Text";
 import {
   Container,
   SCREEN_HEIGHT,
   CalcWorkoutStats,
   formatLongDate,
-} from "../../src/app_components/shared";
-import { RootStackParamList } from "../../src/navigators/RootStack";
+} from "@/src/app_components/shared";
+import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
-import { useGetCompletedWorkoutGroupsForUserByDateRangeQuery } from "../../src/redux/api/apiSlice";
+import { useGetCompletedWorkoutGroupsForUserByDateRangeQuery } from "@/src/redux/api/apiSlice";
 import {
   AnyWorkoutItem,
   WorkoutCardProps,
   WorkoutGroupProps,
-} from "../../src/app_components/Cards/types";
+} from "@/src/app_components/Cards/types";
 import DatePicker from "react-native-date-picker";
 
-import TotalsBarChart from "../../src/app_components/charts/barChart";
-import TotalsLineChart from "../../src/app_components/charts/lineChart";
-import TotalsPieChart from "../../src/app_components/charts/pieChart";
-import FreqCalendar from "../../src/app_components/charts/freqCalendar";
-import BannerAddMembership from "../../src/app_components/ads/BannerAd";
-import { StatsPanel } from "../../src/app_components/Stats/StatsPanel";
+import TotalsBarChart from "@/src/app_components/charts/barChart";
+import TotalsLineChart from "@/src/app_components/charts/lineChart";
+import TotalsPieChart from "@/src/app_components/charts/pieChart";
+import FreqCalendar from "@/src/app_components/charts/freqCalendar";
+import BannerAddMembership from "@/src/app_components/ads/BannerAd";
+import { StatsPanel } from "@/src/app_components/Stats/StatsPanel";
 import { dateFormat } from "@/src/utils/algos";
 import twrnc from "twrnc";
 export type Props = StackScreenProps<RootStackParamList, "StatsScreen">;

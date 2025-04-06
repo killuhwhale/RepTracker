@@ -6,16 +6,16 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { useTheme } from "styled-components";
-import { TSCaptionText } from "../../../../src/app_components/Text/Text";
-import { SCREEN_HEIGHT } from "../../../../src/app_components/shared";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
+import { SCREEN_HEIGHT } from "@/src/app_components/shared";
 import {
   WorkoutDualItemProps,
   WorkoutItemProps,
-} from "../../../../src/app_components/Cards/types";
-import ItemString from "../../../../src/app_components/WorkoutItems/ItemString";
-import { AnimatedButton } from "../../../../src/app_components/Buttons/buttons";
+} from "@/src/app_components/Cards/types";
+import ItemString from "@/src/app_components/WorkoutItems/ItemString";
+import { AnimatedButton } from "@/src/app_components/Buttons/buttons";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import PenaltyModal from "../../../../src/app_components/modals/PenaltyModal";
+import PenaltyModal from "@/src/app_components/modals/PenaltyModal";
 
 const hasPenalty = (item: WorkoutDualItemProps) => {
   return item.penalty?.length && item.penalty?.length > 0;

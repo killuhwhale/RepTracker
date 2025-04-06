@@ -1,10 +1,10 @@
-import React, {FunctionComponent} from 'react';
-import styled from 'styled-components/native';
-import {SCREEN_HEIGHT} from '../../shared';
-import {useTheme} from 'styled-components';
-import {View} from 'react-native';
-import ClassGridItem from './ClassGridItem';
-import {GymClassCardListProps} from '../../Cards/types';
+import React, { FunctionComponent } from "react";
+import styled from "styled-components/native";
+import { SCREEN_HEIGHT } from "@/src/app_components/shared";
+import { useTheme } from "styled-components";
+import { View } from "react-native";
+import ClassGridItem from "./ClassGridItem";
+import { GymClassCardListProps } from "@/src/app_components/Cards/types";
 
 export const StyledList = styled.FlatList`
   width: 100%;
@@ -17,21 +17,21 @@ export const StyledList = styled.FlatList`
 const GymClassSquares: FunctionComponent<{
   extraProps: any;
   data: GymClassCardListProps;
-}> = props => {
+}> = (props) => {
   const theme = useTheme();
-  console.log('Listsss', props);
+  console.log("Listsss", props);
   return (
     <StyledList
       keyboardShouldPersistTaps="always"
       data={props.data}
       extraProps={props.extraProps}
       horizontal={false}
-      contentContainerStyle={{paddingBottom: SCREEN_HEIGHT * 0.05}}
+      contentContainerStyle={{ paddingBottom: SCREEN_HEIGHT * 0.05 }}
       numColumns={2}
-      ItemSeparatorComponent={() => <View style={{height: 10}} />}
-      keyExtractor={({id}: any) => id.toString()}
+      ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+      keyExtractor={({ id }: any) => id.toString()}
       renderItem={(innerprops: any) => {
-        console.log('List item_______', props);
+        console.log("List item_______", props);
 
         return <ClassGridItem card={innerprops.item} />;
       }}
@@ -39,4 +39,4 @@ const GymClassSquares: FunctionComponent<{
   );
 };
 
-export {GymClassSquares};
+export { GymClassSquares };

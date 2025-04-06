@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState, useRef, useEffect } from "react";
 import { View } from "react-native";
 import { useTheme } from "styled-components";
 
-import { TSCaptionText } from "../../../src/app_components/Text/Text";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
 import {
   Container,
   SCREEN_WIDTH,
@@ -20,21 +20,21 @@ import {
   numFilterWithSpaces,
   AddItemFontsize,
   lightenHexColor,
-} from "../../../src/app_components/shared";
-import { useGetWorkoutNamesQuery } from "../../../src/redux/api/apiSlice";
+} from "@/src/app_components/shared";
+import { useGetWorkoutNamesQuery } from "@/src/redux/api/apiSlice";
 
 import {
   WorkoutDualItemProps,
   WorkoutItemProps,
   WorkoutNameProps,
-} from "../../../src/app_components/Cards/types";
+} from "@/src/app_components/Cards/types";
 
-import Input from "../../../src/app_components/Input/input";
-import VerticalPicker from "../../../src/app_components/Pickers/VerticalPicker";
-import { RegularButton } from "../../../src/app_components/Buttons/buttons";
-import { TestIDs } from "../../../src/utils/constants";
-import FilterItemsModal from "../../../src/app_components/modals/filterItemsModal";
-import PickerFilterListView from "../../../src/app_components/modals/pickerFilterListView";
+import Input from "@/src/app_components/Input/input";
+import VerticalPicker from "@/src/app_components/Pickers/VerticalPicker";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import { TestIDs } from "@/src/utils/constants";
+import FilterItemsModal from "@/src/app_components/modals/filterItemsModal";
+import PickerFilterListView from "@/src/app_components/modals/pickerFilterListView";
 import { numberInputStyle } from "@/src/utils/algos";
 import AlertModal from "@/src/app_components/modals/AlertModal";
 
@@ -893,7 +893,7 @@ const AddItem: FunctionComponent<{
               onPress={() => _addItem()}
               testID={TestIDs.CreateWorkoutAddItemBtn.name()}
               btnStyles={{
-                backgroundColor: theme.palette.darkGray,
+                backgroundColor: theme.palette.tertiary.main,
               }}
               text="Add Item"
             />

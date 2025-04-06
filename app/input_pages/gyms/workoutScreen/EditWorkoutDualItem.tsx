@@ -19,19 +19,19 @@ import {
   STANDARD_W,
   WEIGHT_UNITS,
   WORKOUT_TYPES,
-} from "../../../../src/app_components/shared";
+} from "@/src/app_components/shared";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import RNPickerSelect from "react-native-picker-select";
 
-import { TSCaptionText } from "../../../../src/app_components/Text/Text";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
 import {
   WorkoutDualItemProps,
   WorkoutItemProps,
-} from "../../../../src/app_components/Cards/types";
+} from "@/src/app_components/Cards/types";
 
-import Input from "../../../../src/app_components/Input/input";
-import ItemString from "../../../../src/app_components/WorkoutItems/ItemString";
+import Input from "@/src/app_components/Input/input";
+import ItemString from "@/src/app_components/WorkoutItems/ItemString";
 import { jListToNumStr, numberInputStyle } from "@/src/utils/algos";
 
 const EditWorkoutDualItem: FunctionComponent<{

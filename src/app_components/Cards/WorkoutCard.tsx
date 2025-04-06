@@ -1,18 +1,25 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { TSCaptionText, TSParagrapghText } from "../Text/Text";
+import {
+  TSCaptionText,
+  TSParagrapghText,
+} from "@/src/app_components/Text/Text";
 // import { useNavigation } from "@react-navigation/native";
-import { displayJList, SCREEN_WIDTH, WORKOUT_TYPE_LABELS } from "../shared";
+import {
+  displayJList,
+  SCREEN_WIDTH,
+  WORKOUT_TYPE_LABELS,
+} from "@/src/app_components/shared";
 import { WorkoutCardProps } from "./types";
 import { View } from "react-native";
 
-import { AnimatedButton } from "../Buttons/buttons";
+import { AnimatedButton } from "@/src/app_components/Buttons/buttons";
 import Icon from "react-native-vector-icons/Ionicons";
 import {
   useDeleteCompletedWorkoutMutation,
   useDeleteWorkoutMutation,
-} from "../../redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 
 import { router, useNavigation } from "expo-router";
 import WorkoutItemPreviewHorizontalList from "./WorkoutItemPreviewHorizontalList";
@@ -25,7 +32,7 @@ const CardRow = styled.View`
 const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
   const theme = useTheme();
   const cardWidth = SCREEN_WIDTH * 0.92;
-  const colWidth = cardWidth * 0.45;
+  const colWidth = cardWidth * 0.25;
 
   // const navigation = useNavigation<GymClassScreenProps["navigation"]>();
 
@@ -150,7 +157,9 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
                 paddingHorizontal: 8,
               }}
             >
-              <TSParagrapghText>{props.title} </TSParagrapghText>
+              <TSParagrapghText textStyles={{ color: "red" }}>
+                {props.title}{" "}
+              </TSParagrapghText>
               <TSCaptionText>
                 {subtitle}
                 {/* {displayJList(props.scheme_rounds)}{" "}

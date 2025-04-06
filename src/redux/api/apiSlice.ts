@@ -1,16 +1,16 @@
 // Import the RTK Query methods from the React-specific entry point
 import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
 
-import { BASEURL, devLog, isDevEnv, nodeEnv } from "../../utils/constants";
+import { BASEURL, devLog, isDevEnv, nodeEnv } from "@/src/utils/constants";
 import {
   authDelete,
   authGet,
   authPost,
   refreshAccessToken,
-} from "../../utils/fetchAPI";
-import auth from "../../utils/auth";
-import { Member } from "../../app_components/modals/types";
-import { navigate } from "../../navigators/RootNavigation";
+} from "@/src/utils/fetchAPI";
+import auth from "@/src/utils/auth";
+import { Member } from "@/src/app_components/modals/types";
+import { navigate } from "@/src/navigators/RootNavigation";
 import { getToken, storeToken } from "@/src/utils/tokenUtils";
 
 // Dump Asyn Storage

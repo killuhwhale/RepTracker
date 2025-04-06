@@ -23,7 +23,6 @@ const ActionCancelModal: FunctionComponent<{
   containerStyle?: StyleProp<ViewStyle>;
 }> = (props) => {
   const theme = useTheme();
-  console.log("ACM: ", props.modalVisible);
 
   return (
     <Modal
@@ -88,8 +87,6 @@ const ActionCancelModal: FunctionComponent<{
                   onPress={props.onRequestClose}
                   btnStyles={{
                     backgroundColor: "#DB4437",
-
-                    paddingVertical: 8,
                   }}
                   text={props.closeText}
                 />
@@ -98,8 +95,6 @@ const ActionCancelModal: FunctionComponent<{
                   onPress={props.onAction}
                   btnStyles={{
                     backgroundColor: theme.palette.primary.main,
-
-                    paddingVertical: 8,
                   }}
                   text={props.actionText}
                 />

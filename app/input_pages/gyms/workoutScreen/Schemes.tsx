@@ -8,13 +8,10 @@ import {
   mdFontSize,
   numFilter,
   numFilterWithSpaces,
-} from "../../../../src/app_components/shared";
-import {
-  TSCaptionText,
-  TSListTitleText,
-} from "../../../../src/app_components/Text/Text";
+} from "@/src/app_components/shared";
+import { TSCaptionText, TSListTitleText } from "@/src/app_components/Text/Text";
 import React, { FunctionComponent } from "react";
-import Input from "../../../../src/app_components/Input/input";
+import Input from "@/src/app_components/Input/input";
 import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TestIDs } from "@/src/utils/constants";

@@ -2,16 +2,8 @@ import React, { FunctionComponent, useState, useRef, useEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { useTheme } from "styled-components";
 
-import RNPickerSelect from "react-native-picker-select";
-
-import { TSCaptionText } from "../Text/Text";
-import { WorkoutNameProps } from "../Cards/types";
-import { useGetWorkoutNamesQuery } from "../../redux/api/apiSlice";
-import { TestIDs } from "../../utils/constants";
-import Input from "../Input/input";
-
-import { AddItemFontsize } from "../shared";
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { TSCaptionText } from "@/src/app_components/Text/Text";
+import { WorkoutNameProps } from "@/src/app_components/Cards/types";
 
 interface WorkoutNameRowItemProps {
   workoutName: WorkoutNameProps;
@@ -44,34 +36,6 @@ class WorkoutNameRowItem extends React.PureComponent<WorkoutNameRowItemProps> {
     );
   }
 }
-
-// const WorkoutNameRowItem: FunctionComponent<WorkoutNameRowItemProps> = (
-//   props: WorkoutNameRowItemProps,
-// ) => {
-//   return (
-//     <TouchableHighlight
-//       underlayColor="white"
-//       style={{borderColor: 'red', borderWidth: 1}}
-//       onPress={() => {
-//         console.log('alskdnasklnd');
-//       }}>
-//       <View
-//         style={{
-//           flexDirection: 'row',
-//           justifyContent: 'center',
-//           alignItems: 'center',
-//           alignContent: 'center',
-//           paddingHorizontal: 16,
-//           flex: 1,
-//           borderBottomColor: 'white',
-//           borderBottomWidth: 1,
-//           paddingVertical: 8,
-//         }}>
-//         <TSCaptionText>{props.workoutName.name}</TSCaptionText>
-//       </View>
-//     </TouchableHighlight>
-//   );
-// };
 
 const PickerFilterListView: FunctionComponent<{
   data: [WorkoutNameProps];

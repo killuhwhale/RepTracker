@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { ScrollView, View } from "react-native";
-import { RegularButton } from "../../src/app_components/Buttons/buttons";
-import { TestIDs } from "../../src/utils/constants";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
+import { TestIDs } from "@/src/utils/constants";
 import {
   TSCaptionText,
   TSParagrapghText,
-} from "../../src/app_components/Text/Text";
-import Input, { AutoCaptilizeEnum } from "../../src/app_components/Input/input";
+} from "@/src/app_components/Text/Text";
+import Input, { AutoCaptilizeEnum } from "@/src/app_components/Input/input";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useTheme } from "styled-components";
 

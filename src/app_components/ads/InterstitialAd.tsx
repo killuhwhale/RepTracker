@@ -1,7 +1,7 @@
 import {
   useGetAdUnitsQuery,
   useGetUserInfoQuery,
-} from "../../redux/api/apiSlice";
+} from "@/src/redux/api/apiSlice";
 import {
   GAMBannerAd,
   BannerAdSize,
@@ -12,7 +12,7 @@ import {
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import { useTheme } from "styled-components";
-import { RegularButton } from "../Buttons/buttons";
+import { RegularButton } from "@/src/app_components/Buttons/buttons";
 import { Platform, View } from "react-native";
 import { UserProps } from "@/app/types";
 
