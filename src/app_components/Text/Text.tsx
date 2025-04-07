@@ -11,6 +11,7 @@ import {
   tsCaption,
   tsDate,
   tsInput,
+  tsInputSm,
   tsListTitle,
   tsPageTitle,
   tsParagrapgh,
@@ -139,6 +140,11 @@ const StyledTSInput = styled.Text`
   color: ${(props) => props.theme.palette.text};
   text-align: left;
 `;
+const StyledTSInputSm = styled.Text`
+  font-size: ${tsInputSm}px;
+  color: ${(props) => props.theme.palette.text};
+  text-align: left;
+`;
 const StyledTSDate = styled.Text`
   font-size: ${tsDate}px;
   color: ${(props) => props.theme.palette.text};
@@ -210,6 +216,16 @@ const TSInputText: FunctionComponent<TextProps> = (props) => {
     </StyledTSInput>
   );
 };
+const TSInputTextSm: FunctionComponent<TextProps> = (props) => {
+  return (
+    <StyledTSInputSm
+      numberOfLines={props.numberOfLines}
+      style={props.textStyles}
+    >
+      {props.children}
+    </StyledTSInputSm>
+  );
+};
 const TSDateText: FunctionComponent<TextProps> = (props) => {
   return (
     <StyledTSDate numberOfLines={props.numberOfLines} style={props.textStyles}>
@@ -232,5 +248,6 @@ export {
   TSCaptionText,
   TSButtonText,
   TSInputText,
+  TSInputTextSm,
   TSDateText,
 };

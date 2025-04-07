@@ -11,7 +11,6 @@ import {
   SCREEN_WIDTH,
   lightRed,
   red,
-  green,
 } from "../src/app_components/shared";
 import {
   TSCaptionText,
@@ -22,7 +21,7 @@ import {
   TSSnippetText,
 } from "../src/app_components/Text/Text";
 
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { WorkoutCardFullList } from "../src/app_components/Cards/cardList";
 
 import { RootStackParamList } from "../src/navigators/RootStack";
@@ -701,7 +700,7 @@ const WorkoutScreen: FunctionComponent = () => {
                         onPress={openCreateWorkoutScreenForStandard.bind(this)}
                         testID={TestIDs.CreateRegularWorkoutBtn.name()}
                         btnStyles={{
-                          backgroundColor: "#4285F4",
+                          backgroundColor: theme.palette.AWE_Blue,
                         }}
                         textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Standard"
@@ -711,7 +710,7 @@ const WorkoutScreen: FunctionComponent = () => {
                       <RegularButton
                         onPress={openCreateWorkoutScreenForReps.bind(this)}
                         btnStyles={{
-                          backgroundColor: "#DB4437",
+                          backgroundColor: theme.palette.AWE_Red,
                         }}
                         textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Reps"
@@ -730,7 +729,7 @@ const WorkoutScreen: FunctionComponent = () => {
                       <RegularButton
                         onPress={openCreateWorkoutScreenForRounds.bind(this)}
                         btnStyles={{
-                          backgroundColor: "#F4B400",
+                          backgroundColor: theme.palette.AWE_Yellow,
                         }}
                         textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Rounds"
@@ -740,7 +739,7 @@ const WorkoutScreen: FunctionComponent = () => {
                       <RegularButton
                         onPress={openCreateWorkoutScreenCreative.bind(this)}
                         btnStyles={{
-                          backgroundColor: "#0F9D58",
+                          backgroundColor: theme.palette.AWE_Green,
                         }}
                         textStyles={{ color: "black", fontWeight: "bold" }}
                         text="Creative"
@@ -765,7 +764,7 @@ const WorkoutScreen: FunctionComponent = () => {
                       btnStyles={{
                         backgroundColor: showCreate
                           ? theme.palette.gray
-                          : green,
+                          : theme.palette.AWE_Green,
                         padding: 6,
                       }}
                       text={showCreate ? "X" : "Add Workout"}
@@ -775,7 +774,10 @@ const WorkoutScreen: FunctionComponent = () => {
                     <View style={{ marginHorizontal: 6 }}>
                       <RegularButton
                         onPress={() => setShowFinishWorkoutGroupModal(true)}
-                        textStyles={{ marginHorizontal: 12 }}
+                        textStyles={{
+                          marginHorizontal: 12,
+                          fontWeight: "bold",
+                        }}
                         btnStyles={{
                           backgroundColor: theme.palette.primary.main,
                           display: !showCreate ? "flex" : "none",

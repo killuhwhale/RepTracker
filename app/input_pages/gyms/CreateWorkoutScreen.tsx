@@ -374,7 +374,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     setIsCreating(false);
   };
 
-  const removeItem = (idx) => {
+  const removeItem = (idx: number) => {
     const _items = [...items];
     _items.splice(idx, 1);
     setItems(_items);
@@ -460,7 +460,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     }
   };
 
-  const removeItemSSID = (idx) => {
+  const removeItemSSID = (idx: number) => {
     console.log("Removing idx: ", idx);
     const newItems = [...items];
     const newItem = newItems[idx];
@@ -469,7 +469,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     setItems(newItems);
   };
 
-  const addItemToSSID = (idx) => {
+  const addItemToSSID = (idx: number) => {
     const newItems = [...items];
 
     const newItem = newItems[idx];
@@ -510,7 +510,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   };
 
   const isUpdateMode = initItems.length > 2;
-
+  const INPUT_HEADER_HEIGHT = 25;
   return (
     <PageContainer style={{ flex: 1, flexDirection: "column" }}>
       <View style={{ flex: 20, flexDirection: "column", width: "100%" }}>
@@ -539,7 +539,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               width: "100%",
             }}
           >
-            <View style={{ height: 35, marginBottom: 8 }}>
+            <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
               <Input
                 onChangeText={(t) => {
                   setTitle(limitTextLength(t, WorkoutTitleLimit));
@@ -570,7 +570,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               />
             </View>
 
-            <View style={{ height: 35, marginBottom: 8 }}>
+            <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
               <Input
                 label=""
                 placeholder="Description"
@@ -613,16 +613,6 @@ const CreateWorkoutScreen: FunctionComponent = () => {
           <View
             style={{
               flex: 1,
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-end",
-              paddingRight: 12,
-            }}
-          ></View>
-
-          <View
-            style={{
-              flex: 4,
               width: "100%",
               justifyContent: "center",
             }}
@@ -692,6 +682,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               backgroundColor: theme.palette.backgroundColor,
               borderWidth: 1,
               borderColor: "white",
+              borderRadius: 8,
             }}
             onPress={() => _createWorkoutWithItems(isUpdateMode)}
           >
@@ -700,6 +691,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
                 width: "100%",
                 flex: 1,
                 justifyContent: "center",
+                borderRadius: 8,
               }}
             >
               <TSCaptionText

@@ -13,6 +13,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "styled-components/native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme, View } from "react-native";
 import { store } from "../src/redux/store";
@@ -51,25 +52,35 @@ const DarkTheme: DefaultTheme = {
   borderRadius: "8px",
   palette: {
     primary: {
-      main: primaryColor,
+      main: "#005aff",
       contrastText: "#fff",
     },
     secondary: {
-      main: secondaryColor,
+      main: secondaryColor!,
       contrastText: "#fff",
     },
     tertiary: {
-      main: tertiaryColor,
+      main: tertiaryColor!,
       contrastText: "#fff",
     },
-    accent: d_accent,
+    accent: d_accent!,
     transparent: "#34353578",
-
-    text: d_text,
-    backgroundColor: d_background,
-    lightGray: d_lightGray,
-    gray: d_gray,
-    darkGray: d_darkGray,
+    black: "black",
+    white: "white",
+    text: d_text!,
+    backgroundColor: d_background!,
+    lightGray: d_lightGray!,
+    gray: d_gray!,
+    darkGray: d_darkGray!,
+    IP_Btn_bg: "#005aff",
+    IP_Clickable_bg: "#0F9D58",
+    IP_Label_bg: "#1e1e1e",
+    IP_Swipe_bg: "#00a896",
+    IP_TextInput_bg: "#121212",
+    AWE_Blue: "#4285F4",
+    AWE_Red: "#DB4437",
+    AWE_Yellow: "#F4B400",
+    AWE_Green: "#00d1b2", // #00d1b2 => looks good in gradient... (OG: #0F9D58)
   },
 };
 
@@ -77,11 +88,11 @@ const LightTheme: DefaultTheme = {
   borderRadius: "8px",
   palette: {
     primary: {
-      main: primaryColor,
+      main: primaryColor!,
       contrastText: "#fff",
     },
     secondary: {
-      main: secondaryColor,
+      main: secondaryColor!,
       contrastText: "#fff",
     },
     tertiary: {
@@ -91,10 +102,57 @@ const LightTheme: DefaultTheme = {
     accent: "#fbcd77",
     transparent: "#34353578",
     text: l_text,
+    black: "black",
+    white: "white",
     backgroundColor: l_background,
     lightGray: l_lightGray,
     gray: l_gray,
     darkGray: l_darkGray,
+    IP_Btn_bg: "#00d1b2",
+    IP_Clickable_bg: "#008f8c",
+    IP_Label_bg: "#1e1e1e",
+    IP_Swipe_bg: "#00a896",
+    IP_TextInput_bg: "#121212",
+    AWE_Blue: "",
+    AWE_Red: "",
+    AWE_Yellow: "",
+    AWE_Green: "",
+  },
+};
+
+const FeminineTheme: DefaultTheme = {
+  borderRadius: "8px",
+  palette: {
+    primary: {
+      main: "#FF69B4", // Pink
+      contrastText: "#fff",
+    },
+    secondary: {
+      main: "#f7c9a7", // Light Gold (soft gold tone)
+      contrastText: "#fff",
+    },
+    tertiary: {
+      main: "#ff7f7f", // Soft Coral (complementary warm tone)
+      contrastText: "#fff",
+    },
+    accent: d_accent!,
+    transparent: "#34353578",
+    black: "black",
+    white: "white",
+    text: d_text!,
+    backgroundColor: d_background!,
+    lightGray: d_lightGray!,
+    gray: d_gray!,
+    darkGray: d_darkGray!,
+    IP_Btn_bg: "#f1a7c2", // Rose Pink button background
+    IP_Clickable_bg: "#f7c9a7", // Light Gold clickable background
+    IP_Label_bg: "#1e1e1e",
+    IP_Swipe_bg: "#ff7f7f", // Soft Coral swipe background
+    IP_TextInput_bg: "#121212",
+    AWE_Blue: "#6a8bff", // Softer, more feminine blue
+    AWE_Red: "#e76a7b", // Softer, pink-tinged red
+    AWE_Yellow: "#f4c200", // Softened, warmer yellow (a bit of gold)
+    AWE_Green: "#7f3aff", // Awesome Purple
   },
 };
 
@@ -174,7 +232,7 @@ export default function RootLayout() {
         style={{ flex: 1, backgroundColor: d_background, paddingBottom: 0 }}
       >
         <Provider store={store}>
-          <ThemeProvider theme={DarkTheme}>
+          <ThemeProvider theme={FeminineTheme}>
             <Uploady destination={{ url: `${BASEURL}` }}>
               {/* <React.StrictMode> */}
               <GestureHandlerRootView>

@@ -17,6 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { SmallText, TSCaptionText } from "../Text/Text";
+import { useTheme } from "styled-components/native";
 
 {
   /* https://www.youtube.com/watch?v=PVSjPswRn0U&ab_channel=WilliamCandillon */
@@ -201,10 +202,13 @@ const VerticalPicker: FunctionComponent<{
 
     return mappedData;
   };
-
+  const theme = useTheme();
   return (
     <View
-      style={{ flex: 1, width: "100%" }}
+      style={{
+        flex: 1,
+        width: "100%",
+      }}
       testID={props.testID}
       onLayout={getWidthLayout}
     >
@@ -215,7 +219,11 @@ const VerticalPicker: FunctionComponent<{
           <Animated.View
             testID={props.testID}
             style={[
-              { flexDirection: "row", height: "100%", alignItems: "center" },
+              {
+                flexDirection: "row",
+                height: "100%",
+                alignItems: "center",
+              },
               uas,
             ]}
           >
@@ -224,9 +232,12 @@ const VerticalPicker: FunctionComponent<{
         }
       >
         <View style={{ width: "15%", backgroundColor: "grey" }} />
-        <View style={{ width: "70%", backgroundColor: "white" }} />
+        <View
+          style={{ width: "70%", backgroundColor: theme.palette.IP_Swipe_bg }}
+        />
         <View style={{ width: "15%", backgroundColor: "grey" }} />
       </MaskedView>
+
       <PanGestureHandler onGestureEvent={eventHandler} testID={props.testID}>
         <Animated.View style={[StyleSheet.absoluteFill, { flex: 1 }]} />
       </PanGestureHandler>

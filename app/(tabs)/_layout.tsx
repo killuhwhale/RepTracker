@@ -1,12 +1,15 @@
+import { lightenHexColor } from "@/src/app_components/shared";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
+import { useTheme } from "styled-components/native";
 import twrnc from "twrnc";
 
 const FONTSIZE = 10;
 const ICONSIZE = 27;
 
 export default function TabLayout() {
+  const theme = useTheme();
   return (
     <Tabs
       screenOptions={{
@@ -14,8 +17,9 @@ export default function TabLayout() {
           paddingBottom: 0,
           maxHeight: "8%",
         },
-        tabBarActiveTintColor: twrnc.color("bg-blue-500"),
-        tabBarActiveBackgroundColor: twrnc.color("bg-slate-950"),
+        tabBarLabelStyle: { fontWeight: "condensedBold" },
+        tabBarActiveTintColor: theme.palette.primary.main,
+        tabBarActiveBackgroundColor: theme.palette.black,
 
         tabBarInactiveTintColor: twrnc.color("bg-slate-400"),
         tabBarInactiveBackgroundColor: twrnc.color("bg-slate-900"),
@@ -27,11 +31,16 @@ export default function TabLayout() {
           title: "Workouts",
           tabBarLabelStyle: {
             fontSize: FONTSIZE,
+            fontWeight: "bold",
           },
 
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={ICONSIZE} name="home" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              size={ICONSIZE}
+              name="home"
+              color={focused ? theme.palette.primary.main : color}
+            />
           ),
         }}
       />
@@ -41,10 +50,15 @@ export default function TabLayout() {
           title: "Stats",
           tabBarLabelStyle: {
             fontSize: FONTSIZE,
+            fontWeight: "bold",
           },
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={ICONSIZE} name="signal" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              size={ICONSIZE}
+              name="signal"
+              color={focused ? theme.palette.primary.main : color}
+            />
           ),
         }}
       />
@@ -64,10 +78,15 @@ export default function TabLayout() {
           title: "Profile",
           tabBarLabelStyle: {
             fontSize: FONTSIZE,
+            fontWeight: "bold",
           },
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={ICONSIZE} name="user-secret" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              size={ICONSIZE}
+              name="user-secret"
+              color={focused ? theme.palette.primary.main : color}
+            />
           ),
         }}
       />

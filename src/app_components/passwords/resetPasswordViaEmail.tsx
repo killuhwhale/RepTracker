@@ -6,7 +6,7 @@ import { RegularButton } from "../Buttons/buttons";
 import { post } from "@/src/utils/fetchAPI";
 import { BASEURL } from "@/src/utils/constants";
 import Input, { AutoCaptilizeEnum } from "../Input/input";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { validEmailRegex } from "@/src/utils/algos";
 
 const ResetPasswordViaEmail: FunctionComponent = () => {
@@ -100,7 +100,7 @@ const ResetPasswordViaEmail: FunctionComponent = () => {
             textStyles={{
               textAlign: "center",
               marginBottom: 1,
-              color: "green",
+              color: theme.palette.AWE_Green,
             }}
           >
             Only one code will be sent per email every 15mins

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components/native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import {
   TSCaptionText,
   TSParagrapghText,
@@ -32,7 +32,7 @@ const CardRow = styled.View`
 const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
   const theme = useTheme();
   const cardWidth = SCREEN_WIDTH * 0.92;
-  const colWidth = cardWidth * 0.25;
+  const colWidth = cardWidth * 0.33;
 
   // const navigation = useNavigation<GymClassScreenProps["navigation"]>();
 
@@ -157,7 +157,12 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
                 paddingHorizontal: 8,
               }}
             >
-              <TSParagrapghText textStyles={{ color: "red" }}>
+              <TSParagrapghText
+                textStyles={{
+                  color: theme.palette.primary.main,
+                  fontWeight: "500",
+                }}
+              >
                 {props.title}{" "}
               </TSParagrapghText>
               <TSCaptionText>

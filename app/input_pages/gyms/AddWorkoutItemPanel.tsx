@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from "react";
 import { View } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 
-import { TSCaptionText } from "@/src/app_components/Text/Text";
+import { TSCaptionText, TSInputTextSm } from "@/src/app_components/Text/Text";
 import {
   Container,
   SCREEN_WIDTH,
@@ -20,6 +20,7 @@ import {
   numFilterWithSpaces,
   AddItemFontsize,
   lightenHexColor,
+  tsInputSm,
 } from "@/src/app_components/shared";
 import { useGetWorkoutNamesQuery } from "@/src/redux/api/apiSlice";
 
@@ -37,6 +38,7 @@ import FilterItemsModal from "@/src/app_components/modals/filterItemsModal";
 import PickerFilterListView from "@/src/app_components/modals/pickerFilterListView";
 import { numberInputStyle } from "@/src/utils/algos";
 import AlertModal from "@/src/app_components/modals/AlertModal";
+import LinearGradient from "react-native-linear-gradient";
 
 interface AddWorkoutItemProps {
   success: boolean;
@@ -351,7 +353,7 @@ const AddItem: FunctionComponent<{
                   <TSCaptionText
                     textStyles={{
                       textAlign: "center",
-                      backgroundColor: theme.palette.gray,
+                      backgroundColor: theme.palette.IP_Label_bg,
                     }}
                   >
                     Workout Items
@@ -365,10 +367,7 @@ const AddItem: FunctionComponent<{
                           data[workoutName]?.name ?? "No workout name found"
                         }
                         btnStyles={{
-                          backgroundColor: lightenHexColor(
-                            theme.palette.primary.main,
-                            2
-                          ),
+                          backgroundColor: theme.palette.IP_Clickable_bg,
                         }}
                         testID={TestIDs.AddItemChooseWorkoutNameField.name()}
                         onPress={() => setShowWorkoutNamesModal(true)}
@@ -396,7 +395,7 @@ const AddItem: FunctionComponent<{
                     <TSCaptionText
                       textStyles={{
                         textAlign: "center",
-                        backgroundColor: theme.palette.gray,
+                        backgroundColor: theme.palette.IP_Label_bg,
                       }}
                     >
                       Paused
@@ -421,7 +420,7 @@ const AddItem: FunctionComponent<{
                         placeholder="time"
                         centerInput
                         keyboardType="decimal-pad"
-                        fontSize={AddItemFontsize}
+                        fontSize={tsInputSm}
                         value={pauseDuration}
                         inputStyles={{ textAlign: "center" }}
                         isError={repsSchemeRoundsError}
@@ -445,12 +444,17 @@ const AddItem: FunctionComponent<{
             <TSCaptionText
               textStyles={{
                 textAlign: "center",
-                backgroundColor: theme.palette.gray,
+                backgroundColor: theme.palette.IP_Label_bg,
               }}
             >
               Quantity type
             </TSCaptionText>
-            <View style={{ flex: 1, width: "100%" }}>
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+              }}
+            >
               {/* // TODO  Update Vertical Picker to update itself programmatically  */}
 
               <VerticalPicker
@@ -480,7 +484,7 @@ const AddItem: FunctionComponent<{
               <TSCaptionText
                 textStyles={{
                   textAlign: "center",
-                  backgroundColor: theme.palette.gray,
+                  backgroundColor: theme.palette.IP_Label_bg,
                 }}
               >
                 Sets
@@ -490,7 +494,7 @@ const AddItem: FunctionComponent<{
                 containerStyle={[
                   numberInputStyle.containerStyle,
                   {
-                    backgroundColor: theme.palette.primary.main,
+                    backgroundColor: theme.palette.IP_TextInput_bg,
                     borderRightWidth: 1,
                     borderColor: theme.palette.text,
                   },
@@ -499,7 +503,7 @@ const AddItem: FunctionComponent<{
                 testID={TestIDs.AddItemSetsField.name()}
                 placeholder="Sets"
                 centerInput={true}
-                fontSize={AddItemFontsize}
+                fontSize={tsInputSm}
                 value={sets}
                 inputStyles={{ textAlign: "center" }}
                 onChangeText={(text: string) => {
@@ -517,7 +521,7 @@ const AddItem: FunctionComponent<{
                 <TSCaptionText
                   textStyles={{
                     textAlign: "center",
-                    backgroundColor: theme.palette.gray,
+                    backgroundColor: theme.palette.IP_Label_bg,
                   }}
                 >
                   Reps
@@ -527,7 +531,7 @@ const AddItem: FunctionComponent<{
                   containerStyle={[
                     numberInputStyle.containerStyle,
                     {
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: theme.palette.IP_TextInput_bg,
                       alignItems: "center",
                       borderRightWidth: 1,
                       borderColor: theme.palette.text,
@@ -537,7 +541,7 @@ const AddItem: FunctionComponent<{
                   testID={TestIDs.AddItemRepsField?.name()}
                   placeholder="Reps"
                   centerInput
-                  fontSize={AddItemFontsize}
+                  fontSize={tsInputSm}
                   value={reps}
                   inputStyles={{ textAlign: "center" }}
                   isError={repsSchemeRoundsError}
@@ -571,7 +575,7 @@ const AddItem: FunctionComponent<{
                 <TSCaptionText
                   textStyles={{
                     textAlign: "center",
-                    backgroundColor: theme.palette.gray,
+                    backgroundColor: theme.palette.IP_Label_bg,
                   }}
                 >
                   Duration
@@ -583,14 +587,14 @@ const AddItem: FunctionComponent<{
                       containerStyle={[
                         numberInputStyle.containerStyle,
                         {
-                          backgroundColor: theme.palette.primary.main,
+                          backgroundColor: theme.palette.IP_TextInput_bg,
                         },
                       ]}
                       label=""
                       placeholder="Duration"
                       testID={TestIDs.AddItemDurationField.name()}
                       centerInput={true}
-                      fontSize={AddItemFontsize}
+                      fontSize={tsInputSm}
                       value={duration}
                       inputStyles={{ textAlign: "center" }}
                       onChangeText={(t) => {
@@ -611,7 +615,12 @@ const AddItem: FunctionComponent<{
                     />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <View style={{ flex: 1, width: "100%" }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        width: "100%",
+                      }}
+                    >
                       <VerticalPicker
                         itemDisplayIndex={durationUnit}
                         key={"dur"}
@@ -631,7 +640,7 @@ const AddItem: FunctionComponent<{
                 <TSCaptionText
                   textStyles={{
                     textAlign: "center",
-                    backgroundColor: theme.palette.gray,
+                    backgroundColor: theme.palette.IP_Label_bg,
                   }}
                 >
                   Distance
@@ -643,14 +652,14 @@ const AddItem: FunctionComponent<{
                       containerStyle={[
                         numberInputStyle.containerStyle,
                         {
-                          backgroundColor: theme.palette.primary.main,
+                          backgroundColor: theme.palette.IP_TextInput_bg,
                         },
                       ]}
                       label=""
                       placeholder="Distance"
                       testID={TestIDs.AddItemDistanceField.name()}
                       centerInput={true}
-                      fontSize={AddItemFontsize}
+                      fontSize={tsInputSm}
                       value={distance}
                       inputStyles={{ textAlign: "center" }}
                       onChangeText={(t: string) => {
@@ -671,7 +680,12 @@ const AddItem: FunctionComponent<{
                     />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <View style={{ flex: 1, width: "100%" }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        width: "100%",
+                      }}
+                    >
                       <VerticalPicker
                         key={"dist"}
                         itemDisplayIndex={distanceUnit}
@@ -693,17 +707,17 @@ const AddItem: FunctionComponent<{
           <View
             style={{
               flex: 3,
-              backgroundColor: theme.palette.primary.main,
             }}
           >
             <TSCaptionText
               textStyles={{
                 textAlign: "center",
-                backgroundColor: theme.palette.gray,
+                backgroundColor: theme.palette.IP_Label_bg,
               }}
             >
               Weights {weightUnit}
             </TSCaptionText>
+
             <View
               style={{
                 flexDirection: "row",
@@ -716,14 +730,14 @@ const AddItem: FunctionComponent<{
                   containerStyle={[
                     numberInputStyle.containerStyle,
                     {
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: theme.palette.IP_TextInput_bg,
                     },
                   ]}
                   label=""
                   placeholder="Weight(s)"
                   testID={TestIDs.AddItemWeightField.name()}
                   centerInput={true}
-                  fontSize={AddItemFontsize}
+                  fontSize={tsInputSm}
                   value={weight}
                   // isError={weightError.length > 0}
                   helperText={weightError}
@@ -748,7 +762,6 @@ const AddItem: FunctionComponent<{
               <View
                 style={{
                   flex: 1,
-                  backgroundColor: theme.palette.backgroundColor,
                 }}
               >
                 <VerticalPicker
@@ -766,6 +779,7 @@ const AddItem: FunctionComponent<{
             </View>
           </View>
         </View>
+
         {/* Row 3 */}
         <View
           style={{
@@ -779,7 +793,7 @@ const AddItem: FunctionComponent<{
               <TSCaptionText
                 textStyles={{
                   textAlign: "center",
-                  backgroundColor: theme.palette.gray,
+                  backgroundColor: theme.palette.IP_Label_bg,
                 }}
               >
                 % of
@@ -788,7 +802,7 @@ const AddItem: FunctionComponent<{
                 containerStyle={[
                   numberInputStyle.containerStyle,
                   {
-                    backgroundColor: theme.palette.primary.main,
+                    backgroundColor: theme.palette.IP_TextInput_bg,
                     borderRightWidth: 1,
                     borderColor: theme.palette.text,
                   },
@@ -797,7 +811,7 @@ const AddItem: FunctionComponent<{
                 placeholder="% of"
                 testID={TestIDs.AddItemPercentOfField.name()}
                 centerInput={true}
-                fontSize={AddItemFontsize}
+                fontSize={tsInputSm}
                 value={percentOfWeightUnit}
                 inputStyles={{ textAlign: "center" }}
                 onChangeText={(t) => {
@@ -812,7 +826,7 @@ const AddItem: FunctionComponent<{
             <TSCaptionText
               textStyles={{
                 textAlign: "center",
-                backgroundColor: theme.palette.gray,
+                backgroundColor: theme.palette.IP_Label_bg,
               }}
             >
               Rest
@@ -824,14 +838,14 @@ const AddItem: FunctionComponent<{
                   containerStyle={[
                     numberInputStyle.containerStyle,
                     {
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: theme.palette.IP_TextInput_bg,
                     },
                   ]}
                   label=""
                   placeholder="Rest"
                   testID={TestIDs.AddItemRestField.name()}
                   centerInput={true}
-                  fontSize={AddItemFontsize}
+                  fontSize={tsInputSm}
                   value={restDuration}
                   inputStyles={{ textAlign: "center" }}
                   onChangeText={(t) => {
@@ -839,7 +853,11 @@ const AddItem: FunctionComponent<{
                   }}
                 />
               </View>
-              <View style={{ flex: weightUnit === "%" ? 2 : 1 }}>
+              <View
+                style={{
+                  flex: weightUnit === "%" ? 2 : 1,
+                }}
+              >
                 <VerticalPicker
                   key={"rest"}
                   itemDisplayIndex={restDurationUnit}
@@ -889,14 +907,28 @@ const AddItem: FunctionComponent<{
               </View>
             </View>
           ) : (
-            <RegularButton
-              onPress={() => _addItem()}
-              testID={TestIDs.CreateWorkoutAddItemBtn.name()}
-              btnStyles={{
-                backgroundColor: theme.palette.tertiary.main,
-              }}
-              text="Add Item"
-            />
+            <LinearGradient
+              colors={[
+                theme.palette.AWE_Green,
+                theme.palette.primary.main,
+                theme.palette.AWE_Green,
+              ]} // Bright on ends, dark in the middle
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              locations={[0, 0.5, 1]} // Middle color at 50% of the gradient
+              style={{ borderRadius: 8 }}
+            >
+              <RegularButton
+                onPress={() => _addItem()}
+                testID={TestIDs.CreateWorkoutAddItemBtn.name()}
+                btnStyles={{
+                  backgroundColor: theme.palette.transparent,
+                  borderColor: "#ffffff",
+                  borderWidth: 1,
+                }}
+                text="Add Item"
+              />
+            </LinearGradient>
           )}
         </View>
       </View>

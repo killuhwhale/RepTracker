@@ -16,8 +16,10 @@ import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TestIDs } from "@/src/utils/constants";
 
+const INPUT_HEADER_HEIGHT = 25;
+
 const RepSheme: FunctionComponent<{
-  onSchemeRoundChange(scheme: string);
+  onSchemeRoundChange(scheme: string): void;
   schemeRounds: string;
   editable?: boolean;
 }> = (props) => {
@@ -25,7 +27,7 @@ const RepSheme: FunctionComponent<{
 
   return (
     <View
-      style={{ marginBottom: 15, height: 35 }}
+      style={{ marginBottom: 15, height: INPUT_HEADER_HEIGHT }}
       testID={TestIDs.CreateWorkoutSchemeReps.name()}
     >
       <Input
@@ -53,7 +55,7 @@ const RepSheme: FunctionComponent<{
 };
 
 const RoundSheme: FunctionComponent<{
-  onSchemeRoundChange(scheme: string);
+  onSchemeRoundChange(scheme: string): void;
   schemeRounds: string;
   isError: boolean;
   editable?: boolean;
@@ -67,7 +69,7 @@ const RoundSheme: FunctionComponent<{
     : {};
   return (
     <View
-      style={{ marginBottom: 15, height: 35 }}
+      style={{ marginBottom: 15, height: INPUT_HEADER_HEIGHT }}
       testID={TestIDs.CreateWorkoutSchemeRounds.name()}
     >
       <Input
@@ -98,13 +100,13 @@ const RoundSheme: FunctionComponent<{
 };
 
 const CreativeScheme: FunctionComponent<{
-  onSchemeInstructionChange(instructions: string);
+  onSchemeInstructionChange(instructions: string): void;
   instruction: string;
 }> = (props) => {
   const theme = useTheme();
   return (
     <View
-      style={{ marginBottom: 15, height: 35 }}
+      style={{ marginBottom: 15, height: INPUT_HEADER_HEIGHT }}
       testID={TestIDs.CreateWorkoutSchemeCreative.name()}
     >
       <Input

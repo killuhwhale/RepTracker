@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import {
   TSCaptionText,
   TSDateText,
@@ -50,7 +50,7 @@ const WorkoutGroupGridItem: FunctionComponent<{
         onPress={handlePress}
       >
         <LinearGradient
-          colors={[startColor!, endColor!]} // Turquoise
+          colors={[startColor!, theme.palette.AWE_Green]} // Turquoise
           start={{ x: 0.0, y: 0 }}
           end={{ x: 0.9, y: 1 }}
           style={{ flex: 1, borderRadius: 16 }}
@@ -62,37 +62,6 @@ const WorkoutGroupGridItem: FunctionComponent<{
               alignItems: "center",
             }}
           >
-            {/* <View style={{ flex: 5 }}>
-              <View style={{ marginVertical: 4 }}>
-                <TSSnippetText
-                  numberOfLines={1}
-                  textStyles={{ marginLeft: 16, color: textColor }}
-                >
-                  {props.card.title}
-                </TSSnippetText>
-                <TSDateText
-                  numberOfLines={1}
-                  textStyles={{
-                    textAlign: "left",
-                    marginLeft: 16,
-                    color: textColor,
-                  }}
-                >
-                  {dateFormatDayOfWeek(new Date(props.card.for_date))}{" "}
-                </TSDateText>
-              </View>
-            </View>
-            <View style={{ flex: 1, alignItems: "center" }}>
-              {!props.card.finished ? (
-                <Icon
-                  name={"locate"}
-                  color={green}
-                  style={{ fontSize: 24, marginRight: 8 }}
-                />
-              ) : (
-                <></>
-              )}
-            </View> */}
             <View
               style={{
                 backgroundColor: theme.palette.backgroundColor,
@@ -108,13 +77,6 @@ const WorkoutGroupGridItem: FunctionComponent<{
                 alignItems: "center",
               }}
             >
-              {/* <Icon
-                name="barbell-outline"
-                size={28}
-                color={green}
-                style={{ marginRight: 12 }}
-              /> */}
-
               <Image
                 style={{
                   width: 28,
@@ -135,7 +97,7 @@ const WorkoutGroupGridItem: FunctionComponent<{
                   numberOfLines={1}
                   textStyles={{
                     fontSize: 12,
-                    color: "gray",
+                    color: theme.palette.gray,
                     marginTop: 2,
                   }}
                 >
@@ -144,20 +106,17 @@ const WorkoutGroupGridItem: FunctionComponent<{
               </View>
 
               {props.card.finished ? (
-                <View
-                  style={{
-                    backgroundColor: "#4ade80",
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    borderRadius: 12,
-                  }}
-                >
-                  <XSmallText textStyles={{ color: "#064e3b" }}>
-                    Done
-                  </XSmallText>
-                </View>
+                <Icon
+                  name="checkmark-done"
+                  size={24}
+                  color={theme.palette.AWE_Green}
+                />
               ) : (
-                <Icon name="play-circle-outline" size={24} color={green} />
+                <Icon
+                  name="play-circle-outline"
+                  size={24}
+                  color={theme.palette.AWE_Green}
+                />
               )}
             </View>
           </View>

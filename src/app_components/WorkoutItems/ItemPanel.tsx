@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { router, useNavigation } from "expo-router";
 import { TouchableHighlight, View } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 
 import {
   AnyWorkoutItem,
@@ -198,12 +198,13 @@ const WorkoutItemPanel: FunctionComponent<{
 
   return (
     <LinearGradient
-      //   colors={['#00000000', '#4682B4']} // Steel BLUE
+      // colors={["#00000000", "#4682B4"]} // Steel BLUE
       //   colors={['#00000000', '#87CEEB']} // Sky Blue
       //   colors={['#00000000', '#87CEFA']} // Baby BLUE
       //   colors={['#00000000', '#B0E0E6']} // Powder BlLue
       //   colors={['#00000000', '#7DF9FFAA']} // Electric Blue
-      colors={["#00000000", "#40E0D0"]} // Turquoise
+      // colors={["#00000000", "#40E0D0"]} // Turquoise
+      colors={["#00000000", theme.palette.AWE_Green]} //
       // colors={['#00000000', '#F0F8FF']} // Alice BLUE
       // colors={['#00000000', '#6495ED']} // Cornflower BLUE
       // colors={['#00000000', '#000080']} // navy BLUE
@@ -213,7 +214,7 @@ const WorkoutItemPanel: FunctionComponent<{
       style={{
         width: itemWidth,
         minWidth: itemWidth,
-        height: 120,
+        height: 90,
         borderRadius: 8,
         padding: 6,
         marginRight: 8,
@@ -243,7 +244,7 @@ const WorkoutItemPanel: FunctionComponent<{
               }}
             >
               <TSCaptionText textStyles={{ textAlign: "center" }}>
-                {_item.name.name}
+                {_item.name.name} asd
               </TSCaptionText>
               <View
                 style={{

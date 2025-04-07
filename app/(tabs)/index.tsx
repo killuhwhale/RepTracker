@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import {
   WorkoutGroupCardProps,
   WorkoutGroupProps,
@@ -128,7 +128,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
             activeOpacity={0.69}
             onPress={handleNavCreateWorkoutGroupScreen}
             style={{
-              backgroundColor: theme.palette.accent,
+              backgroundColor: theme.palette.AWE_Green,
               padding: 4,
               borderRadius: 112,
             }}
