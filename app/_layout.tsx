@@ -232,7 +232,7 @@ export default function RootLayout() {
         style={{ flex: 1, backgroundColor: d_background, paddingBottom: 0 }}
       >
         <Provider store={store}>
-          <ThemeProvider theme={FeminineTheme}>
+          <ThemeProvider theme={DarkTheme}>
             <Uploady destination={{ url: `${BASEURL}` }}>
               {/* <React.StrictMode> */}
               <GestureHandlerRootView>
