@@ -29,6 +29,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import auth from "../src/utils/auth";
 import twrnc from "twrnc";
 import { getToken } from "@/src/utils/tokenUtils";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 const primaryColor = twrnc.color("bg-blue-600");
 // const secondaryColor = twrnc.color('bg-emerald-900');
@@ -84,42 +86,6 @@ const DarkTheme: DefaultTheme = {
   },
 };
 
-const LightTheme: DefaultTheme = {
-  borderRadius: "8px",
-  palette: {
-    primary: {
-      main: primaryColor!,
-      contrastText: "#fff",
-    },
-    secondary: {
-      main: secondaryColor!,
-      contrastText: "#fff",
-    },
-    tertiary: {
-      main: "#007cff",
-      contrastText: "#fff",
-    },
-    accent: "#fbcd77",
-    transparent: "#34353578",
-    text: l_text,
-    black: "black",
-    white: "white",
-    backgroundColor: l_background,
-    lightGray: l_lightGray,
-    gray: l_gray,
-    darkGray: l_darkGray,
-    IP_Btn_bg: "#00d1b2",
-    IP_Clickable_bg: "#008f8c",
-    IP_Label_bg: "#1e1e1e",
-    IP_Swipe_bg: "#00a896",
-    IP_TextInput_bg: "#121212",
-    AWE_Blue: "",
-    AWE_Red: "",
-    AWE_Yellow: "",
-    AWE_Green: "",
-  },
-};
-
 const FeminineTheme: DefaultTheme = {
   borderRadius: "8px",
   palette: {
@@ -145,14 +111,14 @@ const FeminineTheme: DefaultTheme = {
     gray: d_gray!,
     darkGray: d_darkGray!,
     IP_Btn_bg: "#f1a7c2", // Rose Pink button background
-    IP_Clickable_bg: "#f7c9a7", // Light Gold clickable background
+    IP_Clickable_bg: "#FF69B4", // Light Gold clickable background
     IP_Label_bg: "#1e1e1e",
     IP_Swipe_bg: "#ff7f7f", // Soft Coral swipe background
     IP_TextInput_bg: "#121212",
     AWE_Blue: "#6a8bff", // Softer, more feminine blue
     AWE_Red: "#e76a7b", // Softer, pink-tinged red
     AWE_Yellow: "#f4c200", // Softened, warmer yellow (a bit of gold)
-    AWE_Green: "#7f3aff", // Awesome Purple
+    AWE_Green: "#8A00C4", // Awesome Purple
   },
 };
 
@@ -221,10 +187,27 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
   );
 };
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   const isDarkMode = useColorScheme() === "dark";
   console.log("User's preffered color scheme", useColorScheme(), isDarkMode);
   const [showBackButton, setShowBackButton] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  const [fontsLoaded] = useFonts({
+    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <View style={{ height: "100%", width: "100%", backgroundColor: "red" }}>
@@ -232,7 +215,7 @@ export default function RootLayout() {
         style={{ flex: 1, backgroundColor: d_background, paddingBottom: 0 }}
       >
         <Provider store={store}>
-          <ThemeProvider theme={DarkTheme}>
+          <ThemeProvider theme={isDark ? DarkTheme : FeminineTheme}>
             <Uploady destination={{ url: `${BASEURL}` }}>
               {/* <React.StrictMode> */}
               <GestureHandlerRootView>
@@ -242,7 +225,10 @@ export default function RootLayout() {
                     width: "100%",
                   }}
                 >
-                  <Header showBackButton={showBackButton} />
+                  <Header
+                    showBackButton={showBackButton}
+                    toggleState={setIsDark}
+                  />
                   <AuthNew>
                     <Stack screenOptions={{ headerShown: false }}>
                       <Stack.Screen

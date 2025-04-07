@@ -1,7 +1,10 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 
 import {
+  Keyboard,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   StyleProp,
   TouchableHighlight,
   TouchableOpacity,
@@ -104,6 +107,9 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
           centeredViewStyle.centeredView,
           { backgroundColor: "#000000DD" },
         ]}
+        onTouchStart={() => {
+          Keyboard.dismiss();
+        }}
       >
         <View
           style={[
@@ -115,166 +121,179 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
             },
             props.containerStyle,
           ]}
+          onTouchStart={() => {
+            Keyboard.dismiss();
+          }}
         >
-          <View style={{ flex: 1, width: "100%", height: "100%" }}>
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                paddingVertical: 6,
-                marginBottom: 12,
-                flex: 4,
-                width: "100%",
-              }}
+          <View
+            style={{ flex: 1, width: "100%", height: "100%" }}
+            onTouchStart={() => {
+              Keyboard.dismiss();
+            }}
+          >
+            <KeyboardAvoidingView
+              style={{ flex: 1, width: "100%", height: "100%" }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              {dupError ? (
-                <TSSnippetText
-                  textStyles={{
-                    textAlign: "center",
-                    marginBottom: 8,
-                    color: theme.palette.accent,
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 6,
+                  marginBottom: 12,
+                  flex: 4,
+                  width: "100%",
+                }}
+              >
+                {dupError ? (
+                  <TSSnippetText
+                    textStyles={{
+                      textAlign: "center",
+                      marginBottom: 8,
+                      color: theme.palette.accent,
+                    }}
+                  >
+                    {dupError}
+                  </TSSnippetText>
+                ) : (
+                  <></>
+                )}
+                <TSTitleText textStyles={{ textAlign: "center" }}>
+                  {props.modalText}
+                </TSTitleText>
+              </View>
+
+              <View style={{ flex: 5 }}>
+                <View style={{ marginBottom: 15, height: 40 }}>
+                  <Input
+                    placeholder="New Title"
+                    onChangeText={(t) => {
+                      setTitle(limitTextLength(t, WorkoutGroupTitleLimit));
+                      setTitleError("");
+                    }}
+                    value={title || ""}
+                    label="New Title"
+                    isError={titleError.length > 0}
+                    helperText={titleError}
+                    containerStyle={{
+                      width: "100%",
+                      backgroundColor: theme.palette.darkGray,
+                      borderRadius: 8,
+                      paddingHorizontal: 8,
+                      borderWidth: 1,
+                      borderColor: theme.palette.text,
+                    }}
+                    leading={
+                      <Icon
+                        name="information-circle-outline"
+                        color={theme.palette.text}
+                        style={{ fontSize: mdFontSize }}
+                      />
+                    }
+                  />
+                </View>
+                <View style={{ marginBottom: 15, height: 40 }}>
+                  <Input
+                    placeholder="New Caption"
+                    onChangeText={(t) =>
+                      setCaption(limitTextLength(t, WorkoutGroupDescLimit))
+                    }
+                    value={caption || ""}
+                    label="New Caption"
+                    containerStyle={{
+                      width: "100%",
+                      backgroundColor: theme.palette.darkGray,
+                      borderRadius: 8,
+                      paddingHorizontal: 8,
+                      borderWidth: 1,
+                      borderColor: theme.palette.text,
+                    }}
+                    leading={
+                      <Icon
+                        name="information-circle-outline"
+                        color={theme.palette.text}
+                        style={{ fontSize: mdFontSize }}
+                      />
+                    }
+                  />
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    height: 35,
+                    width: "100%",
+                    backgroundColor: theme.palette.darkGray,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: theme.palette.text,
                   }}
                 >
-                  {dupError}
-                </TSSnippetText>
-              ) : (
-                <></>
-              )}
-              <TSTitleText textStyles={{ textAlign: "center" }}>
-                {props.modalText}
-              </TSTitleText>
-            </View>
-
-            <View style={{ flex: 5 }}>
-              <View style={{ marginBottom: 15, height: 40 }}>
-                <Input
-                  placeholder="New Title"
-                  onChangeText={(t) => {
-                    setTitle(limitTextLength(t, WorkoutGroupTitleLimit));
-                    setTitleError("");
-                  }}
-                  value={title || ""}
-                  label="New Title"
-                  isError={titleError.length > 0}
-                  helperText={titleError}
-                  containerStyle={{
-                    width: "100%",
-                    backgroundColor: theme.palette.darkGray,
-                    borderRadius: 8,
-                    paddingHorizontal: 8,
-                    borderWidth: 1,
-                    borderColor: theme.palette.text,
-                  }}
-                  leading={
-                    <Icon
-                      name="information-circle-outline"
-                      color={theme.palette.text}
-                      style={{ fontSize: mdFontSize }}
-                    />
-                  }
-                />
-              </View>
-              <View style={{ marginBottom: 15, height: 40 }}>
-                <Input
-                  placeholder="New Caption"
-                  onChangeText={(t) =>
-                    setCaption(limitTextLength(t, WorkoutGroupDescLimit))
-                  }
-                  value={caption || ""}
-                  label="New Caption"
-                  containerStyle={{
-                    width: "100%",
-                    backgroundColor: theme.palette.darkGray,
-                    borderRadius: 8,
-                    paddingHorizontal: 8,
-                    borderWidth: 1,
-                    borderColor: theme.palette.text,
-                  }}
-                  leading={
-                    <Icon
-                      name="information-circle-outline"
-                      color={theme.palette.text}
-                      style={{ fontSize: mdFontSize }}
-                    />
-                  }
-                />
+                  <TouchableHighlight
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      justifyContent: "center",
+                    }}
+                    onPress={() => setShowDatePicker(!showDatePicker)}
+                  >
+                    <>
+                      <TSCaptionText
+                        textStyles={{ textAlign: "left", paddingLeft: 16 }}
+                      >
+                        For: {formatLongDate(forDate)}
+                      </TSCaptionText>
+                      <DatePicker
+                        date={forDate}
+                        mode="date"
+                        locale="en"
+                        theme="dark"
+                        modal={true}
+                        open={showDatePicker}
+                        onCancel={() => setShowDatePicker(false)}
+                        onConfirm={(date) => setForDate(date)}
+                        buttonColor={theme.palette.text}
+                        title={"For Date"}
+                      />
+                    </>
+                  </TouchableHighlight>
+                </View>
               </View>
 
               <View
                 style={{
+                  flex: 2,
                   flexDirection: "row",
-                  height: 35,
                   width: "100%",
-                  backgroundColor: theme.palette.darkGray,
-                  justifyContent: "center",
+                  justifyContent: "space-around",
+                  alignContent: "center",
                   alignItems: "center",
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.palette.text,
+                  paddingVertical: 12,
                 }}
               >
-                <TouchableHighlight
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    justifyContent: "center",
+                <LargeButton
+                  onPress={props.onRequestClose}
+                  btnStyles={{
+                    backgroundColor: "#DB4437",
+
+                    paddingVertical: 8,
                   }}
-                  onPress={() => setShowDatePicker(!showDatePicker)}
-                >
-                  <>
-                    <TSCaptionText
-                      textStyles={{ textAlign: "left", paddingLeft: 16 }}
-                    >
-                      For: {formatLongDate(forDate)}
-                    </TSCaptionText>
-                    <DatePicker
-                      date={forDate}
-                      mode="date"
-                      locale="en"
-                      theme="dark"
-                      modal={true}
-                      open={showDatePicker}
-                      onCancel={() => setShowDatePicker(false)}
-                      onConfirm={(date) => setForDate(date)}
-                      buttonColor={theme.palette.text}
-                      title={"For Date"}
-                    />
-                  </>
-                </TouchableHighlight>
+                  text={props.closeText}
+                />
+
+                <LargeButton
+                  onPress={() => duplicateWorkoutGroup()}
+                  btnStyles={{
+                    backgroundColor: theme.palette.primary.main,
+
+                    paddingVertical: 8,
+                  }}
+                  text={props.actionText}
+                />
               </View>
-            </View>
-
-            <View
-              style={{
-                flex: 2,
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "space-around",
-                alignContent: "center",
-                alignItems: "center",
-                paddingVertical: 12,
-              }}
-            >
-              <LargeButton
-                onPress={props.onRequestClose}
-                btnStyles={{
-                  backgroundColor: "#DB4437",
-
-                  paddingVertical: 8,
-                }}
-                text={props.closeText}
-              />
-
-              <LargeButton
-                onPress={() => duplicateWorkoutGroup()}
-                btnStyles={{
-                  backgroundColor: theme.palette.primary.main,
-
-                  paddingVertical: 8,
-                }}
-                text={props.actionText}
-              />
-            </View>
+            </KeyboardAvoidingView>
           </View>
         </View>
       </View>

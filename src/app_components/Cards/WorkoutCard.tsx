@@ -10,6 +10,8 @@ import {
   displayJList,
   SCREEN_WIDTH,
   WORKOUT_TYPE_LABELS,
+  WORKOUTITEM_HEIGHT,
+  WORKOUTITEM_WIDTH,
 } from "@/src/app_components/shared";
 import { WorkoutCardProps } from "./types";
 import { View } from "react-native";
@@ -31,9 +33,6 @@ const CardRow = styled.View`
 
 const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
   const theme = useTheme();
-  const cardWidth = SCREEN_WIDTH * 0.92;
-  const colWidth = cardWidth * 0.33;
-
   // const navigation = useNavigation<GymClassScreenProps["navigation"]>();
 
   const [deleteWorkout, { isLoading }] = useDeleteWorkoutMutation();
@@ -126,7 +125,8 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
           testID={props.testID}
           data={items}
           schemeType={props.scheme_type}
-          itemWidth={colWidth}
+          itemWidth={WORKOUTITEM_WIDTH}
+          itemHeight={WORKOUTITEM_HEIGHT}
           ownedByClass={props.ownedByClass}
         />
       </View>

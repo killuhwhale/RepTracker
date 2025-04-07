@@ -1,24 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TSParagrapghText } from "../Text/Text";
 import { SCREEN_WIDTH } from "../shared";
 
 import { BarChart } from "react-native-chart-kit";
 import HorizontalPicker from "../Pickers/HorizontalPicker";
-
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
-};
 
 const barData = (tags, metric) => {
   // Given a metric [dataTypes], return data
@@ -56,7 +45,18 @@ const TotalsBarChart: FunctionComponent<{
 
   const [showTags, setShowTags] = useState(true);
 
-  // todo,
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+    // color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    color: (opacity = 1) => theme.palette.primary.main,
+
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
 
   const _barDataFilteredDataTypes = () => {
     const rawData = showTags ? props.tags : props.names;

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
 export type Props = StackScreenProps<RootStackParamList, "Header">;
@@ -13,9 +13,10 @@ import LinearGradient from "react-native-linear-gradient";
 import GradientText from "./gradientText";
 import { router } from "expo-router";
 
-const Header: FunctionComponent<{ showBackButton: boolean }> = ({
-  showBackButton,
-}) => {
+const Header: FunctionComponent<{
+  showBackButton: boolean;
+  toggleState: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ showBackButton, toggleState }) => {
   const theme = useTheme();
 
   const handleNavToHome = () => {
@@ -28,6 +29,8 @@ const Header: FunctionComponent<{ showBackButton: boolean }> = ({
     <View
       style={{
         flexDirection: "row",
+
+        justifyContent: "space-between",
         backgroundColor: theme.palette.backgroundColor,
       }}
     >
@@ -55,11 +58,12 @@ const Header: FunctionComponent<{ showBackButton: boolean }> = ({
       ) : (
         <></>
       )}
+
       <TouchableOpacity activeOpacity={0.69} onPress={handleNavToHome}>
         <View
           style={{ flexDirection: "row", paddingVertical: 8, marginLeft: 12 }}
         >
-          <Icon
+          {/* <Icon
             testID={TestIDs.PlanetHome.name()}
             name="planet-outline"
             color={theme.palette.text}
@@ -68,8 +72,39 @@ const Header: FunctionComponent<{ showBackButton: boolean }> = ({
               marginRight: 12,
               color: "#0F9D58",
             }}
+          /> */}
+          <GradientText
+            text="FitTrackrr"
+            reversed={true}
+            textStyles={{ fontFamily: "SpaceMono-Regular" }}
           />
-          <GradientText text="FitTrackrr" />
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.69}
+        onPress={() => {
+          toggleState((prevState) => !prevState);
+        }}
+        style={{ width: "100%", height: "100%", flex: 1 }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 1,
+            // backgroundColor: "red",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginRight: 8,
+          }}
+        >
+          <Icon
+            name="cloudy-night-outline"
+            color={theme.palette.AWE_Green}
+            style={{
+              fontSize: 24,
+            }}
+          />
         </View>
       </TouchableOpacity>
     </View>

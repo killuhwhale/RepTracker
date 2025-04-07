@@ -8,6 +8,7 @@ const WorkoutItemPreviewHorizontalList: FunctionComponent<{
   data: WorkkoutItemsList;
   schemeType: number;
   itemWidth: number;
+  itemHeight: number;
   testID?: string;
   ownedByClass: boolean;
 }> = (props) => {
@@ -39,6 +40,7 @@ const WorkoutItemPreviewHorizontalList: FunctionComponent<{
             item={renderProps.item as WorkoutDualItemProps}
             schemeType={props.schemeType}
             itemWidth={props.itemWidth}
+            itemHeight={props.itemHeight}
             idx={index + 1}
             ownedByClass={props.ownedByClass}
           />

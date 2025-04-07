@@ -69,6 +69,14 @@ export const mdFontSize: number = Platform.OS === "ios" ? 18 : 18;
 export const smFontSize: number = Platform.OS === "ios" ? 12 : 12;
 export const xsmFontSize: number = Platform.OS === "ios" ? 10 : 10;
 
+const cardWidth = SCREEN_WIDTH * 0.92;
+const itemWidth = cardWidth * 0.42;
+
+export const WORKOUTITEM_WIDTH: number =
+  Platform.OS === "ios" ? itemWidth : itemWidth;
+
+export const WORKOUTITEM_HEIGHT: number = Platform.OS === "ios" ? 150 : 150;
+
 export const STANDARD_W = "STANDARD";
 export const REPS_W = "REPS";
 export const ROUNDS_W = "ROUNDS";

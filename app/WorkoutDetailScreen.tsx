@@ -6,6 +6,8 @@ import {
   displayJList,
   formatLongDate,
   WORKOUT_TYPES,
+  WORKOUTITEM_HEIGHT,
+  WORKOUTITEM_WIDTH,
 } from "../src/app_components/shared";
 import {
   TSCaptionText,
@@ -193,7 +195,8 @@ const WorkoutDetailScreen: FunctionComponent = () => {
               testID={""}
               data={workout.workout_items}
               schemeType={scheme_type}
-              itemWidth={120}
+              itemWidth={WORKOUTITEM_WIDTH}
+              itemHeight={WORKOUTITEM_HEIGHT}
               ownedByClass={ownedByClass == 1 ? true : false}
             />
           ) : (

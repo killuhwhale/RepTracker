@@ -18,7 +18,6 @@ import { FlatList, View } from "react-native";
 
 // import {NamePanelItem, TagPanelItem, WorkoutStats} from '../Stats/StatsPanel';
 
-import WorkoutItemPanel from "../WorkoutItems/ItemPanel";
 import { TestIDs } from "@/src/utils/constants";
 
 export const StyledList = styled.FlatList`

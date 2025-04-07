@@ -1,15 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
 import { ScrollView, View } from "react-native";
 
-import { useTheme } from "styled-components";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useTheme } from "styled-components/native";
 import { TSParagrapghText } from "../Text/Text";
-import { SCREEN_WIDTH } from "../shared";
+import { SCREEN_WIDTH, lightenHexColor } from "../shared";
 
 import { PieChart } from "react-native-chart-kit";
 import HorizontalPicker from "../Pickers/HorizontalPicker";
-
-import twrnc from "twrnc";
 
 function remap_shade(value) {
   const oldBase = 0.2;
@@ -20,47 +18,7 @@ function remap_shade(value) {
   );
 }
 
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) =>
-    opacity >= 0.2
-      ? `rgba(26, 255, 146, ${remap_shade(opacity)})`
-      : `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
-};
-
-const shade = 400;
-const pieColors = [
-  twrnc.color(`bg-red-${shade}`),
-  twrnc.color(`bg-orange-${shade + 100}`),
-
-  twrnc.color(`bg-amber-${shade}`),
-  twrnc.color(`bg-yellow-${shade}`),
-
-  twrnc.color(`bg-lime-${shade}`),
-  twrnc.color(`bg-green-${shade}`),
-  twrnc.color(`bg-emerald-${shade}`),
-
-  twrnc.color(`bg-teal-${shade + 100}`),
-  twrnc.color(`bg-cyan-${shade}`),
-  twrnc.color(`bg-sky-${shade}`),
-  twrnc.color(`bg-blue-${shade + 100}`),
-
-  twrnc.color(`bg-indigo-${shade}`),
-  twrnc.color(`bg-violet-${shade + 100}`),
-  twrnc.color(`bg-purple-${shade}`),
-
-  twrnc.color(`bg-fuchsia-${shade}`),
-  twrnc.color(`bg-pink-${shade}`),
-  twrnc.color(`bg-rose-${shade}`),
-];
-
-const pieData = (tags, metric) => {
+const pieData = (tags, metric, pieColors) => {
   // Given a metric [dataTypes], return data
 
   const data: any[] = [];
@@ -131,13 +89,51 @@ const TotalsBarChart: FunctionComponent<{
     barDataFilteredDataTypes.length > 1 ? 1 : 0
   ); // Which data to show in the BarChart [totalReps etc...]
 
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) =>
+      opacity >= 0.2
+        ? lightenHexColor(theme.palette.primary.main, 1)
+        : theme.palette.primary.main,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
+
   // generate bar data, given all data with chosen metric/ dataType
   // We can generate a filtered dataTypes by parsing tags or names.
   // If we look at a dataType, metric, we can check if all values are zero...
   //  Then we can use that list for Horizontal Picker and the IDX will match the filteredList, and pick the right metric
+  const shade = 400;
+  const pieColors = [
+    theme.palette.AWE_Blue,
+    theme.palette.AWE_Green,
+
+    theme.palette.AWE_Red,
+    theme.palette.AWE_Yellow,
+
+    theme.palette.accent,
+    theme.palette.primary.main,
+    theme.palette.secondary.main,
+    theme.palette.tertiary.main,
+
+    lightenHexColor(theme.palette.AWE_Blue, 1),
+    lightenHexColor(theme.palette.AWE_Green, 1),
+    lightenHexColor(theme.palette.AWE_Red, 1),
+    lightenHexColor(theme.palette.AWE_Yellow, 1),
+    lightenHexColor(theme.palette.accent, 1),
+    lightenHexColor(theme.palette.primary.main, 1),
+    lightenHexColor(theme.palette.secondary.main, 1),
+    lightenHexColor(theme.palette.tertiary.main, 1),
+  ];
+
   const PieData = pieData(
     showTags ? props.tags : props.names,
-    barDataFilteredDataTypes[showBarChartDataType]
+    barDataFilteredDataTypes[showBarChartDataType],
+    pieColors
   );
 
   return (

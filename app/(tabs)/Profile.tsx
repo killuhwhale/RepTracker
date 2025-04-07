@@ -26,7 +26,7 @@ import {
 } from "@/src/app_components/Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import {
   apiSlice,
   useDeleteGymMutation,
@@ -614,7 +614,7 @@ const Profile: FunctionComponent<Props> = () => {
                                     style={{
                                       width: "80%",
                                       backgroundColor:
-                                        twrnc.color("bg-blue-600"),
+                                        theme.palette.primary.main,
                                       borderRadius: 8,
                                     }}
                                     key={product.identifier}

@@ -164,9 +164,10 @@ const WorkoutItemPanel: FunctionComponent<{
   item: AnyWorkoutItem;
   schemeType: number;
   itemWidth: number;
+  itemHeight: number;
   ownedByClass: boolean;
   idx?: number;
-}> = ({ item, schemeType, itemWidth, idx, ownedByClass }) => {
+}> = ({ item, schemeType, itemWidth, itemHeight, idx, ownedByClass }) => {
   const theme = useTheme();
 
   const [currentPenalty, setCurrentPenalty] = useState("");
@@ -214,7 +215,7 @@ const WorkoutItemPanel: FunctionComponent<{
       style={{
         width: itemWidth,
         minWidth: itemWidth,
-        height: 90,
+        height: itemHeight,
         borderRadius: 8,
         padding: 6,
         marginRight: 8,

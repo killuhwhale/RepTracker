@@ -19,7 +19,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: { fontWeight: "condensedBold" },
         tabBarActiveTintColor: theme.palette.primary.main,
-        tabBarActiveBackgroundColor: theme.palette.black,
+        tabBarActiveBackgroundColor: theme.palette.backgroundColor,
 
         tabBarInactiveTintColor: twrnc.color("bg-slate-400"),
         tabBarInactiveBackgroundColor: twrnc.color("bg-slate-900"),

@@ -1,36 +1,13 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 import styled from "styled-components/native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { TSParagrapghText, XSmallText } from "../Text/Text";
-import { SCREEN_WIDTH } from "../shared";
+import { SCREEN_WIDTH, lightenHexColor } from "../shared";
 
 import { LineChart } from "react-native-chart-kit";
 import HorizontalPicker from "../Pickers/HorizontalPicker";
-
-function remap_shade(value) {
-  const oldBase = 0.2;
-  const newBase = 0.55;
-  const endRange = 1;
-  return (
-    newBase + ((value - oldBase) * (endRange - newBase)) / (endRange - oldBase)
-  );
-}
-
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) =>
-    opacity >= 0.2
-      ? `rgba(26, 255, 146, ${remap_shade(opacity)})`
-      : `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
-};
 
 const displayNum = (x: number): string => {
   const s = x.toString();
@@ -188,6 +165,20 @@ const TotalsLineChart: FunctionComponent<{
     __filteredDataTypes.length > 1 ? 1 : 0
   ); // Which data to show in the LineChart [totalReps etc...]
   const [prevDTLength, setPrevDTLength] = useState(__filteredDataTypes.length);
+
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) =>
+      opacity >= 0.2
+        ? lightenHexColor(theme.palette.primary.main, 1)
+        : theme.palette.primary.main,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
 
   // Helps align data and horizontal list when Tag or Name Chagnes.
   useEffect(() => {

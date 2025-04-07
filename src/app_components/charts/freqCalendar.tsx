@@ -1,13 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
 import { ScrollView, View } from "react-native";
 import styled from "styled-components/native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { ContributionGraph } from "react-native-chart-kit";
 import { ContributionChartValue } from "react-native-chart-kit/dist/contribution-graph/ContributionGraph";
 import { RectProps } from "react-native-svg/lib/typescript/elements/Rect";
 
 import { TSParagrapghText } from "../Text/Text";
-import { Container, SCREEN_WIDTH } from "../shared";
+import { Container, SCREEN_WIDTH, lightenHexColor } from "../shared";
 import { WorkoutCardProps, WorkoutGroupProps } from "../Cards/types";
 import { dateFormat } from "@/src/utils/algos";
 
@@ -16,29 +16,6 @@ const ScreenContainer = styled(Container)`
   justify-content: space-between;
   width: 100%;
 `;
-
-function remap_shade(value) {
-  const oldBase = 0.2;
-  const newBase = 0.55;
-  const endRange = 1;
-  return (
-    newBase + ((value - oldBase) * (endRange - newBase)) / (endRange - oldBase)
-  );
-}
-
-const chartConfig = {
-  backgroundGradientFrom: "#1E2923",
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: "#08130D",
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) =>
-    opacity >= 0.2
-      ? `rgba(26, 255, 146, ${remap_shade(opacity)})`
-      : `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
-};
 
 interface FreqDataProps {
   date: string;
@@ -95,6 +72,21 @@ const FreqCalendar: FunctionComponent<{
   const calendarDayDelta = Math.max(35, _dayDelta);
 
   const [calendarText, setCalendarText] = useState(initCalendarText);
+
+  const chartConfig = {
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#08130D",
+    backgroundGradientToOpacity: 0.5,
+
+    color: (opacity = 1) =>
+      opacity >= 0.2
+        ? lightenHexColor(theme.palette.primary.main, 1)
+        : theme.palette.primary.main,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
 
   // generate bar data, given all data with chosen metric/ dataType
   // We can generate a filtered dataTypes by parsing tags or names.
