@@ -81,8 +81,8 @@ const FreqCalendar: FunctionComponent<{
 
     color: (opacity = 1) =>
       opacity >= 0.2
-        ? lightenHexColor(theme.palette.primary.main, 1)
-        : theme.palette.primary.main,
+        ? theme.palette.primary.main
+        : lightenHexColor(theme.palette.primary.main, 0.7),
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
