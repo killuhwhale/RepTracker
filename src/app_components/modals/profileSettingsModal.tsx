@@ -122,6 +122,14 @@ const ProfileSettingsModal: FunctionComponent<{
       .catch((err) => console.log("ProfileSettings Logout Error", err));
   };
 
+  const handleNavToWorkoutItemMaxes = () => {
+    router.push({
+      pathname: "/WorkoutItemMaxes",
+      params: { userID: props.user.id },
+    });
+    props.onRequestClose();
+  };
+
   const handleNavToCreateWorkoutGroupScreen = () => {
     router.push({
       pathname: "/input_pages/gyms/CreateWorkoutGroupScreen",
@@ -257,6 +265,11 @@ const ProfileSettingsModal: FunctionComponent<{
               }}
             />
 
+            <ProfileSettingsModalRow
+              // testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+              onAction={handleNavToWorkoutItemMaxes}
+              title="Workout Item Maxes"
+            />
             <ProfileSettingsModalRow
               testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               onAction={handleNavToCreateWorkoutGroupScreen}

@@ -84,10 +84,14 @@ const asyncBaseQuery =
         delete options.headers.Authorization;
       }
 
-      if (data && params?.contentType !== "multipart/form-data") {
+      if (
+        method != "GET" &&
+        data &&
+        params?.contentType !== "multipart/form-data"
+      ) {
         devLog("Stringifying body for JSON data: ", baseUrl + url);
         options.body = JSON.stringify(data);
-      } else {
+      } else if (method != "GET") {
         options.body = data;
       }
       devLog("BODY: ", baseUrl + url, options);
@@ -170,6 +174,7 @@ export const apiSlice = createApi({
     "Members",
     "GymFavs",
     "GymClassFavs",
+    "WorkoutItemMaxes",
     "StatsQuery",
     "DailySnapshot",
     "AppControl",
@@ -799,6 +804,45 @@ export const apiSlice = createApi({
       providesTags: ["UserAuth"],
     }),
 
+    // Workout Maxes
+    getUserWorkoutMaxes: builder.query({
+      query: (user_id) => {
+        return {
+          url: `maxes/list_workouts/?user_id=${user_id}`,
+        };
+      },
+      providesTags: ["WorkoutItemMaxes"],
+    }),
+
+    getWorkoutMaxHistory: builder.query({
+      query: (data) => {
+        return {
+          url: `maxes/${data.workoutItemId}/history/?user_id=${data.user_id}`,
+        };
+      },
+      providesTags: (result, error, workoutItemId) => [
+        { type: "WorkoutItemMaxes", id: workoutItemId },
+      ],
+    }),
+
+    getWorkoutMaxProgress: builder.query({
+      query: (data) => {
+        return { url: `maxes/${data.workoutItemId}/progress/`, body: data };
+      },
+      providesTags: (result, error, workoutItemId) => [
+        { type: "WorkoutItemMaxes", id: workoutItemId },
+      ],
+    }),
+
+    updateWorkoutMax: builder.mutation({
+      query: (data) => ({
+        url: "maxes/update_max/",
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["WorkoutItemMaxes"],
+    }),
+
     // Stats
     getCompletedWorkoutGroupsForUserByDateRange: builder.query({
       query: (data = {}) => {
@@ -891,6 +935,12 @@ export const {
   useUpdateWorkoutDualItemsMutation,
   useCreateCompletedWorkoutMutation,
   useGetCompletedWorkoutGroupsForUserByDateRangeQuery,
+
+  useGetUserWorkoutMaxesQuery,
+  useGetWorkoutMaxHistoryQuery,
+  useGetWorkoutMaxProgressQuery,
+  useUpdateWorkoutMaxMutation,
+
   useGetDailySnapshotQuery,
   useGetAdUnitsQuery,
   // usesTagLabelsGroupsForUserByDateRangeQuery,

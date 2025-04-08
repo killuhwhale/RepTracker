@@ -10,7 +10,7 @@ interface WorkoutNameRowItemProps {
   onSelect(workoutName: WorkoutNameProps): void;
 }
 
-class WorkoutNameRowItem extends React.PureComponent<WorkoutNameRowItemProps> {
+export class WorkoutNameRowItem extends React.PureComponent<WorkoutNameRowItemProps> {
   render() {
     return (
       <TouchableOpacity
@@ -39,10 +39,12 @@ class WorkoutNameRowItem extends React.PureComponent<WorkoutNameRowItemProps> {
 
 const PickerFilterListView: FunctionComponent<{
   data: [WorkoutNameProps];
-  onSelect(workoutName: WorkoutNameProps): void;
+  RowView: any;
+  extraProps: any;
 }> = (props) => {
   /** The list view to display the filtered results. */
   const theme = useTheme();
+  console.log("Extra props for RowItem: ", props.extraProps);
 
   return (
     <View>
@@ -54,8 +56,10 @@ const PickerFilterListView: FunctionComponent<{
         keyExtractor={({ id }: any) => id.toString()}
         renderItem={({ item }: { item: WorkoutNameProps }) => {
           // console.log('WorkoutName item: ', item);
+
           return (
-            <WorkoutNameRowItem workoutName={item} onSelect={props.onSelect} />
+            <props.RowView {...props.extraProps} workoutName={item} />
+            // <WorkoutNameRowItem workoutName={item} onSelect={props.onSelect} />
           );
         }}
       />

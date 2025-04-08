@@ -7,6 +7,7 @@ import { centeredViewStyle, modalViewStyle } from "./modalStyles";
 import Input from "../Input/input";
 import { WorkoutNameProps } from "../Cards/types";
 import { TestIDs } from "@/src/utils/constants";
+import { WorkoutNameRowItem } from "./pickerFilterListView";
 
 const FilterItemsModal: FunctionComponent<{
   modalVisible: boolean;
@@ -135,7 +136,8 @@ const FilterItemsModal: FunctionComponent<{
 
             <View style={{ flex: 1 }}>
               <props.uiView
-                {...props.extraProps}
+                extraProps={props.extraProps}
+                RowView={WorkoutNameRowItem}
                 data={props.items.filter(
                   (_, i) => filterResult.indexOf(i) >= 0
                 )}

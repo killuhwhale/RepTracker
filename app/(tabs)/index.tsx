@@ -51,10 +51,10 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
   } = useGetProfileWorkoutGroupsQuery(page);
 
   const [workouts, setWorkouts] = useState<WorkoutGroupProps[]>([]);
-  const maxPage = Math.ceil((dataWG?.count ? dataWG.count : 1) / PAGE_SIZE);
+  const maxPage = Math.ceil((dataWG?.count ? dataWG?.count : 1) / PAGE_SIZE);
 
   const loadMore = () => {
-    if (!isLoadingWG && dataWG.next) {
+    if (!isLoadingWG && dataWG?.next) {
       console.log("Loading more: maxPage: ", maxPage, dataWG?.count, PAGE_SIZE);
       setPage(Math.min(maxPage, page + 1));
     }
@@ -63,11 +63,11 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
   const currentWorkoutGroupsRef = useRef<{ [key: number]: number }>({});
   // Update workout list when new data arrives
   useEffect(() => {
-    if (dataWG && dataWG.results && dataWG.results.length > 0) {
+    if (dataWG && dataWG?.results && dataWG?.results.length > 0) {
       setWorkouts((prevWorkouts) => {
         const newWorkouts: WorkoutGroupProps[] = [];
 
-        [...dataWG.results].map((wgRes: WorkoutGroupProps) => {
+        [...dataWG?.results].map((wgRes: WorkoutGroupProps) => {
           if (!(wgRes.id in currentWorkoutGroupsRef.current)) {
             newWorkouts.push(wgRes);
             currentWorkoutGroupsRef.current[wgRes.id] = 1;
@@ -86,8 +86,8 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
   }, [dataWG]);
 
   let userWorkouts =
-    !isLoadingWG && isSuccessWG && dataWG && dataWG.results
-      ? ([...dataWG.results] as WorkoutGroupCardProps[])
+    !isLoadingWG && isSuccessWG && dataWG && dataWG?.results
+      ? ([...dataWG?.results] as WorkoutGroupCardProps[])
       : [];
 
   // console.log("dataWG: ", dataWG);
@@ -155,7 +155,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       </View>
       {userWorkouts.length ? (
         <></>
-      ) : isLoadingWG || dataWG.count > 0 ? (
+      ) : isLoadingWG || dataWG?.count > 0 ? (
         <View
           style={{
             flex: 10,
