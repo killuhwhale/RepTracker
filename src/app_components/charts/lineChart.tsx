@@ -38,7 +38,7 @@ const displayNum = (x: number): string => {
   return `${s[0]}.${s[1]}${s[2]}${suffix}`;
 };
 
-const Decorator = ({ x, y, index, indexData }) => {
+const Decorator = ({ x, y, index, indexData }, color) => {
   const trialAndErrorFactor = 4;
   const numChars = Math.ceil(
     (indexData.toString().length * trialAndErrorFactor) / 2
@@ -51,6 +51,8 @@ const Decorator = ({ x, y, index, indexData }) => {
         left: x - numChars,
         top: y - 15,
         textAlign: "center",
+        color: color,
+        fontSize: 12,
       }}
       key={index}
     >
@@ -175,6 +177,7 @@ const TotalsLineChart: FunctionComponent<{
       opacity >= 0.2
         ? lightenHexColor(theme.palette.primary.main, 1)
         : theme.palette.primary.main,
+    labelColor: (opacity = 1) => theme.palette.AWE_Green,
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
@@ -286,7 +289,9 @@ const TotalsLineChart: FunctionComponent<{
           height={260}
           verticalLabelRotation={90}
           chartConfig={chartConfig}
-          renderDotContent={Decorator}
+          renderDotContent={(p) =>
+            Decorator(p, lightenHexColor(theme.palette.primary.main, 1.55))
+          }
           bezier
           fromZero
         />

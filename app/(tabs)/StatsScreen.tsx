@@ -199,6 +199,7 @@ const StatsScreen: FunctionComponent<Props> = () => {
             flexDirection: "row",
             width: "100%",
             backgroundColor: theme.palette.darkGray,
+
             justifyContent: "center",
             alignItems: "center",
             borderBottomWidth: 2,
@@ -211,6 +212,7 @@ const StatsScreen: FunctionComponent<Props> = () => {
             onDateChange={setStartDate}
             mode="date"
             locale="en"
+            // theme="dark"
             theme="dark"
             maximumDate={new Date(endDate.getTime() - oneday)}
             onCancel={() => setStartDateModalOpen(false)}
@@ -220,7 +222,6 @@ const StatsScreen: FunctionComponent<Props> = () => {
             }}
             modal={true}
             open={startDateModalOpen}
-            buttonColor={theme.palette.text}
             title={"Start Date"}
           />
           <DatePicker
@@ -237,7 +238,6 @@ const StatsScreen: FunctionComponent<Props> = () => {
               setEndDate(date);
               setEndDateModalOpen(false);
             }}
-            buttonColor={theme.palette.text}
             title={"End Date"}
           />
         </View>

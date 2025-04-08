@@ -68,6 +68,7 @@ const WorkoutMaxes = () => {
   } = useGetWorkoutNamesQuery("");
   const workoutNames = workoutItems as WorkoutNameProps[];
 
+  // TODO, anywhere th
   // Get workout items with current max values
   const {
     data: workoutItemMaxes,
@@ -80,7 +81,6 @@ const WorkoutMaxes = () => {
   const workoutItemMaxesMap: Map<string, WorkoutMaxProps> = workoutItemMaxes
     ? new Map<string, WorkoutMaxProps>(
         workoutItemMaxes.map((wnm: WorkoutMaxProps) => {
-          console.log("wnm: ", wnm);
           return [wnm.id, wnm];
         })
       )
@@ -318,7 +318,14 @@ const WorkoutMaxes = () => {
                   onPress={cancelEditing}
                   disabled={isUpdating}
                 >
-                  <Text style={styles.actionButtonText}>Cancel</Text>
+                  <Text
+                    style={[
+                      styles.actionButtonText,
+                      { color: theme.palette.gray },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity

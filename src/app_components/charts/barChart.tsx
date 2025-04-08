@@ -52,6 +52,7 @@ const TotalsBarChart: FunctionComponent<{
     backgroundGradientToOpacity: 0.5,
     // color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     color: (opacity = 1) => theme.palette.primary.main,
+    labelColor: (opacity = 1) => theme.palette.AWE_Green,
 
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
