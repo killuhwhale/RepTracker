@@ -494,7 +494,7 @@ export const apiSlice = createApi({
         params: { contentType: "multipart/form-data" },
       }),
       // When creating a workout, we create it and then create the items immediately after.
-      // So we will invalidate on createWorkoutTtems
+      // So we will invalidate on createWorkoutItems
       // invalidatesTags: (result, error, arg) => {
       //   if (error) {
       //     return [];

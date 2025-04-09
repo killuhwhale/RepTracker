@@ -144,6 +144,11 @@ export interface WorkoutItemListProps {
   data: Array<WorkoutItemProps>;
 }
 
+export interface WorkoutStatsProps {
+  items: any;
+  tags: any;
+}
+
 export interface WorkoutCardProps {
   id: number;
   group?: WorkoutGroupProps;
@@ -159,6 +164,7 @@ export interface WorkoutCardProps {
   editable?: boolean;
   testID?: string;
   ownedByClass: boolean;
+  stats?: WorkoutStatsProps;
   navToWorkoutScreenWithItems: () => void;
 }
 

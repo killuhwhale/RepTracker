@@ -89,7 +89,7 @@ const WorkoutCardFullList: FunctionComponent<WorkoutCardListProps> = (
       {props.data.map((item) => {
         const num_items = item.workout_items?.length || 0;
 
-        console.log("WorkoutCardFullList Group", props.group.finished);
+        // console.log("WorkoutCardFullList Group", props.group.finished);
         // WorkoutCardFullList Group
         // On Animate Finish
         return (

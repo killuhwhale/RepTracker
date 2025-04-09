@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RegularButton } from "../Buttons/buttons";
 import * as RootNavigation from "@/src/navigators/RootNavigation";
@@ -69,7 +69,7 @@ const ProfileSettingsModalRow: FunctionComponent<{
     <View
       style={{
         width: "100%",
-        height: 45,
+        height: 35,
         justifyContent: "center",
         alignContent: "center",
         alignItems: "center",
@@ -91,8 +91,8 @@ const ProfileSettingsModalRow: FunctionComponent<{
               variant === 0
                 ? theme.palette.text
                 : variant === 1
-                ? theme.palette.secondary.main
-                : theme.palette.primary.main,
+                ? theme.palette.AWE_Red
+                : theme.palette.AWE_Blue,
           }}
         >
           {props.title}
@@ -200,7 +200,7 @@ const ProfileSettingsModal: FunctionComponent<{
               >
                 <Icon
                   name="refresh"
-                  color="blue"
+                  color={theme.palette.AWE_Green}
                   style={{ fontSize: 24, marginRight: 4 }}
                 />
                 <TSCaptionText>Sub Status</TSCaptionText>
@@ -222,7 +222,7 @@ const ProfileSettingsModal: FunctionComponent<{
               >
                 <Icon
                   name="log-out"
-                  color="red"
+                  color={theme.palette.AWE_Red}
                   style={{ fontSize: 24, marginRight: 4 }}
                 />
                 <TSCaptionText>Logout</TSCaptionText>
@@ -270,6 +270,14 @@ const ProfileSettingsModal: FunctionComponent<{
               onAction={handleNavToWorkoutItemMaxes}
               title="Workout Item Maxes"
             />
+
+            <View
+              style={{
+                borderTopWidth: 1,
+                height: 1,
+                borderColor: theme.palette.text,
+              }}
+            />
             <ProfileSettingsModalRow
               testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               onAction={handleNavToCreateWorkoutGroupScreen}
@@ -305,6 +313,13 @@ const ProfileSettingsModal: FunctionComponent<{
               color={theme.palette.primary.main}
               title="Terms of Use (EULA)"
             />
+            <View
+              style={{
+                borderTopWidth: 1,
+                height: 1,
+                borderColor: theme.palette.text,
+              }}
+            />
             <ProfileSettingsModalRow
               onAction={() => {
                 Linking.openURL(
@@ -316,14 +331,27 @@ const ProfileSettingsModal: FunctionComponent<{
               color={theme.palette.primary.main}
               title="Privacy Policy"
             />
+            <View
+              style={{
+                borderTopWidth: 1,
+                height: 1,
+                borderColor: theme.palette.text,
+              }}
+            />
             <ProfileSettingsModalRow
               onAction={() => {
                 Linking.openURL(`https://${DOMAIN_NAME}/removeAccount`);
                 props.onRequestClose();
               }}
               variant={1}
-              color={theme.palette.secondary.main}
               title="Remove Account"
+            />
+            <View
+              style={{
+                borderTopWidth: 1,
+                height: 1,
+                borderColor: theme.palette.text,
+              }}
             />
           </View>
 
@@ -340,7 +368,7 @@ const ProfileSettingsModal: FunctionComponent<{
           >
             <RegularButton
               testID={TestIDs.CloseProfileSettingsBtn.name()}
-              underlayColor={theme.palette.secondary.main}
+              underlayColor={theme.palette.AWE_Blue}
               onPress={props.onRequestClose}
               btnStyles={{
                 backgroundColor: theme.palette.primary.main,
@@ -349,6 +377,7 @@ const ProfileSettingsModal: FunctionComponent<{
               text="Close"
             />
           </View>
+
           {showConfirmLogout ? (
             <ActionCancelModal
               containerStyle={{ borderWidth: 2, borderColor: "white" }}

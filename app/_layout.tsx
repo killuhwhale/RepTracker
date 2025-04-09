@@ -28,7 +28,11 @@ import { BASEURL } from "../src/utils/constants";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import auth from "../src/utils/auth";
 import twrnc from "twrnc";
-import { getToken } from "@/src/utils/tokenUtils";
+import {
+  getThemePreference,
+  getToken,
+  storeThemePreference,
+} from "@/src/utils/tokenUtils";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -49,6 +53,10 @@ const l_lightGray = "#a8dadc";
 const l_gray = "#457b9d";
 const l_darkGray = "#1d3557";
 const l_background = "#f1faee";
+
+interface ThemeMap {
+  [key: string]: DefaultTheme;
+}
 
 const DarkTheme: DefaultTheme = {
   borderRadius: "8px",
@@ -122,6 +130,11 @@ const FeminineTheme: DefaultTheme = {
   },
 };
 
+const DEFAULT_USER_THEME = "DARK";
+const THEMES: ThemeMap = {
+  [DEFAULT_USER_THEME]: DarkTheme,
+  FEM: FeminineTheme,
+};
 const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
   // This will check if we have a valid token by sending a request to server for user info.
   // This either loads the app or login page.
@@ -190,10 +203,12 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const isDarkMode = useColorScheme() === "dark";
-  console.log("User's preffered color scheme", useColorScheme(), isDarkMode);
+  // const isDarkMode = useColorScheme() === "dark";
+  // console.log("User's preffered color scheme", useColorScheme(), isDarkMode);
+
   const [showBackButton, setShowBackButton] = useState(false);
-  const [isDark, setIsDark] = useState(true);
+  const [userTheme, setUserTheme] = useState(DEFAULT_USER_THEME);
+  const [userThemeLoading, setUserThemeLoading] = useState(true);
 
   const [fontsLoaded] = useFonts({
     "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -205,7 +220,17 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+  useEffect(() => {
+    const getThemePref = async () => {
+      const themePrefrence = await getThemePreference();
+      setUserTheme(themePrefrence);
+      setUserThemeLoading(false);
+    };
+
+    getThemePref();
+  }, []);
+
+  if (!fontsLoaded || userThemeLoading) {
     return null;
   }
 
@@ -215,7 +240,7 @@ export default function RootLayout() {
         style={{ flex: 1, backgroundColor: d_background, paddingBottom: 0 }}
       >
         <Provider store={store}>
-          <ThemeProvider theme={isDark ? DarkTheme : FeminineTheme}>
+          <ThemeProvider theme={userTheme ? THEMES[userTheme] : DarkTheme}>
             <Uploady destination={{ url: `${BASEURL}` }}>
               {/* <React.StrictMode> */}
               <GestureHandlerRootView>
@@ -227,7 +252,7 @@ export default function RootLayout() {
                 >
                   <Header
                     showBackButton={showBackButton}
-                    toggleState={setIsDark}
+                    toggleState={setUserTheme}
                   />
                   <AuthNew>
                     <Stack screenOptions={{ headerShown: false }}>

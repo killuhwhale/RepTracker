@@ -12,6 +12,7 @@ import {
 
 import twrnc from "twrnc";
 import { UserProps } from "@/app/types";
+import { WorkoutMaxProps } from "@/app/WorkoutItemMaxes";
 
 export const Container = styled.View`
   flex: 1;
@@ -221,6 +222,7 @@ export class CalcWorkoutStats {
   schemeRounds: string;
   schemeType: number;
   items: WorkkoutItemsList;
+  workoutItemMaxesMap: Map<string, WorkoutMaxProps>;
 
   isFormatted = false;
   ownedByClass = false;
@@ -231,10 +233,11 @@ export class CalcWorkoutStats {
   fTags = {};
   fNames = {};
 
-  constructor() {
+  constructor(workoutItemMaxesMap: Map<string, WorkoutMaxProps>) {
     this.schemeRounds = "";
     this.schemeType = -1;
     this.items = [];
+    this.workoutItemMaxesMap = workoutItemMaxesMap;
   }
 
   getStats() {
@@ -284,6 +287,8 @@ export class CalcWorkoutStats {
 
   calcItemReps(
     item: AnyWorkoutItem,
+    loadFactorKG: number,
+    loadFactorLB: number,
     pCat: string,
     workoutName: string,
     quantity: number | null,
@@ -297,17 +302,17 @@ export class CalcWorkoutStats {
 
     // Convert weights based on native item weight unit
     if (item.weight_unit == "kg") {
-      this.tags[pCat].totalLbs += totalVol * KG2LB;
-      this.names[workoutName].totalLbs += totalVol * KG2LB;
+      this.tags[pCat].totalLbs += totalVol * loadFactorLB * KG2LB;
+      this.names[workoutName].totalLbs += totalVol * loadFactorLB * KG2LB;
 
-      this.tags[pCat].totalKgs += totalVol;
-      this.names[workoutName].totalKgs += totalVol;
+      this.tags[pCat].totalKgs += totalVol * loadFactorKG;
+      this.names[workoutName].totalKgs += totalVol * loadFactorKG;
     } else {
-      this.tags[pCat].totalLbs += totalVol;
-      this.names[workoutName].totalLbs += totalVol;
+      this.tags[pCat].totalLbs += totalVol * loadFactorLB;
+      this.names[workoutName].totalLbs += totalVol * loadFactorLB;
 
-      this.tags[pCat].totalKgs += totalVol * LB2KG;
-      this.names[workoutName].totalKgs += totalVol * LB2KG;
+      this.tags[pCat].totalKgs += totalVol * loadFactorKG * LB2KG;
+      this.names[workoutName].totalKgs += totalVol * loadFactorKG * LB2KG;
     }
   }
 
@@ -376,7 +381,38 @@ export class CalcWorkoutStats {
     }
   }
 
-  calcStandardScheme(item: AnyWorkoutItem, pCat: string, workoutName: string) {
+  getLoadFactors(
+    item: AnyWorkoutItem,
+    totalVol: number,
+    maxVal: number,
+    maxUnit: string,
+    quantity: number
+  ) {
+    const itemWeightKG = item.weight_unit == "kg" ? totalVol : totalVol * LB2KG;
+    const itemWeightLB = item.weight_unit == "kg" ? totalVol * KG2LB : totalVol;
+
+    // Adjust maxval to match totalVal calculation (single rep vs set of reps)
+    if (maxVal == -1) {
+      maxVal = totalVol; // user didnt record max, we just usse vol to maintain normal calcs
+    } else {
+      maxVal = maxVal * item.sets! * quantity!; //  We need to calculate for the total sets, we just have a weight for a single weight.  0 case: if we do have any sets, no vol
+    }
+
+    const maxValKG = maxUnit == "kg" ? maxVal : maxVal * LB2KG;
+    const maxValLB = maxUnit == "kg" ? maxVal * KG2LB : maxVal;
+
+    const loadFactorKG = itemWeightKG / maxValKG;
+    const loadFactorLB = itemWeightLB / maxValLB;
+    return [loadFactorKG, loadFactorLB];
+  }
+
+  calcStandardScheme(
+    item: AnyWorkoutItem,
+    maxVal: number,
+    maxUnit: string,
+    pCat: string,
+    workoutName: string
+  ) {
     const weights = JSON.parse(item.weights);
     // Expand a single value arrray
     const itemWeights = expandArray(weights, item.sets);
@@ -397,10 +433,41 @@ export class CalcWorkoutStats {
     const totalVol =
       quantity *
       (weights.length == 0 ? 0 : itemWeights.reduce((p, c) => p + c, 0));
+
+    const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
+      item,
+      totalVol,
+      maxVal,
+      maxUnit,
+      quantity
+    );
+
+    // console.log(
+    //   `Load factor for ${item.name.name}: ${loadFactorLB}LBS`,
+    //   itemWeightLB,
+    //   maxValLB,
+    //   weights.length,
+    //   quantity
+    // );
+
+    // The problem is that we need to calculate a load for a bunch of weights, instead of iterating over each one,
+    // we will operate on the total, so our maxVal, if not given because user hasnt recorded yet, we will just use the weight they used.
+    // But if they did record a max then we will need to multiply it by sets to get the factor acurately
+
+    // Note: Weright and set should be euqal, we count reps and totalVol independently since we can do reps without weight and thus no vol...
     // console.log('CALC Standard Scheme:: ', quantity, weights, itemWeights);
     if (itemReps[0]) {
       //Reps
-      this.calcItemReps(item, pCat, workoutName, quantity, totalVol, item.sets);
+      this.calcItemReps(
+        item,
+        loadFactorKG,
+        loadFactorLB,
+        pCat,
+        workoutName,
+        quantity,
+        totalVol,
+        item.sets
+      );
     } else if (itemDuration[0]) {
       // Duration
       this.calcItemDuration(
@@ -423,7 +490,13 @@ export class CalcWorkoutStats {
     }
   }
 
-  calcRepsScheme(item: AnyWorkoutItem, pCat: string, workoutName: string) {
+  calcRepsScheme(
+    item: AnyWorkoutItem,
+    maxVal: number,
+    maxUnit: string,
+    pCat: string,
+    workoutName: string
+  ) {
     const repsPerRounds = parseNumList(this.schemeRounds); // Comes from previous screen, param, string
     const reps = JSON.parse(item.reps);
     const itemReps =
@@ -460,7 +533,13 @@ export class CalcWorkoutStats {
       // E.g we do not do the quanitity 21,15,9 times, we do it once per round.
       const totalVol =
         (item.constant ? 1 : roundReps) * quantity * itemWeights[idx];
-
+      const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
+        item,
+        totalVol,
+        maxVal,
+        maxUnit,
+        quantity
+      );
       // console.log(
       //   'Total vol: ',
       //   quantity,
@@ -474,6 +553,8 @@ export class CalcWorkoutStats {
       if (itemReps[0]) {
         this.calcItemReps(
           item,
+          loadFactorKG,
+          loadFactorLB,
           pCat,
           workoutName,
           itemReps[idx],
@@ -503,7 +584,13 @@ export class CalcWorkoutStats {
     });
   }
 
-  calcRoundsScheme(item: AnyWorkoutItem, pCat: string, workoutName: string) {
+  calcRoundsScheme(
+    item: AnyWorkoutItem,
+    maxVal: number,
+    maxUnit: string,
+    pCat: string,
+    workoutName: string
+  ) {
     const rounds = parseInt(this.schemeRounds);
     const reps = JSON.parse(item.reps);
     const distance = JSON.parse(item.distance);
@@ -524,9 +611,28 @@ export class CalcWorkoutStats {
       // If the
       const totalVol = dotProd(itemReps, weights);
       // console.log("Dot Product: ", quantity, weights, totalVol)
-      this.tags[pCat].totalReps += itemReps.reduce((p, c) => p + c, 0);
-      this.names[workoutName].totalReps += itemReps.reduce((p, c) => p + c, 0);
-      this.calcItemReps(item, pCat, workoutName, null, totalVol, null);
+      const _totalReps = itemReps.reduce((p, c) => p + c, 0);
+      this.tags[pCat].totalReps += _totalReps;
+      this.names[workoutName].totalReps += _totalReps;
+      // TODO() Verify _totalReps is appropriate for getLoadFactors
+      const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
+        item,
+        totalVol,
+        maxVal,
+        maxUnit,
+        _totalReps
+      );
+
+      this.calcItemReps(
+        item,
+        loadFactorKG,
+        loadFactorLB,
+        pCat,
+        workoutName,
+        null,
+        totalVol,
+        null
+      );
     } else if (itemDuration[0]) {
       const totalVol = dotProd(itemDuration, weights);
       const total = itemDuration.reduce((p, c) => p + c, 0);
@@ -574,7 +680,13 @@ export class CalcWorkoutStats {
   }
 
   // calcRecordScheme essentailly will calculate anything (really doesnt calculate anything, just reports or tallys up the total from the recorded values unless owned by class.)
-  calcRecordScheme(item: AnyWorkoutItem, pCat: string, workoutName: string) {
+  calcRecordScheme(
+    item: AnyWorkoutItem,
+    maxVal: number,
+    maxUnit: string,
+    pCat: string,
+    workoutName: string
+  ) {
     // Problem is, we dont know how much was accomplished until after the fact.
     // WE can calculate what a single round would be, then once we save this as completed, we can calculate the toatls....
     // For now, we will calc a single round only.
@@ -608,7 +720,24 @@ export class CalcWorkoutStats {
     if (itemReps[0]) {
       //Reps
       const totalVol = dotProd(itemReps, weights);
-      this.calcItemReps(item, pCat, workoutName, itemReps[0], totalVol, 1);
+
+      const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
+        item,
+        totalVol,
+        maxVal,
+        maxUnit,
+        itemReps[0]
+      );
+      this.calcItemReps(
+        item,
+        loadFactorKG,
+        loadFactorLB,
+        pCat,
+        workoutName,
+        itemReps[0],
+        totalVol,
+        1
+      );
       // console.log("Dot Product: ", quantity, weights, totalVol)
     } else if (itemDuration[0]) {
       const totalVol = dotProd(itemDuration, weights);
@@ -649,6 +778,29 @@ export class CalcWorkoutStats {
     this.isFormatted = false;
     try {
       this.items.forEach((item) => {
+        let currentStat = this.workoutItemMaxesMap.get(item.name.id.toString());
+        if (currentStat && !currentStat.current_max) {
+          currentStat = {
+            id: currentStat.id,
+            name: currentStat.name,
+            current_max: {
+              id: "",
+              max_value: -1,
+              unit: "",
+              last_updated: "",
+            },
+          };
+        }
+        console.log("currentStat: ", currentStat);
+        const maxVal = currentStat.current_max.max_value;
+        const maxUnit = currentStat.current_max.unit;
+
+        // TODO if we dont have a max, we should just use the weight use so our factor is just 1.
+        // Since we passdown the itenm, we can pull the max close to where we need it, but then we just duplicate the code a bit
+        // Lets just try to get it if its null, we will pass in 0.
+
+        console.log("\n Calc item (max):", item.name.id.toString(), maxVal);
+
         // Tags
         const pCat = item.name.primary?.title;
         const sCat = item.name.secondary?.title;
@@ -661,17 +813,21 @@ export class CalcWorkoutStats {
 
         if (WORKOUT_TYPES[this.schemeType] == STANDARD_W) {
           // console.log('calculating Standarad!!!!!!!!!!111');
-          this.calcStandardScheme(item, pCat, workoutName);
+          // TODO () Add maxVal to this so we an use it to calculate loads
+          this.calcStandardScheme(item, maxVal, maxUnit, pCat, workoutName);
         } else if (WORKOUT_TYPES[this.schemeType] == REPS_W) {
-          this.calcRepsScheme(item, pCat, workoutName);
+          // TODO () Add maxVal to this so we an use it to calculate loads
+          this.calcRepsScheme(item, maxVal, maxUnit, pCat, workoutName);
         } else if (WORKOUT_TYPES[this.schemeType] == ROUNDS_W) {
-          this.calcRoundsScheme(item, pCat, workoutName);
+          // TODO () Add maxVal to this so we an use it to calculate loads
+          this.calcRoundsScheme(item, maxVal, maxUnit, pCat, workoutName);
         }
         // else if (WORKOUT_TYPES[this.schemeType] == CREATIVE_W) {
         // The other workout types are all record types with r_ prefix
         // calcDuationScheme will calculate all of these types. No
         else {
-          this.calcRecordScheme(item, pCat, workoutName);
+          // TODO () Add maxVal to this so we an use it to calculate loads
+          this.calcRecordScheme(item, maxVal, maxUnit, pCat, workoutName);
         }
       });
       // console.log('Calc res ', this.getStats());
@@ -681,6 +837,69 @@ export class CalcWorkoutStats {
     }
 
     return false;
+  }
+
+  sumObj(a: { [key: string]: number }, b: { [key: string]: number }) {
+    // Given a, the obj, add it to b which has the obj but different values,,,
+    // E.g. A=> {"key": "Squat", "totalDistanceM": 0, "totalDistanceY": 0, "totalKgM": 0, "totalKgSec": 0, "totalKgs": 3515, "totalLbM": 0, "totalLbSec": 0, "totalLbs": 7750, "totalReps": 50, "totalTime": 0}
+    const total: { [key: string]: number } = {};
+
+    Object.keys(a).forEach((metric) => {
+      if (metric != "key") {
+        console.log("sumObj: ", `Adding ${a[metric]} to ${b[metric]}`);
+        total[metric] = a[metric] + b[metric];
+        console.log("SumRes: ", total[metric]);
+      }
+    });
+    console.log("REturn from sumObj: ", total);
+    return total;
+  }
+
+  calcMultiJSON(data: WorkoutCardProps[], ownedByClass = false) {
+    this.isFormatted = false;
+    this.ownedByClass = ownedByClass;
+    // console.log('CalcMulti Data: ', data);
+    const allTags: { [key: string]: any } = {};
+    const allItems: { [key: string]: any } = {};
+
+    data.forEach((workout) => {
+      // const {
+      //   scheme_rounds,
+      //   scheme_type,
+      //   workout_items,
+      //   completed_workout_items,
+      // } = workout as WorkoutCardProps;
+
+      const stats = workout.stats;
+
+      if (!stats) return;
+
+      if (stats && stats.items) {
+        Object.keys(stats!.items!).map((key) => {
+          if (allItems[key]) {
+            allItems[key] = this.sumObj(stats!.items[key], allItems[key]);
+          } else {
+            allItems[key] = stats!.items[key];
+          }
+        });
+      }
+
+      if (stats && stats.tags) {
+        Object.keys(stats!.tags!).map((key) => {
+          if (allTags[key]) {
+            // console.log("Adding to allTags: ", stats!.tags[key]);
+            allTags[key] = this.sumObj(stats!.tags[key], allTags[key]);
+          } else {
+            // console.log("First in allTags: ", stats!.tags[key]);
+            allTags[key] = stats!.tags[key];
+          }
+        });
+      }
+    });
+
+    this.tags = allTags;
+    this.names = allItems;
+    return true;
   }
 
   calcMulti(data: WorkoutCardProps[], ownedByClass = false) {

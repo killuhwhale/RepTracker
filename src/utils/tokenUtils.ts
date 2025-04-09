@@ -47,3 +47,62 @@ export const getToken = async (access = true) => {
     return null;
   }
 };
+
+// Key constants for theme storage
+const THEME_MODE_KEY = "__app_theme_mode";
+
+/**
+ * Store the user's theme preference
+ * @param themeName String identifier for the selected theme
+ * @returns Promise<boolean> Success state of the operation
+ */
+export const storeThemePreference = async (
+  themeName: string
+): Promise<boolean> => {
+  try {
+    await RNSecureStorage.set(THEME_MODE_KEY, themeName, {
+      accessible: ACCESSIBLE.WHEN_UNLOCKED,
+    });
+    return true;
+  } catch (e) {
+    console.log("Error saving theme preference to storage: ", e);
+    return false;
+  }
+};
+
+/**
+ * Get the user's theme preference
+ * @param defaultTheme Default theme name if no preference is found
+ * @returns Promise<string> The name of the selected theme
+ */
+export const getThemePreference = async (
+  defaultTheme: string = "dark"
+): Promise<string> => {
+  try {
+    const themePreference = await RNSecureStorage.get(THEME_MODE_KEY);
+
+    // If no preference is stored yet, return the default
+    if (themePreference === null) {
+      return defaultTheme;
+    }
+
+    return themePreference;
+  } catch (e) {
+    console.log("Error getting theme preference from storage: ", e);
+    return defaultTheme;
+  }
+};
+
+/**
+ * Clear the user's theme preference (reset to default)
+ * @returns Promise<boolean> Success state of the operation
+ */
+export const clearThemePreference = async (): Promise<boolean> => {
+  try {
+    await RNSecureStorage.remove(THEME_MODE_KEY);
+    return true;
+  } catch (e) {
+    console.log("Error clearing theme preference from storage: ", e);
+    return false;
+  }
+};

@@ -12,10 +12,11 @@ import { TestIDs } from "@/src/utils/constants";
 import LinearGradient from "react-native-linear-gradient";
 import GradientText from "./gradientText";
 import { router } from "expo-router";
+import { storeThemePreference } from "@/src/utils/tokenUtils";
 
 const Header: FunctionComponent<{
   showBackButton: boolean;
-  toggleState: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ showBackButton, toggleState }) => {
   const theme = useTheme();
 
@@ -84,7 +85,15 @@ const Header: FunctionComponent<{
       <TouchableOpacity
         activeOpacity={0.69}
         onPress={() => {
-          toggleState((prevState) => !prevState);
+          toggleState((prevState) => {
+            console.log("Setting user theme in header: ", prevState);
+
+            const newState = prevState === "DARK" ? "FEM" : "DARK";
+            storeThemePreference(newState)
+              .then((r) => console.log("Stored userTheme: ", r))
+              .catch((err) => console.log("Failed to store userTheme: ", err));
+            return newState;
+          });
         }}
         style={{ width: "100%", height: "100%", flex: 1 }}
       >

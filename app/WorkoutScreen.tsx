@@ -408,12 +408,15 @@ const WorkoutScreen: FunctionComponent = () => {
     : [];
 
   const [tags, names] = useMemo(() => {
-    const calc = new CalcWorkoutStats();
+    const calc = new CalcWorkoutStats(new Map());
 
-    calc.calcMulti(workouts, workoutGroup.owned_by_class);
-
+    // todo, calculate totals based on the given stats workouts, instead of raw calcs as provided by: calcMulti
+    // This can be reused by stats screen.....
+    console.log("Workout screen workouts: ", workouts);
+    calc.calcMultiJSON(workouts, workoutGroup.owned_by_class);
+    // console.log("Calc multi on: ", workouts);
     return calc.getStats();
-  }, [workouts]);
+  }, [workouts, data]);
 
   // Show when:
   //  - OgWorkout is Finished

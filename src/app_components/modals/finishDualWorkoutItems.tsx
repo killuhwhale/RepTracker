@@ -124,11 +124,11 @@ const FinishDualWorkoutItems: FunctionComponent<{
 }) => {
   const theme = useTheme();
   let initGroup = jsonCopy(workoutGroup) as WorkoutGroupProps;
-  console.log("Initial WG: ");
+  // console.log("Initial WG: ");
 
-  initGroup.workouts?.map((workout) =>
-    workout.workout_items?.map((item) => console.log("Init Item: ", item))
-  );
+  // initGroup.workouts?.map((workout) =>
+  //   workout.workout_items?.map((item) => console.log("Init Item: ", item))
+  // );
 
   const [editedWorkoutGroup, setEditedWorkoutGroup] =
     useState<WorkoutGroupProps>(initGroup);

@@ -19,13 +19,17 @@ import {
 
 import { RootStackParamList } from "../src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { StatsPanel } from "../src/app_components/Stats/StatsPanel";
 import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import { useLocalSearchParams } from "expo-router";
-import { useGetWorkoutByIDQuery } from "@/src/redux/api/apiSlice";
+import {
+  useGetUserWorkoutMaxesQuery,
+  useGetWorkoutByIDQuery,
+} from "@/src/redux/api/apiSlice";
 import WorkoutItemPreviewHorizontalList from "@/src/app_components/Cards/WorkoutItemPreviewHorizontalList";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
+import { WorkoutMaxProps } from "./WorkoutItemMaxes";
 
 export type Props = StackScreenProps<RootStackParamList, "WorkoutDetailScreen">;
 
@@ -74,7 +78,7 @@ const ScreenContainer = styled(Container)`
 
 const WorkoutDetailScreen: FunctionComponent = () => {
   const params = useLocalSearchParams(); // returns string or string array, cannot serialize much....
-
+  const theme = useTheme();
   // TODO() Build or find query from APISlice to get workout items for this workout....
 
   // Thank goodness for type safety...
@@ -105,20 +109,9 @@ const WorkoutDetailScreen: FunctionComponent = () => {
     isError,
     error: errorWorkoutByID,
   } = useGetWorkoutByIDQuery(id);
-  console.log("Workout items: ", workout);
 
-  const stats = new CalcWorkoutStats();
-  stats.setWorkoutParams(
-    scheme_rounds,
-    scheme_type,
-    workout?.workout_items ?? []
-  );
-  stats.calc();
-
-  const [tags, names] = stats.getStats();
-  // const tags = stats.tags;
-  // const names = stats.names;
-  const theme = useTheme();
+  const tags = workout?.stats?.tags ? workout.stats.tags : {};
+  const names = workout?.stats?.items ? workout.stats.items : {};
 
   return (
     <ScreenContainer>

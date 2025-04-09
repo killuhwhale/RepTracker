@@ -37,14 +37,14 @@ const MaxRowItem: FunctionComponent<{}> = ({}) => {
   return <View></View>;
 };
 
-interface CurrentMaxProps {
+export interface CurrentMaxProps {
   id: string;
   max_value: number;
   unit: string;
   last_updated: string;
 }
 
-interface WorkoutMaxProps {
+export interface WorkoutMaxProps {
   id: string;
   name: string;
   current_max: CurrentMaxProps;
@@ -329,14 +329,25 @@ const WorkoutMaxes = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.actionButton, styles.saveButton]}
+                  style={[
+                    styles.actionButton,
+                    styles.saveButton,
+                    { backgroundColor: theme.palette.AWE_Green },
+                  ]}
                   onPress={() => saveMax(item.id)}
                   disabled={isUpdating}
                 >
                   {isUpdating ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={styles.actionButtonText}>Save</Text>
+                    <Text
+                      style={[
+                        styles.actionButtonText,
+                        { color: theme.palette.text },
+                      ]}
+                    >
+                      Save
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>

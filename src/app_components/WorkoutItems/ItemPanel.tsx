@@ -79,14 +79,14 @@ const WorkoutItemWeights: FunctionComponent<{
   const weightUnit = showRecorded ? item.r_weight_unit : item.weight_unit;
   const percentOf = showRecorded ? item.r_percent_of : item.percent_of;
 
-  console.log(
-    "WorkoutItemWeights:  ",
-    item.name.name,
-    weights,
-    weightUnit,
-    percentOf,
-    item
-  );
+  // console.log(
+  //   "WorkoutItemWeights:  ",
+  //   item.name.name,
+  //   weights,
+  //   weightUnit,
+  //   percentOf,
+  //   item
+  // );
   const theme = useTheme();
   return (
     <>

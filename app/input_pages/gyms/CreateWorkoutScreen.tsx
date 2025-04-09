@@ -38,6 +38,7 @@ import {
   WorkoutDescLimit,
   SchemeTextLimit,
   CreateSchemeInstructionLimit,
+  CalcWorkoutStats,
 } from "@/src/app_components/shared";
 
 import {
@@ -244,6 +245,8 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const [createWorkoutError, setCreateWorkoutError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
+  const calc = new CalcWorkoutStats(new Map());
+
   const _createWorkoutWithItems = async (_isUpdateMode: boolean) => {
     // Need to get file from the URI
     if (items.length == 0 || items.length > 15) return setShowAlert(true);
@@ -338,7 +341,18 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         }
       });
 
+      calc.setWorkoutParams(scheme_rounds as string, schemeType, items);
+
+      calc.calc();
+
+      const [tags, names] = calc.getStats();
+      console.log("Creating workout, calcd stats: ", tags, names);
+
       data.append("items", JSON.stringify(items));
+
+      data.append("names", JSON.stringify(names));
+      data.append("tags", JSON.stringify(tags));
+
       data.append("workout", createdWorkout.id);
       data.append("workout_group", workoutGroupID);
       let createdItems;
