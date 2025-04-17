@@ -38,7 +38,7 @@ export class WorkoutNameRowItem extends React.PureComponent<WorkoutNameRowItemPr
 }
 
 const PickerFilterListView: FunctionComponent<{
-  data: [WorkoutNameProps];
+  data: WorkoutNameProps[];
   RowView: any;
   extraProps: any;
 }> = (props) => {

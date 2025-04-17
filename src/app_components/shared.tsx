@@ -295,11 +295,13 @@ export class CalcWorkoutStats {
     totalVol: number,
     sets: number | null
   ) {
+    console.log("Calculating item reps: ", sets, quantity, totalVol);
+    totalVol = totalVol ? totalVol : 0;
+
     if (sets && quantity) {
       this.tags[pCat].totalReps += sets * quantity;
       this.names[workoutName].totalReps += sets * quantity;
     }
-
     // Convert weights based on native item weight unit
     if (item.weight_unit == "kg") {
       this.tags[pCat].totalLbs += totalVol * loadFactorLB * KG2LB;
@@ -401,8 +403,27 @@ export class CalcWorkoutStats {
     const maxValKG = maxUnit == "kg" ? maxVal : maxVal * LB2KG;
     const maxValLB = maxUnit == "kg" ? maxVal * KG2LB : maxVal;
 
-    const loadFactorKG = itemWeightKG / maxValKG;
-    const loadFactorLB = itemWeightLB / maxValLB;
+    const _loadFactorKG = itemWeightKG / maxValKG;
+    const _loadFactorLB = itemWeightLB / maxValLB;
+
+    console.log(
+      `Load factor for ${item.name.name}`,
+      itemWeightKG,
+      itemWeightLB,
+      maxVal,
+      maxValKG,
+      maxValLB,
+      itemWeightLB,
+      maxValLB,
+      _loadFactorKG,
+      _loadFactorLB,
+      quantity
+    );
+
+    const loadFactorKG = _loadFactorKG ? _loadFactorKG : 1;
+    const loadFactorLB = _loadFactorLB ? _loadFactorLB : 1;
+    console.log("Returning factors: ", loadFactorKG, loadFactorLB);
+
     return [loadFactorKG, loadFactorLB];
   }
 
@@ -441,14 +462,6 @@ export class CalcWorkoutStats {
       maxUnit,
       quantity
     );
-
-    // console.log(
-    //   `Load factor for ${item.name.name}: ${loadFactorLB}LBS`,
-    //   itemWeightLB,
-    //   maxValLB,
-    //   weights.length,
-    //   quantity
-    // );
 
     // The problem is that we need to calculate a load for a bunch of weights, instead of iterating over each one,
     // we will operate on the total, so our maxVal, if not given because user hasnt recorded yet, we will just use the weight they used.
@@ -502,6 +515,8 @@ export class CalcWorkoutStats {
     const itemReps =
       reps.length === 1 ? expandArray(reps, repsPerRounds.length) : reps;
 
+    console.log("Item repszzz: ", this.schemeRounds, repsPerRounds);
+
     const durations = JSON.parse(item.duration);
     const itemDuration =
       durations.length === 1
@@ -533,12 +548,18 @@ export class CalcWorkoutStats {
       // E.g we do not do the quanitity 21,15,9 times, we do it once per round.
       const totalVol =
         (item.constant ? 1 : roundReps) * quantity * itemWeights[idx];
+      console.log(
+        "calcRepsScheme  itemReps: ",
+        totalVol,
+        itemWeights,
+        itemReps
+      );
       const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
         item,
         totalVol,
         maxVal,
         maxUnit,
-        quantity
+        roundReps
       );
       // console.log(
       //   'Total vol: ',
@@ -790,8 +811,20 @@ export class CalcWorkoutStats {
               last_updated: "",
             },
           };
+        } else if (!currentStat) {
+          currentStat = {
+            id: "",
+            name: item.name.name,
+            current_max: {
+              id: "",
+              max_value: -1,
+              unit: "",
+              last_updated: "",
+            },
+          };
         }
         console.log("currentStat: ", currentStat);
+
         const maxVal = currentStat.current_max.max_value;
         const maxUnit = currentStat.current_max.unit;
 
@@ -799,13 +832,13 @@ export class CalcWorkoutStats {
         // Since we passdown the itenm, we can pull the max close to where we need it, but then we just duplicate the code a bit
         // Lets just try to get it if its null, we will pass in 0.
 
-        console.log("\n Calc item (max):", item.name.id.toString(), maxVal);
+        // console.log("\n Calc item (max):", item.name.id.toString(), maxVal);
 
         // Tags
         const pCat = item.name.primary?.title;
         const sCat = item.name.secondary?.title;
         if (pCat === undefined) {
-          console.log("Primary category is undefined: ", item.name, item);
+          console.error("Primary category is undefined: ", item.name, item);
         }
         // Title
         const workoutName = item.name.name;
@@ -979,6 +1012,7 @@ export const formatLongDate = (date: Date) => {
 };
 
 export function isDateInFuture(user: UserProps, ignoreFlag = false): boolean {
+  if (!user) return false;
   const date = user.sub_end_date;
   const membership_on = user.membership_on;
 

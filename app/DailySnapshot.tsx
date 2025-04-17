@@ -36,7 +36,7 @@ const DailySnapshotScreen: FunctionComponent = () => {
   console.log("Daily Snapshot: ", workoutGroups);
   const [score, setScore] = useState(500);
   const [tags, names] = useMemo(() => {
-    const calc = new CalcWorkoutStats();
+    const calc = new CalcWorkoutStats(); // Deprecated Screen here all code out of date...
 
     // Extract workouts from Group
     const workoutsFromGroup = workoutGroups?.map(

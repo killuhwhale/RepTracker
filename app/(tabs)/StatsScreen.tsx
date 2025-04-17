@@ -44,6 +44,7 @@ import { StatsPanel } from "@/src/app_components/Stats/StatsPanel";
 import { dateFormat } from "@/src/utils/algos";
 import twrnc from "twrnc";
 import { WorkoutMaxProps } from "../WorkoutItemMaxes";
+import { useMaxes } from "@/hooks/useMaxes";
 export type Props = StackScreenProps<RootStackParamList, "StatsScreen">;
 
 const ScreenContainer = styled(Container)`
@@ -75,15 +76,6 @@ const StatsScreen: FunctionComponent<Props> = () => {
   const [startDateModalOpen, setStartDateModalOpen] = useState(false);
   const [endDateModalOpen, setEndDateModalOpen] = useState(false);
 
-  // Get profile data
-  const {
-    data: profileData,
-    isLoading: isUserLoading,
-    isSuccess: isUserSuccess,
-    isError: isUserError,
-    error: userError,
-  } = useGetProfileViewQuery("");
-
   // Get workout data - use skip option to prevent calling with undefined userId
   const { data, isLoading, isSuccess, isError, error } =
     useGetCompletedWorkoutGroupsForUserByDateRangeQuery({
@@ -92,68 +84,12 @@ const StatsScreen: FunctionComponent<Props> = () => {
       endDate: dateFormat(endDate),
     });
 
-  // Get max data - use skip option to prevent calling with undefined userId
-
-  /** Calculating Load
-   *
-   * At the time of creating the workout, we will just store these calculations,
-   * so we can contiue to just use the current max stored....
-   *
-   * Do the calculations and store as text?
-   *
-   * then instead of taking in workout items and calculating, we just query for the workout stats.....
-   *
-   * we can store in json
-   * - we need to be able to display stats for asinge workout AND a workoutgroup
-   * - so store the stats on a per workout basis as JSON
-   * - We fetch as needed and can calc totals clients side....
-   *
-   *
-   * WorkoutStats
-   * id PK AUTO INT
-   * workout_id string
-   * tags string or json optimized stype
-   * items string or json optimized stype
-   *
-   *
-   *
-   *
-   * Update ApiSlice to include calculated info when creating a Workout
-   * Update types for Workout to possibly include these stats.
-   *
-   * Update Django Views and Serializers to get stats for each workout when needed
-   *
-   *
-   *
-   * Then our APISlice will now include workoutstats with each workout
-   * We then display this instead of calculting (Just need to add when shoing stats for workoutGroup)
-   *
-   *
-   *
-   * When Needed:
-   *  - just about everywhere now....
-   *
-   */
-
   const {
-    data: workoutItemMaxes,
-    isLoading: isMaxesLoading,
-    isFetching,
-    error: getMaxesError,
-    refetch,
-  } = useGetUserWorkoutMaxesQuery(profileData?.user?.id || "0", {
-    skip: !profileData?.user?.id,
-  });
-
-  const workoutItemMaxesMap = useMemo(() => {
-    return workoutItemMaxes
-      ? new Map<string, WorkoutMaxProps>(
-          workoutItemMaxes.map((wnm: WorkoutMaxProps) => {
-            return [wnm.id.toString(), wnm];
-          })
-        )
-      : new Map<string, WorkoutMaxProps>();
-  }, [workoutItemMaxes]);
+    userId,
+    workoutItemMaxesMap,
+    isLoading: isUSerMaxesLoading,
+    error: userMaxesError,
+  } = useMaxes();
 
   const [allWorkouts, workoutTagStats, workoutNameStats] = useMemo(() => {
     if (data && data.length > 0) {
@@ -170,7 +106,8 @@ const StatsScreen: FunctionComponent<Props> = () => {
 
         _allWorkouts.push(...workouts); // Collect all workouts for bar data
 
-        calc.calcMultiJSON(workouts);
+        calc.calcMulti(workouts);
+        // calc.calcMultiJSON(workouts);
         const [tags, names] = calc.getStats();
 
         _workoutTagStats.push({ ...tags, date: workoutGroup.for_date });
@@ -180,19 +117,14 @@ const StatsScreen: FunctionComponent<Props> = () => {
       return [_allWorkouts, _workoutTagStats, _workoutNameStats];
     }
     return [[], [], []];
-  }, [data, workoutItemMaxes]);
-
-  // console.log("\n\n", "WorkotuTag Stats: ", workoutTagStats, "\n\n");
+  }, [data, workoutItemMaxesMap]);
 
   const [tags, names] = useMemo(() => {
-    // console.log("MAX: ", workoutItemMaxesMap);
-    // const stats = new CalcWorkoutStats(workoutItemMaxesMap);
-
     const calc = new CalcWorkoutStats(workoutItemMaxesMap);
     calc.calcMulti(allWorkouts);
     // calc.calcMultiJSON(allWorkouts);
     return calc.getStats();
-  }, [allWorkouts, data, workoutItemMaxes]);
+  }, [allWorkouts, data, workoutItemMaxesMap]);
 
   const tagLabels: string[] = Array.from(new Set(Object.keys(tags)));
   const nameLabels: string[] = Array.from(new Set(Object.keys(names)));

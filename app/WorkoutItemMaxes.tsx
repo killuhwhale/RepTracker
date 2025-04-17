@@ -4,17 +4,16 @@ import React, {
   useEffect,
   useCallback,
   FunctionComponent,
+  useMemo,
 } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
-  TextInput,
   StyleSheet,
   ActivityIndicator,
+  TextInput,
   Alert,
-  RefreshControl,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,15 +26,11 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { WorkoutNameProps } from "@/src/app_components/Cards/types";
 import { useTheme } from "styled-components/native";
-import { filter } from "@/src/utils/algos";
+import { debounce, filter } from "@/src/utils/algos";
 import Input from "@/src/app_components/Input/input";
 import PickerFilterListView from "@/src/app_components/modals/pickerFilterListView";
-import { TSListTitleText } from "@/src/app_components/Text/Text";
 import { lightenHexColor } from "@/src/app_components/shared";
-
-const MaxRowItem: FunctionComponent<{}> = ({}) => {
-  return <View></View>;
-};
+// import debounce from 'lodash/debounce';
 
 export interface CurrentMaxProps {
   id: string;
@@ -50,78 +45,39 @@ export interface WorkoutMaxProps {
   current_max: CurrentMaxProps;
 }
 
-const WorkoutMaxes = () => {
-  const params = useLocalSearchParams();
-  // console.log("WorkoutMaxes params: ", params);
+// Separate component for editing max value
+const EditWorkoutMax = ({
+  workoutNameId,
+  initialValue = "",
+  initialUnit = "kg",
+  onSave,
+  onCancel,
+  theme,
+}) => {
+  const [value, setValue] = useState(initialValue);
+  const [unit, setUnit] = useState(initialUnit);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [newMaxValue, setNewMaxValue] = useState("");
-  const [selectedUnit, setSelectedUnit] = useState("kg");
+  // Toggle unit and convert value
+  const toggleUnit = () => {
+    const newUnit = unit === "kg" ? "lb" : "kg";
+    setUnit(newUnit);
 
-  const {
-    data: workoutItems,
-    isLoading: isItemsLoading,
-    isSuccess,
-    isError,
-    error: itemsError,
-  } = useGetWorkoutNamesQuery("");
-  const workoutNames = workoutItems as WorkoutNameProps[];
-
-  // TODO, anywhere th
-  // Get workout items with current max values
-  const {
-    data: workoutItemMaxes,
-    isLoading,
-    isFetching,
-    error: getWorkoutsError,
-    refetch,
-  } = useGetUserWorkoutMaxesQuery(params.userID);
-
-  const workoutItemMaxesMap: Map<string, WorkoutMaxProps> = workoutItemMaxes
-    ? new Map<string, WorkoutMaxProps>(
-        workoutItemMaxes.map((wnm: WorkoutMaxProps) => {
-          return [wnm.id, wnm];
-        })
-      )
-    : new Map<string, WorkoutMaxProps>();
-
-  // Update workout max mutation
-  const [updateWorkoutMax, { isLoading: isUpdating }] =
-    useUpdateWorkoutMaxMutation();
-
-  // Refresh data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
-
-  // Pull to refresh handler
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  }, [refetch]);
-
-  // Start editing a workout max
-  const startEditing = (item) => {
-    setEditingId(item.id);
-    setNewMaxValue(
-      item.current_max ? item.current_max.max_value.toString() : ""
-    );
-    setSelectedUnit(item.current_max ? item.current_max.unit : "kg");
+    // Convert the value when changing units
+    if (value && !isNaN(parseFloat(value))) {
+      if (unit === "kg") {
+        // Convert kg to lb (1 kg = 2.20462 lb)
+        setValue((parseFloat(value) * 2.20462).toFixed(1));
+      } else {
+        // Convert lb to kg (1 lb = 0.453592 kg)
+        setValue((parseFloat(value) * 0.453592).toFixed(1));
+      }
+    }
   };
 
-  // Cancel editing
-  const cancelEditing = () => {
-    setEditingId(null);
-    setNewMaxValue("");
-  };
-
-  // Save updated max value
-  const saveMax = async (workoutNameId: string) => {
-    if (!newMaxValue || isNaN(parseFloat(newMaxValue))) {
+  // Handle save
+  const handleSave = async () => {
+    if (!value || isNaN(parseFloat(value))) {
       Alert.alert(
         "Invalid Value",
         "Please enter a valid number for the max value."
@@ -129,91 +85,81 @@ const WorkoutMaxes = () => {
       return;
     }
 
+    setIsUpdating(true);
     try {
-      await updateWorkoutMax({
-        user_id: params.userID,
-        workout_name_id: workoutNameId,
-        max_value: parseFloat(newMaxValue),
-        unit: selectedUnit,
-        notes: "Updated from app",
-      }).unwrap();
-
-      setEditingId(null);
-      setNewMaxValue("");
+      await onSave(workoutNameId, parseFloat(value), unit);
     } catch (err) {
       Alert.alert("Error", "Failed to update max value. Please try again.");
       console.error("Failed to update max:", err);
-    }
-  };
-  const router = useRouter();
-  // View history for a workout item
-  const viewHistory = (item: any) => {
-    console.log("TODO() need to naviate to details page...");
-    // navigation.navigate('WorkoutMaxHistory', {
-
-    // });
-    router.push({
-      pathname: "/UserWorkoutMaxHistory",
-      params: {
-        workoutItemId: item.id,
-        workoutName: item.name,
-        userID: params.userID,
-      },
-    });
-  };
-
-  // Toggle unit between kg and lb
-  const toggleUnit = () => {
-    setSelectedUnit(selectedUnit === "kg" ? "lb" : "kg");
-
-    // Convert the value when changing units
-    if (newMaxValue && !isNaN(parseFloat(newMaxValue))) {
-      if (selectedUnit === "kg") {
-        // Convert kg to lb (1 kg = 2.20462 lb)
-        setNewMaxValue((parseFloat(newMaxValue) * 2.20462).toFixed(1));
-      } else {
-        // Convert lb to kg (1 lb = 0.453592 kg)
-        setNewMaxValue((parseFloat(newMaxValue) * 0.453592).toFixed(1));
-      }
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  const theme = useTheme();
+  return (
+    <View style={styles.editContainer}>
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={setValue}
+        keyboardType="numeric"
+        autoFocus
+        selectTextOnFocus
+      />
 
-  const [stringData, setOgData] = useState<string[]>(
-    workoutNames ? workoutNames.map((workoutName) => workoutName.name) : []
+      <TouchableOpacity style={styles.unitToggleButton} onPress={toggleUnit}>
+        <Text style={styles.unitToggleText}>{unit}</Text>
+      </TouchableOpacity>
+
+      <View style={styles.editActions}>
+        <TouchableOpacity
+          style={[styles.actionButton, styles.cancelButton]}
+          onPress={onCancel}
+          disabled={isUpdating}
+        >
+          <Text
+            style={[styles.actionButtonText, { color: theme.palette.gray }]}
+          >
+            Cancel
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            styles.saveButton,
+            { backgroundColor: theme.palette.AWE_Green },
+          ]}
+          onPress={handleSave}
+          disabled={isUpdating}
+        >
+          {isUpdating ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text
+              style={[styles.actionButtonText, { color: theme.palette.text }]}
+            >
+              Save
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </View>
   );
-  const [filterResult, setFilterResult] = useState<number[]>(
-    Array.from(Array(stringData.length).keys()).map((idx) => idx)
-  );
+};
 
-  const [term, setTerm] = useState("");
-
-  const filterText = (term: string) => {
-    // Updates filtered data.
-    console.log("Filter text: ", term, stringData);
-    const { items, marks } = filter(term, stringData, { word: false });
-    setFilterResult(items);
-    setTerm(term);
-  };
-
-  useEffect(() => {
-    // console.log('Running init filter effect');
-    setOgData(
-      workoutNames ? workoutNames.map((gymClass) => gymClass.name) : []
-    );
-    setFilterResult(
-      Array.from(Array(workoutNames?.length || 0).keys()).map((idx) => idx)
-    );
-  }, [workoutNames]);
-
-  // console.log("workoutItemMaxes: ", workoutItemMaxes);
-  // Render each workout item
-  const renderWorkoutItem = (props: any) => {
-    const item = props.workoutName;
-    const maxItem: WorkoutMaxProps | undefined = workoutItemMaxesMap.get(
-      item.id
-    );
+interface WorkoutItemRowProps {
+  item: WorkoutMaxProps;
+  maxItem?: WorkoutMaxProps;
+  onEdit: (id: string | null) => void;
+  onSaveMax: (id: string, value: number, unit: string) => Promise<void>;
+  editingId: string | null;
+  onViewHistory: (item: WorkoutMaxProps) => void;
+  theme: any;
+}
+// Individual workout item component with its own state management
+const WorkoutItemRow: FunctionComponent<WorkoutItemRowProps> = React.memo(
+  ({ item, maxItem, onEdit, onSaveMax, editingId, onViewHistory, theme }) => {
     const isEditing = editingId === item.id;
 
     return (
@@ -242,7 +188,7 @@ const WorkoutMaxes = () => {
               styles.historyButton,
               { backgroundColor: lightenHexColor(theme.palette.text, 0.92) },
             ]}
-            onPress={() => viewHistory(item)}
+            onPress={() => onViewHistory(item)}
           >
             <Ionicons
               name="time-outline"
@@ -284,7 +230,7 @@ const WorkoutMaxes = () => {
                     backgroundColor: lightenHexColor(theme.palette.text, 0.25),
                   },
                 ]}
-                onPress={() => startEditing(item)}
+                onPress={() => onEdit(item.id)}
               >
                 <Ionicons
                   name="pencil"
@@ -294,70 +240,171 @@ const WorkoutMaxes = () => {
               </TouchableOpacity>
             </View>
           ) : (
-            // Edit max value form
-            <View style={styles.editContainer}>
-              <TextInput
-                style={styles.input}
-                value={newMaxValue}
-                onChangeText={setNewMaxValue}
-                keyboardType="numeric"
-                autoFocus
-                selectTextOnFocus
-              />
-
-              <TouchableOpacity
-                style={styles.unitToggleButton}
-                onPress={toggleUnit}
-              >
-                <Text style={styles.unitToggleText}>{selectedUnit}</Text>
-              </TouchableOpacity>
-
-              <View style={styles.editActions}>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.cancelButton]}
-                  onPress={cancelEditing}
-                  disabled={isUpdating}
-                >
-                  <Text
-                    style={[
-                      styles.actionButtonText,
-                      { color: theme.palette.gray },
-                    ]}
-                  >
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.actionButton,
-                    styles.saveButton,
-                    { backgroundColor: theme.palette.AWE_Green },
-                  ]}
-                  onPress={() => saveMax(item.id)}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text
-                      style={[
-                        styles.actionButtonText,
-                        { color: theme.palette.text },
-                      ]}
-                    >
-                      Save
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
+            // Edit max value form with its own component
+            <EditWorkoutMax
+              workoutNameId={item.id}
+              initialValue={
+                maxItem?.current_max
+                  ? maxItem.current_max.max_value.toString()
+                  : ""
+              }
+              initialUnit={
+                maxItem?.current_max ? maxItem.current_max.unit : "kg"
+              }
+              onSave={onSaveMax}
+              onCancel={() => onEdit(null)}
+              theme={theme}
+            />
           )}
         </View>
       </View>
     );
-  };
+  }
+);
 
+const WorkoutMaxes = () => {
+  const theme = useTheme();
+  const params = useLocalSearchParams();
+  const router = useRouter();
+
+  // Local state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [filteredIndices, setFilteredIndices] = useState<number[]>([]);
+
+  // API queries
+  const { data: _workoutNames, isLoading: isItemsLoading } =
+    useGetWorkoutNamesQuery("");
+  const workoutNames = _workoutNames as WorkoutNameProps[];
+  const {
+    data: workoutItemMaxes,
+    isLoading,
+    error: getWorkoutsError,
+    refetch,
+  } = useGetUserWorkoutMaxesQuery(params.userID);
+
+  const [updateWorkoutMax] = useUpdateWorkoutMaxMutation();
+
+  // Create a map of workout maxes for quick lookup
+  const workoutItemMaxesMap = useMemo(() => {
+    if (!workoutItemMaxes) return new Map();
+
+    return new Map(
+      workoutItemMaxes.map((wnm: WorkoutMaxProps) => [wnm.id, wnm])
+    );
+  }, [workoutItemMaxes]);
+
+  // Create a memoized array of workout names
+  const workoutNameStrings = useMemo(() => {
+    if (!workoutNames) return [];
+    return workoutNames.map((item) => item.name);
+  }, [workoutNames]);
+
+  // Handle initial filter setup
+  useEffect(() => {
+    if (workoutNames && workoutNames.length > 0) {
+      setFilteredIndices(Array.from(Array(workoutNames.length).keys()));
+    }
+  }, [workoutNames]);
+
+  // Create a debounced filter function
+  const debouncedFilter = useCallback(
+    debounce((term: string) => {
+      if (!workoutNameStrings.length) return;
+
+      const { items } = filter(term, workoutNameStrings, { word: false });
+      setFilteredIndices(items);
+    }, 300),
+    [workoutNameStrings]
+  );
+
+  // Handle search input change
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchText(text);
+      debouncedFilter(text);
+    },
+    [debouncedFilter]
+  );
+
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  // Memoize filtered workout items
+  const filteredWorkoutItems = useMemo(() => {
+    if (!workoutNames) return [];
+    return filteredIndices.map((index) => workoutNames[index]);
+  }, [workoutNames, filteredIndices]);
+
+  // Set editing item id
+  const handleEdit = useCallback((id: string | null) => {
+    setEditingId(id);
+  }, []);
+
+  // Save max value
+  const handleSaveMax = useCallback(
+    async (workoutNameId: string, maxValue: number, unit: string) => {
+      await updateWorkoutMax({
+        user_id: params.userID,
+        workout_name_id: workoutNameId,
+        max_value: maxValue,
+        unit: unit,
+        notes: "Updated from app",
+      }).unwrap();
+
+      setEditingId(null);
+    },
+    [params.userID, updateWorkoutMax]
+  );
+
+  // View history for a workout item
+  const handleViewHistory = useCallback(
+    (item: any) => {
+      router.push({
+        pathname: "/UserWorkoutMaxHistory",
+        params: {
+          workoutItemId: item.id,
+          workoutName: item.name,
+          userID: params.userID,
+        },
+      });
+    },
+    [router, params.userID]
+  );
+
+  // Render workout item row with memoization
+  const renderWorkoutItem = useCallback(
+    (props: any) => {
+      const item = props.workoutName;
+      const maxItem = workoutItemMaxesMap.get(item.id);
+
+      return (
+        <WorkoutItemRow
+          item={item}
+          maxItem={maxItem}
+          editingId={editingId}
+          onEdit={handleEdit}
+          onSaveMax={handleSaveMax}
+          onViewHistory={handleViewHistory}
+          theme={theme}
+        />
+      );
+    },
+    [
+      workoutItemMaxesMap,
+      editingId,
+      handleEdit,
+      handleSaveMax,
+      handleViewHistory,
+      theme,
+    ]
+  );
+
+  // Loading state
   if (isLoading || isItemsLoading) {
     return (
       <View style={styles.centered}>
@@ -367,13 +414,16 @@ const WorkoutMaxes = () => {
     );
   }
 
+  // Error state
+  // || "Failed to load workout items"
   if (getWorkoutsError) {
-    console.log("getWorkoutsError: ", getWorkoutsError);
     return (
       <View style={styles.centered}>
         <Ionicons name="alert-circle" size={48} color="#e74c3c" />
         <Text style={styles.errorText}>
-          {getWorkoutsError.data?.message || "Failed to load workout items"}
+          {getWorkoutsError
+            ? getWorkoutsError.toString()
+            : "Failed to load workout items"}
         </Text>
         <TouchableOpacity style={styles.retryButton} onPress={refetch}>
           <Text style={styles.retryButtonText}>Retry</Text>
@@ -393,24 +443,27 @@ const WorkoutMaxes = () => {
         Record your current max for each exercise. This helps calculate your
         intensity factor during workouts.
       </Text>
+
+      {/* Search input */}
       <View
         style={{
-          height: 25,
+          height: 45,
           borderWidth: 1,
-          borderColor: "white",
+          borderColor: theme.palette.text,
           marginBottom: 12,
           borderRadius: 8,
         }}
       >
         <Input
-          onChangeText={filterText}
-          value={term}
+          onChangeText={handleSearchChange}
+          value={searchText}
           inputStyles={{ fontSize: 14 }}
-          focus={true}
+          focus={false}
           containerStyle={{
             width: "100%",
             backgroundColor: theme.palette.backgroundColor,
             borderRadius: 8,
+            height: "100%",
           }}
           leading={
             <Icon
@@ -420,15 +473,14 @@ const WorkoutMaxes = () => {
             />
           }
           label=""
-          placeholder="Searfg"
+          placeholder="Search exercises..."
         />
       </View>
 
+      {/* List view */}
       <View style={{ flex: 1 }}>
         <PickerFilterListView
-          data={workoutItems.filter(
-            (_: any, i: number) => filterResult.indexOf(i) >= 0
-          )}
+          data={filteredWorkoutItems}
           extraProps={{
             onSelect: (item: WorkoutNameProps) =>
               console.log("User selected: ", item),
@@ -443,8 +495,6 @@ const WorkoutMaxes = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "red",
-    // backgroundColor: "#f5f5f5",
     padding: 12,
   },
   centered: {
@@ -520,7 +570,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   editButton: {
-    // backgroundColor: "#4a90e2",
     width: 36,
     height: 36,
     borderRadius: 18,

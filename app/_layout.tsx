@@ -19,7 +19,7 @@ import { useColorScheme, View } from "react-native";
 import { store } from "../src/redux/store";
 import { Provider } from "react-redux";
 import Header from "../src/app_components/Header/header";
-import { apiSlice } from "../src/redux/api/apiSlice";
+import { apiSlice, useGetProfileViewQuery } from "../src/redux/api/apiSlice";
 
 import AuthScreen from "@/app/AuthScreen";
 import Uploady from "@rpldy/native-uploady";
@@ -98,7 +98,7 @@ const FeminineTheme: DefaultTheme = {
   borderRadius: "8px",
   palette: {
     primary: {
-      main: "#FF69B4", // Pink
+      main: "#D069B4", // Pink
       contrastText: "#fff",
     },
     secondary: {
@@ -141,11 +141,23 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
 
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const {
+    data: profileData,
+    isLoading: isUserLoading,
+    error: userError,
+  } = useGetProfileViewQuery("");
+
   useEffect(() => {
     const a = async () => {
-      const token = await getToken();
-      if (token && token.length > 0) {
-        setLoggedIn(true);
+      try {
+        // const token = await getToken();
+        console.log("Auth gettoken response: ", profileData, profileData.user);
+        if (profileData.user && profileData.user) {
+          setLoggedIn(true);
+        }
+      } catch (err) {
+        setLoggedIn(false);
+        return false;
       }
     };
 
@@ -180,8 +192,11 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
       }
     }, "logInKey");
 
-    a();
-  }, []);
+    // once user is done loading, check if user is found or not.
+    if (!isUserLoading) {
+      a();
+    }
+  }, [isUserLoading]);
 
   return (
     <View style={{ flex: 1 }}>

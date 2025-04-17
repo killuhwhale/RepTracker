@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TouchableHighlight,
 } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import styled from "styled-components/native";
 
 import Icon from "react-native-vector-icons/Ionicons";
@@ -48,6 +48,9 @@ import {
   useUpdateWorkoutMutation,
   useUpdateWorkoutItemsMutation,
   useUpdateWorkoutDualItemsMutation,
+  useGetUserWorkoutMaxesQuery,
+  useGetProfileViewQuery,
+  useGetWorkoutNamesQuery,
 } from "@/src/redux/api/apiSlice";
 
 import { RootStackParamList } from "@/src/navigators/RootStack";
@@ -57,6 +60,7 @@ import {
   WorkoutDualItemProps,
   WorkoutItemProps,
   WorkoutItems,
+  WorkoutNameProps,
 } from "@/src/app_components/Cards/types";
 
 import Input from "@/src/app_components/Input/input";
@@ -68,6 +72,12 @@ import CreateWorkoutItemList from "./workoutScreen/CreateWorkoutItemList";
 import CreateWorkoutDualItemList from "./workoutScreen/CreateWorkoutDualItemList";
 import SchemeField from "./workoutScreen/Schemes";
 import { router, useLocalSearchParams } from "expo-router";
+import { WorkoutMaxProps } from "@/app/WorkoutItemMaxes";
+import { useMaxes } from "@/hooks/useMaxes";
+import CreateWorkoutPrompt, {
+  ToolResultProps,
+} from "@/src/app_components/modals/CreateWorkoutPrompt";
+import FullScreenSpinner from "@/src/app_components/Spinner";
 
 export type Props = StackScreenProps<RootStackParamList, "CreateWorkoutScreen">;
 
@@ -191,6 +201,54 @@ const appendUUID = (items: WorkoutItems) => {
   });
 };
 
+export function handleGenerateWorkoutItemsResponse(
+  response: any,
+  workoutNames: Map<string, WorkoutNameProps>
+): WorkoutItemProps[] {
+  const { items } = response;
+  if (!items || !Array.isArray(items)) return [];
+  const workoutItemsMap = new Map(Array.from(workoutNames.entries()));
+  return items.map((item: any, index: number) => {
+    // console.log(
+    //   "\n\n\n\n  getting id for ",
+    //   workoutItemsMap.get(item.name),
+    //   item.name,
+    //   workoutItemsMap.keys()
+    // );
+    console.log(
+      "Using map workoutNamesMap entries:",
+      item.name,
+      workoutItemsMap.get(item.name) == undefined
+    );
+    // console.log("\n\n\n\n");
+    const _item: WorkoutItemProps = {
+      workout: 0,
+      // name: { id: workoutItemsMap.get(item.name) ?? 0, name: item.name },
+      name: workoutItemsMap.get(item.name) ?? ({} as WorkoutNameProps),
+      ssid: -1,
+      constant: item.constant ?? false,
+      pause_duration: 0,
+      sets: item.sets ?? 1,
+      reps: item.reps ? item.reps : "0",
+      duration: item.duration ? item.duration : "0",
+      distance: item.distance ? item.distance : "0",
+      duration_unit: item.duration_unit ?? 0,
+      distance_unit: item.distance_unit ?? 0,
+      weights: item.weights ? item.weights : "",
+      weight_unit: item.weight_unit ?? "kg",
+      rest_duration: 0,
+      rest_duration_unit: 0,
+      percent_of: "",
+      order: item.order ?? index,
+      date: "",
+      id: 0,
+      uuid: Math.floor(Math.random() * 1000000).toString(),
+    };
+    console.log("Created item to submit from AI suggestion: ", _item);
+    return _item;
+  });
+}
+
 const CreateWorkoutScreen: FunctionComponent = () => {
   const theme = useTheme();
   const params = useLocalSearchParams();
@@ -245,11 +303,79 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const [createWorkoutError, setCreateWorkoutError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
-  const calc = new CalcWorkoutStats(new Map());
+  // const {
+  //     data: profileData,
+  //     isLoading: isUserLoading,
+  //     isSuccess: isUserSuccess,
+  //     isError: isUserError,
+  //     error: userError,
+  //   } = useGetProfileViewQuery("");
+
+  // const {
+  //   data: workoutItemMaxes,
+  //   isLoading: isMaxesLoading,
+  //   isFetching,
+  //   error: getMaxesError,
+  //   refetch,
+  // } = useGetUserWorkoutMaxesQuery(profileData?.user?.id || "0", {
+  //   skip: !profileData?.user?.id,
+  // });
+
+  // const workoutItemMaxesMap = useMemo(() => {
+  //   return workoutItemMaxes
+  //     ? new Map<string, WorkoutMaxProps>(
+  //         workoutItemMaxes.map((wnm: WorkoutMaxProps) => {
+  //           return [wnm.id.toString(), wnm];
+  //         })
+  //       )
+  //     : new Map<string, WorkoutMaxProps>();
+  // }, [workoutItemMaxes]);
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [aiItems, setAIItems] = useState<ToolResultProps | null>(null);
+
+  const {
+    data: _workoutNames,
+    isLoading: isWNLoading,
+    isSuccess,
+    isError,
+    error: wNError,
+  } = useGetWorkoutNamesQuery("");
+
+  const workoutNames = _workoutNames as WorkoutNameProps[];
+
+  // TODO() AI Items do not remain in the list like normal items do when leaving the page.
+
+  useEffect(() => {
+    console.log("UseEffect Ai Items: ", aiItems);
+    if (aiItems && workoutNames) {
+      // console.log("useEffect workoutNames: ", workoutNames);
+      const workoutNamesMap: Map<string, WorkoutNameProps> = new Map(
+        workoutNames.map((wn) => [wn.name, wn])
+      );
+      console.log("Using map workoutNamesMap: ", workoutNamesMap);
+      // Transform output from AI to a full usable object.
+      const items_to_add_to_list = handleGenerateWorkoutItemsResponse(
+        aiItems,
+        workoutNamesMap
+      );
+      if (items_to_add_to_list) {
+        items_to_add_to_list.forEach((item) => {
+          addWorkoutItem(item, false);
+        });
+      }
+      console.log("Items to add to list: ", items_to_add_to_list);
+      setAIItems(null);
+    }
+  }, [aiItems, workoutNames]);
+
+  const { userId, workoutItemMaxesMap, isLoading, error } = useMaxes();
 
   const _createWorkoutWithItems = async (_isUpdateMode: boolean) => {
     // Need to get file from the URI
     if (items.length == 0 || items.length > 15) return setShowAlert(true);
+
+    console.log("Creating with workout with schemeRounds: ", schemeRounds);
+
     setIsCreating(true);
 
     const workoutData = new FormData();
@@ -341,15 +467,14 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         }
       });
 
-      calc.setWorkoutParams(scheme_rounds as string, schemeType, items);
-
+      const calc = new CalcWorkoutStats(workoutItemMaxesMap);
+      calc.setWorkoutParams(schemeRounds as string, schemeType, items);
       calc.calc();
-
       const [tags, names] = calc.getStats();
-      console.log("Creating workout, calcd stats: ", tags, names);
+
+      console.log("Stats calc: ", schemeRounds, tags, names);
 
       data.append("items", JSON.stringify(items));
-
       data.append("names", JSON.stringify(names));
       data.append("tags", JSON.stringify(tags));
 
@@ -399,7 +524,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     shouldUpdateItem: boolean
   ): AddWorkoutItemProps => {
     const _item = { ...item };
-
+    console.log("Adding raw item: ", _item);
     const { success, errorType, errorMsg } = verifyWorkoutItem(
       _item,
       schemeType,
@@ -440,7 +565,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       _item.r_sets = _item.sets;
     }
 
-    console.log("Add item, Recorded info: ", _item);
+    // console.log("Add item, Recorded info: ", _item);
 
     // we can do an update here instead.....
     if (shouldUpdateItem) {
@@ -455,7 +580,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     } else {
       _item.uuid = uuid();
       console.log("~~~~Adding item: ", _item);
-      setItems([...items, _item]);
+      setItems((prevItems) => [...prevItems, _item]);
     }
 
     return { success: true, errorType: -1, errorMsg: "" };
@@ -523,162 +648,190 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     setToggleUpdateHack(!toggleUpdateHack);
   };
 
-  const isUpdateMode = initItems.length > 2;
+  const isUpdateMode = initItems.length > 2 || initItems.length == 0;
+  console.log("CreateWorkout initItems: ", initItems, initItems.length);
   const INPUT_HEADER_HEIGHT = 25;
+
+  if (isWNLoading) {
+    return <FullScreenSpinner></FullScreenSpinner>;
+  }
+
   return (
     <PageContainer style={{ flex: 1, flexDirection: "column" }}>
       <View style={{ flex: 20, flexDirection: "column", width: "100%" }}>
-        <ScrollView style={{ flexDirection: "column" }}>
-          <View style={{ flex: 1, justifyContent: "center", width: "100%" }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <View style={{ flex: 1 }}></View>
+          <View style={{ flex: 5 }}>
             <TSTitleText textStyles={{ textAlign: "center", marginBottom: 4 }}>
               Create Workout - {workoutGroupTitle}
             </TSTitleText>
           </View>
+          <View style={{ flex: 1 }}>
+            <Icon
+              onPress={() => setShowChatModal((prev) => !prev)}
+              name="sparkles-outline"
+              color={theme.palette.AWE_Red}
+              style={{ fontSize: 24 }}
+            />
+          </View>
+        </View>
+        <View style={{ flex: 10 }}>
+          <ScrollView style={{ flexDirection: "column" }}>
+            {createWorkoutError.length ? (
+              <TSTitleText textStyles={{ color: "red" }}>
+                {createWorkoutError}
+              </TSTitleText>
+            ) : (
+              <></>
+            )}
 
-          {createWorkoutError.length ? (
-            <TSTitleText textStyles={{ color: "red" }}>
-              {createWorkoutError}
-            </TSTitleText>
-          ) : (
-            <></>
-          )}
+            <View
+              style={{
+                flexShrink: 2,
+                flexGrow: 3,
+                flexBasis: 0,
 
-          <View
-            style={{
-              flexShrink: 2,
-              flexGrow: 3,
-              flexBasis: 0,
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
+                <Input
+                  onChangeText={(t) => {
+                    setTitle(limitTextLength(t, WorkoutTitleLimit));
+                    setCreateWorkoutError("");
+                    setIsCreating(false);
+                  }}
+                  value={title}
+                  label=""
+                  testID={TestIDs.CreateWorkoutTitleField.name()}
+                  placeholder="Title"
+                  inputStyles={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  containerStyle={{
+                    width: "100%",
+                    backgroundColor: theme.palette.darkGray,
+                    borderRadius: 8,
+                    paddingHorizontal: 8,
+                  }}
+                  leading={
+                    <Icon
+                      name="remove-outline"
+                      color={theme.palette.text}
+                      style={{ fontSize: mdFontSize }}
+                    />
+                  }
+                />
+              </View>
 
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
-              <Input
-                onChangeText={(t) => {
-                  setTitle(limitTextLength(t, WorkoutTitleLimit));
-                  setCreateWorkoutError("");
-                  setIsCreating(false);
-                }}
-                value={title}
-                label=""
-                testID={TestIDs.CreateWorkoutTitleField.name()}
-                placeholder="Title"
-                inputStyles={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                containerStyle={{
-                  width: "100%",
-                  backgroundColor: theme.palette.darkGray,
-                  borderRadius: 8,
-                  paddingHorizontal: 8,
-                }}
-                leading={
-                  <Icon
-                    name="remove-outline"
-                    color={theme.palette.text}
-                    style={{ fontSize: mdFontSize }}
-                  />
+              <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
+                <Input
+                  label=""
+                  placeholder="Description"
+                  testID={TestIDs.CreateWorkoutDescField.name()}
+                  value={desc}
+                  onChangeText={(t) =>
+                    setDesc(limitTextLength(t, WorkoutDescLimit))
+                  }
+                  containerStyle={{
+                    width: "100%",
+                    backgroundColor: theme.palette.darkGray,
+                    borderRadius: 8,
+                    paddingHorizontal: 8,
+                  }}
+                  leading={
+                    <Icon
+                      name="remove-outline"
+                      color={theme.palette.text}
+                      style={{ fontSize: mdFontSize }}
+                    />
+                  }
+                />
+              </View>
+
+              <SchemeField
+                schemeType={schemeType}
+                schemeRounds={schemeRounds}
+                setSchemeRounds={(t) =>
+                  setSchemeRounds(limitTextLength(t, SchemeTextLimit))
                 }
+                setInstruction={(t) =>
+                  setInstruction(
+                    limitTextLength(t, CreateSchemeInstructionLimit)
+                  )
+                }
+                schemeRoundsError={schemeRoundsError}
+                setSchemeRoundsError={setSchemeRoundsError}
+                instruction={instruction}
               />
             </View>
 
-            <View style={{ height: INPUT_HEADER_HEIGHT, marginBottom: 8 }}>
-              <Input
-                label=""
-                placeholder="Description"
-                testID={TestIDs.CreateWorkoutDescField.name()}
-                value={desc}
-                onChangeText={(t) =>
-                  setDesc(limitTextLength(t, WorkoutDescLimit))
-                }
-                containerStyle={{
-                  width: "100%",
-                  backgroundColor: theme.palette.darkGray,
-                  borderRadius: 8,
-                  paddingHorizontal: 8,
-                }}
-                leading={
-                  <Icon
-                    name="remove-outline"
-                    color={theme.palette.text}
-                    style={{ fontSize: mdFontSize }}
-                  />
-                }
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                justifyContent: "center",
+              }}
+            >
+              <AddItem
+                addWorkoutItem={addWorkoutItem}
+                schemeType={schemeType}
+                itemToUpdate={itemToUpdate}
+                workoutNames={workoutNames}
+                toggleUpdateHack={toggleUpdateHack}
+                requestUpdate={requestUpdate}
               />
             </View>
 
-            <SchemeField
-              schemeType={schemeType}
-              schemeRounds={schemeRounds}
-              setSchemeRounds={(t) =>
-                setSchemeRounds(limitTextLength(t, SchemeTextLimit))
-              }
-              setInstruction={(t) =>
-                setInstruction(limitTextLength(t, CreateSchemeInstructionLimit))
-              }
-              schemeRoundsError={schemeRoundsError}
-              setSchemeRoundsError={setSchemeRoundsError}
-              instruction={instruction}
-            />
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              width: "100%",
-              justifyContent: "center",
-            }}
-          >
-            <AddItem
-              addWorkoutItem={addWorkoutItem}
-              schemeType={schemeType}
-              itemToUpdate={itemToUpdate}
-              toggleUpdateHack={toggleUpdateHack}
-              requestUpdate={requestUpdate}
-            />
-          </View>
-
-          <View
-            style={{
-              flex: 6,
-              justifyContent: "flex-start",
-              alignContent: "flex-start",
-              alignItems: "flex-start",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            <View style={{ height: "100%", width: "100%", marginTop: 8 }}>
-              {schemeType <= 2 ? (
-                <CreateWorkoutItemList
-                  items={items}
-                  schemeType={schemeType}
-                  curColor={curColor}
-                  showAddSSID={showAddSSID}
-                  itemToUpdate={itemToUpdate}
-                  setShowAddSSID={setShowAddSSID}
-                  setCurColor={setCurColor}
-                  removeItemSSID={removeItemSSID}
-                  addItemToSSID={addItemToSSID}
-                  updateItemConstant={updateItemConstant}
-                  removeItem={removeItem}
-                  requestUpdate={requestUpdate}
-                />
-              ) : (
-                <CreateWorkoutDualItemList
-                  items={items as WorkoutDualItemProps[]}
-                  schemeType={schemeType}
-                  itemToUpdate={itemToUpdate}
-                  removeItem={removeItem}
-                  addPenalty={addPenalty}
-                  requestUpdate={requestUpdate}
-                />
-              )}
+            <View
+              style={{
+                flex: 6,
+                justifyContent: "flex-start",
+                alignContent: "flex-start",
+                alignItems: "flex-start",
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              <View style={{ height: "100%", width: "100%", marginTop: 8 }}>
+                {schemeType <= 2 ? (
+                  <CreateWorkoutItemList
+                    items={items}
+                    schemeType={schemeType}
+                    curColor={curColor}
+                    showAddSSID={showAddSSID}
+                    itemToUpdate={itemToUpdate}
+                    setShowAddSSID={setShowAddSSID}
+                    setCurColor={setCurColor}
+                    removeItemSSID={removeItemSSID}
+                    addItemToSSID={addItemToSSID}
+                    updateItemConstant={updateItemConstant}
+                    removeItem={removeItem}
+                    requestUpdate={requestUpdate}
+                  />
+                ) : (
+                  <CreateWorkoutDualItemList
+                    items={items as WorkoutDualItemProps[]}
+                    schemeType={schemeType}
+                    itemToUpdate={itemToUpdate}
+                    removeItem={removeItem}
+                    addPenalty={addPenalty}
+                    requestUpdate={requestUpdate}
+                  />
+                )}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
       </View>
       <View
         style={{
@@ -729,6 +882,13 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         }
         modalVisible={showAlert}
         onRequestClose={() => setShowAlert(false)}
+      />
+      <CreateWorkoutPrompt
+        visible={showChatModal}
+        schemeTypeText={WORKOUT_TYPES[schemeType]}
+        userID={userId}
+        setAIItems={setAIItems}
+        onClose={() => setShowChatModal(false)}
       />
     </PageContainer>
   );

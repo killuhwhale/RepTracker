@@ -28,7 +28,10 @@ const BannerAddMembership: FunctionComponent = () => {
   const { data, isLoading } = useGetAdUnitsQuery("");
 
   const adUnit =
-    !isLoading && data && data[BANNER_AD_UNIT].length > 0
+    !isLoading &&
+    data &&
+    data[BANNER_AD_UNIT] &&
+    data[BANNER_AD_UNIT].length > 0
       ? data[BANNER_AD_UNIT]
       : TestIds.BANNER;
   console.log("adUnit: ", adUnit);

@@ -52,12 +52,12 @@ export interface WorkoutCategoryProps {
 export interface WorkoutNameProps {
   id: number;
   name: string;
-  desc: string;
-  categories: WorkoutCategoryProps[];
-  primary: WorkoutCategoryProps;
-  secondary: WorkoutCategoryProps;
-  media_ids: string;
-  date: string;
+  desc?: string;
+  categories?: WorkoutCategoryProps[];
+  primary?: WorkoutCategoryProps;
+  secondary?: WorkoutCategoryProps;
+  media_ids?: string;
+  date?: string;
 }
 
 export interface WorkoutNameSimpleProps {

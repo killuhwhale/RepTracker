@@ -422,14 +422,7 @@ export const apiSlice = createApi({
         data: data,
         params: { contentType: "multipart/form-data" },
       }),
-      invalidatesTags: (result, err, arg) => {
-        const data = new Map<string, string>(arg._parts);
-
-        return ["UserWorkoutGroups"];
-        // return data.get("owned_by_class")
-        //   ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
-        //   : ["UserWorkoutGroups"];
-      },
+      invalidatesTags: [{ type: "UserWorkoutGroups" }],
     }),
     duplicateWorkoutGroup: builder.mutation({
       query: (data = {}) => ({
@@ -438,13 +431,7 @@ export const apiSlice = createApi({
         data: data,
         params: { contentType: "multipart/form-data" },
       }),
-      invalidatesTags: (result, err, arg) => {
-        const data = new Map<string, string>(arg._parts);
-        return ["UserWorkoutGroups"];
-        // return data.get("owned_by_class")
-        //   ? [{ type: "GymClassWorkoutGroups", id: data.get("owner_id") }]
-        //   : ["UserWorkoutGroups"];
-      },
+      invalidatesTags: [{ type: "UserWorkoutGroups" }],
     }),
     finishWorkoutGroup: builder.mutation({
       query: (data = {}) => ({
@@ -459,6 +446,7 @@ export const apiSlice = createApi({
 
         return [
           { type: "WorkoutGroupWorkouts", id: data.get("group") },
+          { type: "UserWorkoutGroups" },
           "DailySnapshot",
         ];
       },
@@ -482,7 +470,11 @@ export const apiSlice = createApi({
               { type: "GymClassWorkoutGroups", id: data.get("owner_id") },
               "DailySnapshot",
             ]
-          : ["UserWorkoutGroups", "DailySnapshot"];
+          : [
+              "UserWorkoutGroups",
+              "DailySnapshot",
+              { type: "UserWorkoutGroups" },
+            ];
       },
     }),
 
@@ -566,11 +558,11 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (resut, error, arg) => {
         const data = new Map<string, string>(arg._parts);
-        devLog(
-          "Invalidating create normal Item: ",
-          data.get("workout_group"),
-          data
-        );
+        // devLog(
+        //   "Invalidating create normal Item: ",
+        //   data.get("workout_group"),
+        //   data
+        // );
         return [
           { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
           { type: "UserWorkoutGroups" },
@@ -698,7 +690,7 @@ export const apiSlice = createApi({
         //      - TODO() We do not have a search feature, to find other users workouts yet.
         return [
           { type: "WorkoutGroupWorkouts", id: data.get("workout_group") }, // Reset WorkoutScreen
-          "UserWorkoutGroups", // Reset Profile workout list
+          { type: "UserWorkoutGroups" }, // Reset Profile workout list
           { type: "GymClassWorkoutGroups", id: data.get("owner_id") },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -741,7 +733,7 @@ export const apiSlice = createApi({
         //      - TODO() We do not have a search feature, to find other users workouts yet.
         return [
           { type: "WorkoutGroupWorkouts", id: data.get("workout_group") }, // Reset WorkoutScreen
-          "UserWorkoutGroups", // Reset Profile workout list
+          { type: "UserWorkoutGroups" }, // Reset Profile workout list
           { type: "GymClassWorkoutGroups", id: data.get("owner_id") },
         ];
       },
@@ -766,17 +758,32 @@ export const apiSlice = createApi({
     // Expanded Profile data view
     getProfileWorkoutGroups: builder.query({
       query: (page: number = 1) => {
-        // devLog("Long running operation start");
-        // let s = 0;
-        // for (let i = 0; i < 50_000_000; i++) {
-        //   s += 2.3;
-        // }
-        // devLog("Long running operation done: ", s);
-
         return { url: `profile/workout_groups/?page=${page}` };
       },
-      providesTags: ["UserWorkoutGroups"],
+      providesTags: (result, error, page) => [
+        { type: "UserWorkoutGroups", id: page },
+      ],
     }),
+    searchWorkoutGroups: builder.query({
+      query: ({ query, userID }) => {
+        return {
+          url: `profile/workout_group_query/?user_id=${userID}&query=${encodeURIComponent(
+            query
+          )}`,
+        };
+      },
+      providesTags: [{ type: "UserWorkoutGroups" }],
+    }),
+
+    createWorkoutPrompt: builder.mutation({
+      query: ({ prompt, userID, schemeTypeText }) => ({
+        url: "ai/create_workout/",
+        method: "POST",
+        data: { prompt, user_id: userID, scheme_type_text: schemeTypeText },
+        params: { contentType: "application/json" },
+      }),
+    }),
+
     getProfileGymFavs: builder.query({
       query: () => {
         return { url: "profile/gym_favs/" };
@@ -895,6 +902,8 @@ export const {
   useGetUserGymsQuery,
   useGetProfileViewQuery,
   useGetProfileWorkoutGroupsQuery,
+  useSearchWorkoutGroupsQuery,
+  useCreateWorkoutPromptMutation,
   useGetProfileGymFavsQuery,
   useGetProfileGymClassFavsQuery,
 

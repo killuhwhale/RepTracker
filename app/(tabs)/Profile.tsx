@@ -501,6 +501,15 @@ const Profile: FunctionComponent<Props> = () => {
     fadeAnim.setValue(0);
   }
 
+  const logout = () => {
+    console.log("Loggin out");
+    AuthManager.logout()
+      .then((res) => {
+        console.log("ProfileSettings: Logged out");
+      })
+      .catch((err) => console.log("ProfileSettings Logout Error", err));
+  };
+
   return (
     <PageContainer>
       <BannerAddMembership />
@@ -761,7 +770,34 @@ const Profile: FunctionComponent<Props> = () => {
           /> */}
         </View>
       ) : isError ? (
-        <TSCaptionText>Error.... {error.toString()}</TSCaptionText>
+        <View>
+          <TSCaptionText>
+            Error.... {error.data} {error.status} {error.toString()}{" "}
+            {Object.keys(error.data).toString()}
+          </TSCaptionText>
+          <TouchableHighlight
+            underlayColor="#00000022"
+            style={{ borderRadius: 8 }}
+            onPress={() => {
+              logout();
+            }}
+          >
+            <View
+              style={{
+                alignItems: "flex-end",
+                width: "100%",
+                padding: 12,
+              }}
+            >
+              <Icon
+                name="log-out"
+                color={theme.palette.AWE_Red}
+                style={{ fontSize: 24, marginRight: 4 }}
+              />
+              <TSCaptionText>Logout</TSCaptionText>
+            </View>
+          </TouchableHighlight>
+        </View>
       ) : (
         <TSCaptionText>No Data</TSCaptionText>
       )}

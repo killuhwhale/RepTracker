@@ -36,6 +36,7 @@ import {
 } from "../src/app_components/Cards/types";
 import { ScrollView } from "react-native-gesture-handler";
 import {
+  ActivityIndicator,
   Switch,
   TouchableHighlight,
   TouchableWithoutFeedback,
@@ -64,6 +65,7 @@ import FinishDualWorkoutItems from "../src/app_components/modals/finishDualWorko
 import { router, useLocalSearchParams } from "expo-router";
 import DuplicateWorkoutGroupModal from "@/src/app_components/modals/DuplicateWorkoutGroupModal";
 import { dateFormatDayOfWeek } from "@/src/utils/algos";
+import FullScreenSpinner from "@/src/app_components/Spinner";
 export type Props = StackScreenProps<RootStackParamList, "WorkoutScreen">;
 
 const Row = styled.View`
@@ -408,13 +410,9 @@ const WorkoutScreen: FunctionComponent = () => {
     : [];
 
   const [tags, names] = useMemo(() => {
-    const calc = new CalcWorkoutStats(new Map());
-
-    // todo, calculate totals based on the given stats workouts, instead of raw calcs as provided by: calcMulti
-    // This can be reused by stats screen.....
-    console.log("Workout screen workouts: ", workouts);
+    const calc = new CalcWorkoutStats(new Map()); // Doesnt need maxes since we are calculating them when creating, we  just use this to combine workouts...
     calc.calcMultiJSON(workouts, workoutGroup.owned_by_class);
-    // console.log("Calc multi on: ", workouts);
+    console.log("Calc multi on: ", workouts[0]?.stats);
     return calc.getStats();
   }, [workouts, data]);
 
@@ -505,6 +503,8 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const disableDeleteBtnRed = useRef(false);
+
+  const [isWaitingForDelete, setIsWaitingForDelete] = useState(false);
   const onDelete = async () => {
     if (showingOGWorkoutGroup && !disableDeleteBtnRed.current) {
       disableDeleteBtnRed.current = true;
@@ -528,9 +528,15 @@ const WorkoutScreen: FunctionComponent = () => {
       ).unwrap();
       console.log("Del WG res: ", deletedWorkoutGroup);
     }
+    setIsWaitingForDelete(true);
     setDeleteWorkoutGroupModalVisible(false);
-    disableDeleteBtnRed.current = false;
-    router.push("/");
+    setTimeout(() => {
+      setIsWaitingForDelete(false);
+      disableDeleteBtnRed.current = false;
+      router.push({
+        pathname: "/",
+      });
+    }, 750);
   };
 
   const promptUpdateDualItems = () => {
@@ -589,6 +595,10 @@ const WorkoutScreen: FunctionComponent = () => {
     });
   };
 
+  // if (isWaitingForDelete) {
+  //   return ;
+  // }
+
   return (
     <View
       style={{
@@ -596,6 +606,7 @@ const WorkoutScreen: FunctionComponent = () => {
         width: SCREEN_WIDTH,
       }}
     >
+      {isWaitingForDelete ? <FullScreenSpinner></FullScreenSpinner> : <></>}
       <BannerAddMembership />
       <ScrollView
         style={{

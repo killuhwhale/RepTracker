@@ -14,7 +14,7 @@ import {
   DURATION_UNITS,
   SCREEN_HEIGHT,
 } from "../shared";
-import { TSCaptionText } from "../Text/Text";
+import { TSCaptionText, TSInputTextSm } from "../Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import LinearGradient from "react-native-linear-gradient";
@@ -72,42 +72,99 @@ const recordedTextColor = "#f0abfc";
 
 const WorkoutItemWeights: FunctionComponent<{
   item: AnyWorkoutItem;
-  ownedByClass: boolean;
-  showRecorded: boolean;
-}> = ({ item, ownedByClass, showRecorded }) => {
-  const weights = showRecorded ? item.r_weights ?? "[0]" : item.weights;
-  const weightUnit = showRecorded ? item.r_weight_unit : item.weight_unit;
-  const percentOf = showRecorded ? item.r_percent_of : item.percent_of;
+}> = ({ item }) => {
+  const weights = item.weights;
+  const rWeights = item.r_weights ?? "[]";
+
+  const weightUnit = item.weight_unit;
+  const rWeightUnit = item.r_weight_unit;
+
+  const percentOf = item.percent_of;
+  const rPercentOf = item.r_percent_of;
 
   // console.log(
   //   "WorkoutItemWeights:  ",
   //   item.name.name,
-  //   weights,
-  //   weightUnit,
-  //   percentOf,
-  //   item
+  //   typeof rWeights,
+  //   rWeightUnit,
+  //   rPercentOf
   // );
-  const theme = useTheme();
-  return (
-    <>
-      {weights &&
-      JSON.parse(weights).length > 0 &&
-      JSON.parse(weights)[0] > 0 ? (
-        <TSCaptionText
-          textStyles={{
-            color: showRecorded ? recordedTextColor : theme.palette.text,
-          }}
-        >
-          {`@ ${displayJList(weights)}${
-            item.weight_unit === "%" ? "% of " : weightUnit
-          }`}
 
-          {item.weight_unit === "%" ? percentOf : ""}
-        </TSCaptionText>
-      ) : (
-        <></>
-      )}
-    </>
+  const theme = useTheme();
+  const w = displayJList(weights);
+  const rw = displayJList(rWeights);
+  const has_record = [item.r_reps, item.r_distance, item.r_duration].indexOf(
+    "[0]"
+  );
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "space-around",
+      }}
+    >
+      <TSCaptionText
+        textStyles={{
+          color: theme.palette.text,
+          fontSize: 9,
+        }}
+      >
+        {w ? (
+          ` @ ${w}${
+            weightUnit === "%"
+              ? ` % of ${percentOf}`
+              : weights != "[]"
+              ? `${weightUnit}`
+              : ""
+          } `
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+            }}
+          >
+            <TSInputTextSm textStyles={{ fontSize: 6 }}>No </TSInputTextSm>
+            <TSInputTextSm textStyles={{ fontSize: 6 }}>Weight</TSInputTextSm>
+          </View>
+        )}
+
+        {/* {weightUnit === "%" ? percentOf : ""} */}
+      </TSCaptionText>
+
+      <TSCaptionText
+        textStyles={{
+          color: recordedTextColor,
+          fontSize: 9,
+        }}
+      >
+        {rw && rPercentOf && rWeightUnit ? (
+          ` @ ${rw}${
+            rWeightUnit === "%"
+              ? ` % of ${rPercentOf}`
+              : rWeights != "[]"
+              ? `${rWeightUnit}`
+              : ""
+          } `
+        ) : has_record ? (
+          <></>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+            }}
+          >
+            <TSInputTextSm textStyles={{ fontSize: 6 }}>No </TSInputTextSm>
+            <TSInputTextSm textStyles={{ fontSize: 6 }}>Weight</TSInputTextSm>
+          </View>
+        )}
+      </TSCaptionText>
+    </View>
   );
 };
 
@@ -116,12 +173,19 @@ const WorkoutItemRepsDurDistance: FunctionComponent<{
   ownedByClass: boolean;
   schemeType: number;
 }> = ({ item, ownedByClass, schemeType }) => {
-  if (item.name.name === "Hill Sprints") {
-    console.log("Displaying item: ", schemeType, item, item.distance !== "[0]");
-  }
+  // if (item.name.name === "Hill Sprints") {
+  //   console.log("Displaying item: ", schemeType, item, item.distance !== "[0]");
+  // }
 
   return (
-    <>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        width: "100%",
+      }}
+    >
       {item.reps !== "[0]" ? (
         <>
           <TSCaptionText>{displayJList(item.reps)} Reps </TSCaptionText>
@@ -156,7 +220,7 @@ const WorkoutItemRepsDurDistance: FunctionComponent<{
       )}
 
       {item.constant ? <TSCaptionText> per round</TSCaptionText> : <></>}
-    </>
+    </View>
   );
 };
 
@@ -334,7 +398,7 @@ const WorkoutItemPanel: FunctionComponent<{
       <View
         style={{
           alignSelf: "center",
-          flex: 3,
+          flex: 4,
           width: "100%",
           justifyContent: "center",
           alignContent: "center",
@@ -343,26 +407,37 @@ const WorkoutItemPanel: FunctionComponent<{
       >
         <TSCaptionText textStyles={{ textAlign: "center" }}>
           {item.sets > 0 && schemeType === 0 ? `${item.sets} x ` : ""}
-          <WorkoutItemRepsDurDistance
-            item={item}
-            ownedByClass={ownedByClass}
-            schemeType={schemeType}
-          />
         </TSCaptionText>
+
+        <WorkoutItemRepsDurDistance
+          item={item}
+          ownedByClass={ownedByClass}
+          schemeType={schemeType}
+        />
       </View>
 
-      <View style={{ alignItems: "center", flex: 2, width: "100%" }}>
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "space-evenly",
+          flex: 4,
+          width: "100%",
+          flexDirection: "column",
+        }}
+      >
         <WorkoutItemWeights
           item={item}
           ownedByClass={false}
           showRecorded={false}
         />
-        <WorkoutItemWeights
+        {/* <WorkoutItemWeights
           item={item}
           ownedByClass={false}
           showRecorded={true}
-        />
-        <WorkoutItemRest item={item} ownedByClass={false} />
+        /> */}
+        <View style={{ flex: 1 }}>
+          <WorkoutItemRest item={item} ownedByClass={false} />
+        </View>
       </View>
 
       <PenaltyDisplayModal

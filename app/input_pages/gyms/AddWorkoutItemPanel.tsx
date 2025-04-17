@@ -61,6 +61,7 @@ const AddItem: FunctionComponent<{
   ): AddWorkoutItemProps;
   itemToUpdate: WorkoutDualItemProps | WorkoutItemProps | null;
   schemeType: number;
+  workoutNames: WorkoutNameProps[];
   toggleUpdateHack: boolean;
   requestUpdate: (item: WorkoutItemProps | WorkoutDualItemProps | null) => void;
 }> = (props) => {
@@ -154,9 +155,8 @@ const AddItem: FunctionComponent<{
   }, [props.itemToUpdate, props.toggleUpdateHack]);
 
   const theme = useTheme();
-  const { data, isLoading, isSuccess, isError, error } =
-    useGetWorkoutNamesQuery("");
-  const workoutNames = data as WorkoutNameProps[];
+
+  const workoutNames = props.workoutNames as WorkoutNameProps[];
 
   const workoutNamesMap: Map<string, number> = workoutNames
     ? new Map<string, number>(
@@ -231,7 +231,7 @@ const AddItem: FunctionComponent<{
   };
 
   const _addItem = (updateItem: boolean = false) => {
-    if (!data || data.length <= 0) {
+    if (!workoutNames || workoutNames.length <= 0) {
       console.log("Error, no workout names to add to item.");
       return;
     }
@@ -276,7 +276,7 @@ const AddItem: FunctionComponent<{
 
     const item = {
       workout: props.itemToUpdate ? props.itemToUpdate.workout : 0,
-      name: data[workoutName] as WorkoutNameProps,
+      name: workoutNames[workoutName] as WorkoutNameProps,
       ssid: props.itemToUpdate ? props.itemToUpdate.ssid : -1,
       constant: props.itemToUpdate ? props.itemToUpdate.constant : false,
       pause_duration: nanOrNah(pauseDuration),
@@ -323,8 +323,8 @@ const AddItem: FunctionComponent<{
   };
 
   const isPausedItem =
-    !isLoading && isSuccess && data && data.length > 0
-      ? data[workoutName].name.match(/pause*/i)
+    workoutNames && workoutNames.length > 0
+      ? workoutNames[workoutName].name.match(/pause*/i)
       : false;
 
   return (
@@ -339,7 +339,7 @@ const AddItem: FunctionComponent<{
       >
         {/* Row 1 */}
         <View style={{ flex: 1, flexDirection: "row" }}>
-          {!isLoading && isSuccess && data ? (
+          {workoutNames ? (
             <View
               style={{ justifyContent: "flex-start", flex: 4, height: "100%" }}
             >
@@ -364,7 +364,8 @@ const AddItem: FunctionComponent<{
                     {!showWorkoutNamesModal ? (
                       <RegularButton
                         text={
-                          data[workoutName]?.name ?? "No workout name found"
+                          workoutNames[workoutName]?.name ??
+                          "No workout name found"
                         }
                         btnStyles={{
                           backgroundColor: theme.palette.IP_Clickable_bg,
