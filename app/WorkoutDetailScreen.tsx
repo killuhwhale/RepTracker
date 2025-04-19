@@ -19,7 +19,7 @@ import {
 
 import { RootStackParamList } from "../src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { StatsPanel } from "../src/app_components/Stats/StatsPanel";
 import BannerAddMembership from "../src/app_components/ads/BannerAd";
 import { useLocalSearchParams } from "expo-router";
@@ -30,6 +30,7 @@ import {
 import WorkoutItemPreviewHorizontalList from "@/src/app_components/Cards/WorkoutItemPreviewHorizontalList";
 import { useTheme } from "styled-components/native";
 import { WorkoutMaxProps } from "./WorkoutItemMaxes";
+import { ItemStringDisplayList } from "@/src/app_components/WorkoutItems/ItemStringDisplayList";
 
 export type Props = StackScreenProps<RootStackParamList, "WorkoutDetailScreen">;
 
@@ -167,7 +168,7 @@ const WorkoutDetailScreen: FunctionComponent = () => {
 
         <View
           style={{
-            flexGrow: 5,
+            flexGrow: 6,
             flexBasis: 0,
             flexShrink: 1,
             justifyContent: "center",
@@ -184,13 +185,18 @@ const WorkoutDetailScreen: FunctionComponent = () => {
           </View>
 
           {!isLoading && isSuccess ? (
-            <WorkoutItemPreviewHorizontalList
-              testID={""}
-              data={workout.workout_items}
+            // <WorkoutItemPreviewHorizontalList
+            //   testID={""}
+            //   data={workout.workout_items}
+            //   schemeType={scheme_type}
+            //   itemWidth={WORKOUTITEM_WIDTH}
+            //   itemHeight={WORKOUTITEM_HEIGHT}
+            //   ownedByClass={ownedByClass == 1 ? true : false}
+            // />
+
+            <ItemStringDisplayList
+              items={workout.workout_items}
               schemeType={scheme_type}
-              itemWidth={WORKOUTITEM_WIDTH}
-              itemHeight={WORKOUTITEM_HEIGHT}
-              ownedByClass={ownedByClass == 1 ? true : false}
             />
           ) : (
             <></>

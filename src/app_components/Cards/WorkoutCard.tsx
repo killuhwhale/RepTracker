@@ -100,16 +100,28 @@ const WorkoutCard: FunctionComponent<WorkoutCardProps> = (props) => {
   const instruction = props.instruction;
   const displaySchemeType =
     props.scheme_type <= 2 ? WORKOUT_TYPE_LABELS[props.scheme_type] : "";
+
   let subtitle = ``;
   if (displaySchemeRounds && displaySchemeRounds !== "undefined") {
     subtitle += displaySchemeRounds + " ";
   }
-  if (instruction && instruction !== "undefined") {
+  if (
+    instruction &&
+    instruction !== "undefined" &&
+    displaySchemeRounds != instruction
+  ) {
     subtitle += instruction + " ";
   }
   if (displaySchemeType) {
     subtitle += displaySchemeType;
   }
+
+  console.log(
+    "WorkoutCard info: ",
+    displaySchemeRounds,
+    instruction,
+    displaySchemeType
+  );
   return (
     <View
       testID={props.testID}

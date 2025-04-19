@@ -43,9 +43,12 @@ const ProfileSettingsModalRow: FunctionComponent<{
     {
       width: "100%",
       height: "100%",
-      justifyContent: "center",
+      justifyContent: "flex-start",
+      alignItems: "center",
       borderRadius: 8,
       paddingLeft: 8,
+      flex: 1,
+      flexDirection: "row",
     },
     {
       width: "75%",
@@ -53,14 +56,19 @@ const ProfileSettingsModalRow: FunctionComponent<{
       justifyContent: "center",
       borderRadius: 8,
       paddingLeft: 8,
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
     },
-    ,
     {
       width: "75%",
       height: "60%",
       justifyContent: "center",
+      alignItems: "center",
       borderRadius: 8,
       paddingLeft: 8,
+      flex: 1,
+      flexDirection: "row",
     },
   ] as ViewStyle[];
 
@@ -84,19 +92,30 @@ const ProfileSettingsModalRow: FunctionComponent<{
           props.onAction();
         }}
       >
-        <TSSnippetText
-          textStyles={{
-            textAlign: variant === 0 ? "left" : "center",
-            color:
-              variant === 0
-                ? theme.palette.text
-                : variant === 1
-                ? theme.palette.AWE_Red
-                : theme.palette.AWE_Blue,
-          }}
-        >
-          {props.title}
-        </TSSnippetText>
+        <View style={[variantStyles[variant]]}>
+          <TSSnippetText
+            textStyles={{
+              textAlign: variant === 0 ? "left" : "center",
+              color:
+                variant === 0
+                  ? theme.palette.text
+                  : variant === 1
+                  ? theme.palette.AWE_Red
+                  : theme.palette.AWE_Blue,
+            }}
+          >
+            {props.title}
+          </TSSnippetText>
+          {variant > 0 ? (
+            <Icon
+              name="link-outline"
+              color={theme.palette.AWE_Red}
+              style={{ fontSize: 12, marginLeft: 8 }}
+            />
+          ) : (
+            <></>
+          )}
+        </View>
       </TouchableHighlight>
     </View>
   );

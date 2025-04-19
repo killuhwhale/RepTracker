@@ -884,7 +884,9 @@ export class CalcWorkoutStats {
         console.log("SumRes: ", total[metric]);
       }
     });
-    console.log("REturn from sumObj: ", total);
+
+    total["key"] = a.key;
+    console.log("Return from sumObj: ", total);
     return total;
   }
 

@@ -514,7 +514,7 @@ export const apiSlice = createApi({
       invalidatesTags: (result, error, arg) => {
         const data = new Map<string, string>(arg._parts);
         devLog("Invalidates tag, Workouts: ", data);
-        return [{ type: "WorkoutGroupWorkouts", id: data.get("group") }];
+        return [{ type: "WorkoutGroupWorkouts" }];
       },
     }),
 
@@ -564,7 +564,7 @@ export const apiSlice = createApi({
         //   data
         // );
         return [
-          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "WorkoutGroupWorkouts" },
           { type: "UserWorkoutGroups" },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -588,7 +588,7 @@ export const apiSlice = createApi({
         //   data
         // );
         return [
-          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "WorkoutGroupWorkouts" },
           { type: "UserWorkoutGroups" },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -611,7 +611,7 @@ export const apiSlice = createApi({
           data
         );
         return [
-          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "WorkoutGroupWorkouts" },
           { type: "UserWorkoutGroups" },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -630,7 +630,7 @@ export const apiSlice = createApi({
         const data = new Map<string, string>(arg._parts);
 
         return [
-          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "WorkoutGroupWorkouts" },
           { type: "UserWorkoutGroups" },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -649,7 +649,7 @@ export const apiSlice = createApi({
         const data = new Map<string, string>(arg._parts);
 
         return [
-          { type: "WorkoutGroupWorkouts", id: data.get("workout_group") },
+          { type: "WorkoutGroupWorkouts" },
           { type: "UserWorkoutGroups" },
           { type: "StatsQuery" },
           { type: "DailySnapshot" },
@@ -764,6 +764,14 @@ export const apiSlice = createApi({
         { type: "UserWorkoutGroups", id: page },
       ],
     }),
+    getLastXWorkoutGroups: builder.query({
+      query: (userID) => {
+        return {
+          url: `workoutGroups/last_x_workout_groups/?user_id=${userID}`,
+        };
+      },
+      providesTags: (result, error, page) => [{ type: "UserWorkoutGroups" }],
+    }),
     searchWorkoutGroups: builder.query({
       query: ({ query, userID }) => {
         return {
@@ -776,10 +784,22 @@ export const apiSlice = createApi({
     }),
 
     createWorkoutPrompt: builder.mutation({
-      query: ({ prompt, userID, schemeTypeText }) => ({
+      query: ({
+        prompt,
+        userID,
+        schemeTypeText,
+        userMaxes,
+        lastWorkoutGroups,
+      }) => ({
         url: "ai/create_workout/",
         method: "POST",
-        data: { prompt, user_id: userID, scheme_type_text: schemeTypeText },
+        data: {
+          prompt,
+          user_id: userID,
+          scheme_type_text: schemeTypeText,
+          userMaxes,
+          lastWorkoutGroups,
+        },
         params: { contentType: "application/json" },
       }),
     }),
@@ -902,6 +922,7 @@ export const {
   useGetUserGymsQuery,
   useGetProfileViewQuery,
   useGetProfileWorkoutGroupsQuery,
+  useGetLastXWorkoutGroupsQuery,
   useSearchWorkoutGroupsQuery,
   useCreateWorkoutPromptMutation,
   useGetProfileGymFavsQuery,

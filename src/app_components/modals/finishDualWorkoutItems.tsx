@@ -133,13 +133,13 @@ const FinishDualWorkoutItems: FunctionComponent<{
 
   useEffect(() => {
     // Our copy of initGroup does not have data on first render since we are fetching from API. onces its ready, fill it
-    if (
-      (Object.keys(editedWorkoutGroup).length === 0 &&
-        Object.keys(workoutGroup).length !== 0) ||
-      editedWorkoutGroup.workouts?.length != initGroup.workouts?.length
-    ) {
-      setEditedWorkoutGroup(jsonCopy(workoutGroup));
-    }
+    // if (
+    //   (Object.keys(editedWorkoutGroup).length === 0 &&
+    //     Object.keys(workoutGroup).length !== 0) ||
+    //   editedWorkoutGroup.workouts?.length != initGroup.workouts?.length
+    // ) {
+    // }
+    setEditedWorkoutGroup(jsonCopy(workoutGroup));
   }, [workoutGroup]);
 
   const editDualItem = (

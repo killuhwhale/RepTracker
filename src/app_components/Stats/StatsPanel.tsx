@@ -26,6 +26,7 @@ export interface WorkoutStats {
 export const TagPanelItem: FunctionComponent<{ tag: WorkoutStats }> = ({
   tag,
 }) => {
+  console.log("tag.key: ", tag.key, tag);
   return (
     <View style={PanelStyle.container}>
       <TSParagrapghText>{tag.key}</TSParagrapghText>

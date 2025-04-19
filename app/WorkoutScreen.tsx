@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useMemo, useRef, useState } from "react";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components/native";
 import {
   COMPLETED_WORKOUT_MEDIA,
@@ -89,10 +95,10 @@ const hasUnfinsihedDualItems = (workouts: WorkoutCardProps[]) => {
 };
 
 type WSHeaderProps = {
-  oGIsSuccess: boolean;
+  isSuccess: boolean;
   completedIsSuccess: boolean;
   showingOGWorkoutGroup: boolean;
-  oGIsLoading: boolean;
+  dataIsLoading: boolean;
   isFinished: boolean;
   personalWorkout: boolean;
   WGOwner: boolean;
@@ -103,10 +109,10 @@ type WSHeaderProps = {
 };
 
 const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
-  oGIsSuccess,
+  isSuccess,
   completedIsSuccess,
   showingOGWorkoutGroup,
-  oGIsLoading,
+  dataIsLoading,
   workoutGroup,
   isFinished,
   personalWorkout,
@@ -127,7 +133,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
         }}
       >
         <View style={{ flex: 1, justifyContent: "center", width: "100%" }}>
-          {oGIsSuccess && completedIsSuccess ? (
+          {isSuccess && completedIsSuccess ? (
             <TouchableHighlight
               onPress={() => setShowingOGWorkoutGroup(!showingOGWorkoutGroup)}
             >
@@ -135,7 +141,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
                 <Icon
                   name="podium"
                   color={
-                    showingOGWorkoutGroup && !oGIsLoading
+                    showingOGWorkoutGroup && !dataIsLoading
                       ? theme.palette.text
                       : "red"
                   }
@@ -143,7 +149,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
                 />
 
                 <TSCaptionText textStyles={{ textAlign: "center" }}>
-                  {showingOGWorkoutGroup && !oGIsLoading ? "og" : "completed"}
+                  {showingOGWorkoutGroup && !dataIsLoading ? "og" : "completed"}
                 </TSCaptionText>
               </View>
             </TouchableHighlight>
@@ -168,7 +174,7 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
           }}
         >
           {showingOGWorkoutGroup &&
-          !oGIsLoading &&
+          !dataIsLoading &&
           isFinished &&
           !personalWorkout ? (
             // Currently nothing will happen
@@ -277,11 +283,16 @@ const WorkoutScreen: FunctionComponent = () => {
   let isShowingOGWorkoutGroup = true;
 
   // Data to use for View
-  let oGData = {} as WorkoutGroupProps;
-  let oGIsLoading = true;
-  let oGIsSuccess = false;
-  let oGIsError = false;
-  let oGError: any = "";
+  // let data = {} as WorkoutGroupProps;
+  // let dataIsLoading = true;
+  // let isSuccess = false;
+  // let isError = false;
+  // let error: any = "";
+  // data = data;
+  // dataIsLoading = dataIsLoading;
+  // isSuccess = isSuccess;
+  // isError = isError;
+  // error = error;
 
   const {
     data,
@@ -291,11 +302,31 @@ const WorkoutScreen: FunctionComponent = () => {
     error,
   } = useGetWorkoutsForUsersWorkoutGroupQuery(curGroupID);
 
-  oGData = data;
-  oGIsLoading = dataIsLoading;
-  oGIsSuccess = isSuccess;
-  oGIsError = isError;
-  oGError = error;
+  const [workoutGroup, setWorkoutGroup] = useState(
+    data ?? ({} as WorkoutGroupProps)
+  );
+
+  const [workouts, setWorkouts] = useState(
+    workoutGroup.workouts
+      ? workoutGroup.workouts
+      : workoutGroup.completed_workouts
+      ? workoutGroup.completed_workouts
+      : []
+  );
+
+  useEffect(() => {
+    console.log("Workout group data changed, update vars: ", data);
+    if (!data) return;
+
+    setWorkoutGroup(data);
+    setWorkouts(
+      data.workouts
+        ? data.workouts
+        : data.completed_workouts
+        ? data.completed_workouts
+        : []
+    );
+  }, [data]);
 
   let completedData = {} as WorkoutGroupProps;
   let completedIsLoading = true;
@@ -319,7 +350,7 @@ const WorkoutScreen: FunctionComponent = () => {
   //   // if (workout_group) {
   //   //   const { data, isLoading, isSuccess, isError, error } =
   //   //     useGetWorkoutsForGymClassWorkoutGroupQuery(workout_group);
-  //   //   oGData = data;
+  //   //   data = data;
   //   //   // console.log('Getting OG data...', data);
   //   //   if (data !== undefined) {
   //   //     console.log("Getting OG data...", data);
@@ -330,10 +361,10 @@ const WorkoutScreen: FunctionComponent = () => {
   //   //   }
 
   //   //   // WHen OG workout is deleted {"err_type": 0, "error": "Failed get Gym class's workouts."}
-  //   //   oGIsLoading = isLoading;
-  //   //   oGIsSuccess = isSuccess;
-  //   //   oGIsError = isError;
-  //   //   oGError = error;
+  //   //  OG dataIsLoading = isLoading;
+  //   //   OGisSuccess = isSuccess;
+  //   //   OGisError = isError;
+  //   //   OGerror = error;
   //   // }
 
   //   // Fetch OG Workout by ID
@@ -343,11 +374,11 @@ const WorkoutScreen: FunctionComponent = () => {
   //   // const { data, isLoading, isSuccess, isError, error } =
   //   //   useGetWorkoutsForGymClassWorkoutGroupQuery(id);
   //   // // console.log('Owned by class, data: ', data);
-  //   // oGData = data;
-  //   // oGIsLoading = isLoading;
-  //   // oGIsSuccess = isSuccess;
-  //   // oGIsError = isError;
-  //   // oGError = error;
+  //   // data = data;
+  //   // dataIsLoading = isLoading;
+  //   // isSuccess = isSuccess;
+  //   // isError = isError;
+  //   // error = error;
 
   //   // // This 'completed' should come from ogData query.
   //   // const {
@@ -374,17 +405,17 @@ const WorkoutScreen: FunctionComponent = () => {
 
   // }
 
-  const title = oGData?.title ?? "";
+  const title = data?.title ?? "";
   const [showingOGWorkoutGroup, setShowingOGWorkoutGroup] = useState(
     isShowingOGWorkoutGroup
   );
 
-  const workoutGroup: WorkoutGroupProps =
-    showingOGWorkoutGroup && oGData
-      ? oGData
-      : !showingOGWorkoutGroup && completedData
-      ? completedData
-      : ({} as WorkoutGroupProps);
+  // const workoutGroup: WorkoutGroupProps =
+  // showingOGWorkoutGroup && data
+  //   ? data
+  //   : !showingOGWorkoutGroup && completedData
+  //   ? completedData
+  //   : ({} as WorkoutGroupProps);
 
   // const isOGWorkoutGroup = workoutGroup.workouts ? true : false
   mediaClass = showingOGWorkoutGroup ? WORKOUT_MEDIA : COMPLETED_WORKOUT_MEDIA;
@@ -403,12 +434,6 @@ const WorkoutScreen: FunctionComponent = () => {
   const [showFinishWorkoutGroupModal, setShowFinishWorkoutGroupModal] =
     useState(false);
 
-  const workouts = workoutGroup.workouts
-    ? workoutGroup.workouts
-    : workoutGroup.completed_workouts
-    ? workoutGroup.completed_workouts
-    : [];
-
   const [tags, names] = useMemo(() => {
     const calc = new CalcWorkoutStats(new Map()); // Doesnt need maxes since we are calculating them when creating, we  just use this to combine workouts...
     calc.calcMultiJSON(workouts, workoutGroup.owned_by_class);
@@ -423,7 +448,7 @@ const WorkoutScreen: FunctionComponent = () => {
 
   // Used to determine if user is viewing their own workout.
   const personalWorkout =
-    userData?.id == oGData?.owner_id && !oGData?.owned_by_class;
+    userData?.id == data?.owner_id && !data?.owned_by_class;
 
   // When a user is viewing a classWorkout and they are owner. Missing when the owner is viewing a WorkoutGroup that a class owns....
   // Figure out a better way to tell who is the owner. aybe this should come from the server....
@@ -479,23 +504,23 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const openCreateWorkoutScreenForStandard = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 0);
+    navToWorkoutScreen(data.id.toString(), title, 0);
   };
   const openCreateWorkoutScreenForReps = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 1);
+    navToWorkoutScreen(data.id.toString(), title, 1);
   };
   const openCreateWorkoutScreenForRounds = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 2);
+    navToWorkoutScreen(data.id.toString(), title, 2);
   };
   const openCreateWorkoutScreenCreative = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 3);
+    navToWorkoutScreen(data.id.toString(), title, 3);
   };
   const openCreateWorkoutScreenForTimeScore = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 4);
+    navToWorkoutScreen(data.id.toString(), title, 4);
   };
 
   const openCreateWorkoutScreenForTimeLimit = () => {
-    navToWorkoutScreen(oGData.id.toString(), title, 5);
+    navToWorkoutScreen(data.id.toString(), title, 5);
   };
 
   const onConfirmDelete = () => {
@@ -509,9 +534,9 @@ const WorkoutScreen: FunctionComponent = () => {
     if (showingOGWorkoutGroup && !disableDeleteBtnRed.current) {
       disableDeleteBtnRed.current = true;
       const delData = new FormData();
-      delData.append("owner_id", oGData.owner_id);
-      delData.append("owned_by_class", oGData.owned_by_class);
-      delData.append("id", oGData.id);
+      delData.append("owner_id", data.owner_id);
+      delData.append("owned_by_class", data.owned_by_class);
+      delData.append("id", data.id);
       console.log("Deleteing workout GORUP", delData);
       const deletedWorkoutGroup = await deleteWorkoutGroupMutation(
         delData
@@ -555,17 +580,17 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const _finishGroupWorkout = async () => {
-    // console.log(
-    //   'Need to check......: ',
-    //   hasUnfinsihedDualItems(workouts),
-    //   workouts,
-    // );
+    console.log(
+      "Need to check......: ",
+      hasUnfinsihedDualItems(workouts),
+      workouts
+    );
 
     // Allow user to submit finish to WorkoutGroup for class.
-    const data = new FormData();
-    data.append("group", oGData.id.toString());
+    const formdata = new FormData();
+    formdata.append("group", data.id.toString());
     try {
-      const res = await finishWorkoutGroup(data).unwrap();
+      const res = await finishWorkoutGroup(formdata).unwrap();
       console.log("res finsih", res);
       setShowFinishWorkoutGroupModal(false);
     } catch (err) {
@@ -574,11 +599,11 @@ const WorkoutScreen: FunctionComponent = () => {
   };
 
   const navigateToCompletedWorkoutGroupScreen = () => {
-    console.log("Sending data to screen: ", oGData);
-    if (oGData && Object.keys(oGData).length > 0) {
-      // navigation.navigate('CreateCompletedWorkoutScreen', oGData);
+    console.log("Sending data to screen: ", data);
+    if (data && Object.keys(data).length > 0) {
+      // navigation.navigate('CreateCompletedWorkoutScreen', data);
       console.log(
-        "Should be navigating to // navigation.navigate('CreateCompletedWorkoutScreen', oGData);"
+        "Should be navigating to // navigation.navigate('CreateCompletedWorkoutScreen', data);"
       );
     }
   };
@@ -594,10 +619,6 @@ const WorkoutScreen: FunctionComponent = () => {
       },
     });
   };
-
-  // if (isWaitingForDelete) {
-  //   return ;
-  // }
 
   return (
     <View
@@ -626,8 +647,8 @@ const WorkoutScreen: FunctionComponent = () => {
               WGOwner={WGOwner}
               completedIsSuccess={completedIsSuccess}
               isFinished={isFinished}
-              oGIsLoading={oGIsLoading}
-              oGIsSuccess={oGIsSuccess}
+              dataIsLoading={dataIsLoading}
+              isSuccess={isSuccess}
               onConfirmDelete={onConfirmDelete}
               personalWorkout={personalWorkout}
               setShowingOGWorkoutGroup={setShowingOGWorkoutGroup}
@@ -683,7 +704,7 @@ const WorkoutScreen: FunctionComponent = () => {
           </View>
 
           <View style={{ flexShrink: 1, flexGrow: 5, flexBasis: 0 }}>
-            {oGData && showingOGWorkoutGroup && oGData.finished === false ? (
+            {data && showingOGWorkoutGroup && data.finished === false ? (
               <View
                 style={{
                   flex: 2,
@@ -808,7 +829,7 @@ const WorkoutScreen: FunctionComponent = () => {
               <></>
             )}
 
-            {oGData && oGData.finished ? (
+            {data && data.finished ? (
               <></>
             ) : (
               <View
@@ -889,10 +910,10 @@ const WorkoutScreen: FunctionComponent = () => {
                 </Row>
 
                 <Row style={{ width: "100%" }}>
-                  {(showingOGWorkoutGroup && oGIsLoading) ||
+                  {(showingOGWorkoutGroup && dataIsLoading) ||
                   (!showingOGWorkoutGroup && completedIsLoading) ? (
                     <TSCaptionText>Loading....</TSCaptionText>
-                  ) : (showingOGWorkoutGroup && oGIsSuccess) ||
+                  ) : (showingOGWorkoutGroup && isSuccess) ||
                     (!showingOGWorkoutGroup && completedIsSuccess) ? (
                     <WorkoutCardFullList
                       data={workouts}
@@ -900,10 +921,10 @@ const WorkoutScreen: FunctionComponent = () => {
                       group={workoutGroup}
                       navToWorkoutScreenWithItems={navToWorkoutScreenWithItems}
                     />
-                  ) : (showingOGWorkoutGroup && oGIsError) ||
+                  ) : (showingOGWorkoutGroup && isError) ||
                     (!showingOGWorkoutGroup && completedIsError) ? (
                     <TSCaptionText>
-                      Error.... {oGError.toString() | completedError.toString()}
+                      Error.... {error.toString() | completedError.toString()}
                     </TSCaptionText>
                   ) : (
                     <TSCaptionText>No Data</TSCaptionText>
@@ -962,7 +983,7 @@ const WorkoutScreen: FunctionComponent = () => {
       </View>
 
       <DuplicateWorkoutGroupModal
-        owner_id={oGData?.owner_id}
+        owner_id={data?.owner_id}
         actionText="Duplicate"
         closeText="Cancel"
         modalText="Duplicate Workout Group"

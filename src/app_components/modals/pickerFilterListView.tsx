@@ -43,8 +43,7 @@ const PickerFilterListView: FunctionComponent<{
   extraProps: any;
 }> = (props) => {
   /** The list view to display the filtered results. */
-  const theme = useTheme();
-  console.log("Extra props for RowItem: ", props.extraProps);
+  // const theme = useTheme();
 
   return (
     <View>

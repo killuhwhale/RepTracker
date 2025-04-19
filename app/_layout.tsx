@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
   PropsWithChildren,
+  useRef,
 } from "react";
 
 import {
@@ -35,6 +36,7 @@ import {
 } from "@/src/utils/tokenUtils";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import FullScreenSpinner from "@/src/app_components/Spinner";
 
 const primaryColor = twrnc.color("bg-blue-600");
 // const secondaryColor = twrnc.color('bg-emerald-900');
@@ -140,12 +142,17 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
   // This either loads the app or login page.
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [registeredWithAuth, setRegisteredWithAuth] = useState(false);
 
   const {
     data: profileData,
     isLoading: isUserLoading,
     error: userError,
   } = useGetProfileViewQuery("");
+
+  // useEffect(() => {
+
+  // }, [registeredWithAuth])
 
   useEffect(() => {
     const a = async () => {
@@ -157,8 +164,9 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
         }
       } catch (err) {
         setLoggedIn(false);
-        return false;
       }
+
+      setRegisteredWithAuth(true);
     };
 
     auth.listenLogout(() => {
@@ -197,6 +205,10 @@ const AuthNew: FunctionComponent<PropsWithChildren> = (props) => {
       a();
     }
   }, [isUserLoading]);
+
+  if (isUserLoading || !registeredWithAuth) {
+    return <FullScreenSpinner></FullScreenSpinner>;
+  }
 
   return (
     <View style={{ flex: 1 }}>

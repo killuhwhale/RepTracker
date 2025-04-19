@@ -187,33 +187,40 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       }}
     >
       <BannerAddMembership />
-      <View style={{ padding: 12, flex: 10, height: "100%", width: "100%" }}>
+      <View style={{ padding: 12, flex: 1, height: "100%", width: "100%" }}>
         <View
           style={{
             width: "100%",
             flexDirection: "row",
             justifyContent: "flex-end",
+            flex: 1,
           }}
         >
           <TouchableOpacity
             activeOpacity={0.69}
             onPress={handleNavCreateWorkoutGroupScreen}
             style={{
-              backgroundColor: theme.palette.AWE_Green,
               padding: 4,
               borderRadius: 112,
             }}
           >
-            <Icon
-              name="add"
-              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
-              color={theme.palette.text}
-              style={{ fontSize: 20 }}
-            />
+            <View
+              style={{
+                backgroundColor: theme.palette.AWE_Green,
+                borderRadius: 8,
+              }}
+            >
+              <Icon
+                name="add"
+                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+                color={theme.palette.text}
+                style={{ fontSize: 20, padding: 2 }}
+              />
+            </View>
           </TouchableOpacity>
         </View>
 
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 15 }}>
           <View style={{ flex: 1, marginBottom: 12 }}>
             <Input
               onChangeText={handleSearchChange}

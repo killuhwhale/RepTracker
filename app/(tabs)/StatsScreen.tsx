@@ -45,6 +45,7 @@ import { dateFormat } from "@/src/utils/algos";
 import twrnc from "twrnc";
 import { WorkoutMaxProps } from "../WorkoutItemMaxes";
 import { useMaxes } from "@/hooks/useMaxes";
+import FullScreenSpinner from "@/src/app_components/Spinner";
 export type Props = StackScreenProps<RootStackParamList, "StatsScreen">;
 
 const ScreenContainer = styled(Container)`
@@ -158,11 +159,15 @@ const StatsScreen: FunctionComponent<Props> = () => {
   ];
 
   const dataReady = workoutTagStats.length || workoutNameStats.length;
-  console.log("Stats items: ", names);
-  console.log("Stats tags: ", tags);
+
   return (
     <ScreenContainer>
       {/* Date Picker */}
+      {isLoading || isUSerMaxesLoading ? (
+        <FullScreenSpinner></FullScreenSpinner>
+      ) : (
+        <></>
+      )}
       <BannerAddMembership />
       <View style={{ flex: 2, width: "100%", alignItems: "center" }}>
         <View

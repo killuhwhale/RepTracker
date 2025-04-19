@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import React, {
+  FunctionComponent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -216,7 +222,7 @@ export function handleGenerateWorkoutItemsResponse(
     //   workoutItemsMap.keys()
     // );
     console.log(
-      "Using map workoutNamesMap entries:",
+      "AI Suggested item undefined?:",
       item.name,
       workoutItemsMap.get(item.name) == undefined
     );
@@ -278,6 +284,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const [title, setTitle] = useState(workoutTitle as string);
   const [desc, setDesc] = useState(workoutDesc as string);
   const [schemeRounds, setSchemeRounds] = useState(scheme_rounds as string);
+  const schemeRoundsRef = useRef("");
   const [instruction, setInstruction] = useState(_instruction as string);
 
   const [showAddSSID, setShowAddSSID] = useState(false);
@@ -303,33 +310,6 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   const [createWorkoutError, setCreateWorkoutError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
-  // const {
-  //     data: profileData,
-  //     isLoading: isUserLoading,
-  //     isSuccess: isUserSuccess,
-  //     isError: isUserError,
-  //     error: userError,
-  //   } = useGetProfileViewQuery("");
-
-  // const {
-  //   data: workoutItemMaxes,
-  //   isLoading: isMaxesLoading,
-  //   isFetching,
-  //   error: getMaxesError,
-  //   refetch,
-  // } = useGetUserWorkoutMaxesQuery(profileData?.user?.id || "0", {
-  //   skip: !profileData?.user?.id,
-  // });
-
-  // const workoutItemMaxesMap = useMemo(() => {
-  //   return workoutItemMaxes
-  //     ? new Map<string, WorkoutMaxProps>(
-  //         workoutItemMaxes.map((wnm: WorkoutMaxProps) => {
-  //           return [wnm.id.toString(), wnm];
-  //         })
-  //       )
-  //     : new Map<string, WorkoutMaxProps>();
-  // }, [workoutItemMaxes]);
   const [showChatModal, setShowChatModal] = useState(false);
   const [aiItems, setAIItems] = useState<ToolResultProps | null>(null);
 
@@ -348,6 +328,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   useEffect(() => {
     console.log("UseEffect Ai Items: ", aiItems);
     if (aiItems && workoutNames) {
+      setShowChatModal(false);
       // console.log("useEffect workoutNames: ", workoutNames);
       const workoutNamesMap: Map<string, WorkoutNameProps> = new Map(
         workoutNames.map((wn) => [wn.name, wn])
@@ -358,12 +339,19 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         aiItems,
         workoutNamesMap
       );
+
+      setTitle(limitTextLength(aiItems.goal, WorkoutTitleLimit));
+
+      schemeRoundsRef.current = aiItems.scheme_rounds;
+      setSchemeRounds(aiItems.scheme_rounds); // Must be set befopre items for ROUNDS to validate correctly
+      setInstruction(aiItems.scheme_rounds); // Applies to Creative workouts
+
       if (items_to_add_to_list) {
         items_to_add_to_list.forEach((item) => {
           addWorkoutItem(item, false);
         });
       }
-      console.log("Items to add to list: ", items_to_add_to_list);
+
       setAIItems(null);
     }
   }, [aiItems, workoutNames]);
@@ -528,7 +516,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
     const { success, errorType, errorMsg } = verifyWorkoutItem(
       _item,
       schemeType,
-      schemeRounds
+      schemeRoundsRef.current ?? ""
     );
 
     if (!success) {
@@ -649,12 +637,9 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   };
 
   const isUpdateMode = initItems.length > 2 || initItems.length == 0;
-  console.log("CreateWorkout initItems: ", initItems, initItems.length);
   const INPUT_HEADER_HEIGHT = 25;
 
-  if (isWNLoading) {
-    return <FullScreenSpinner></FullScreenSpinner>;
-  }
+  console.log("\n\n\n\n Why modal open?: ", showChatModal, "\n\n\n\n");
 
   return (
     <PageContainer style={{ flex: 1, flexDirection: "column" }}>
@@ -667,6 +652,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
             width: "100%",
           }}
         >
+          {isWNLoading ? <FullScreenSpinner></FullScreenSpinner> : <></>}
           <View style={{ flex: 1 }}></View>
           <View style={{ flex: 5 }}>
             <TSTitleText textStyles={{ textAlign: "center", marginBottom: 4 }}>
@@ -675,7 +661,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
           </View>
           <View style={{ flex: 1 }}>
             <Icon
-              onPress={() => setShowChatModal((prev) => !prev)}
+              onPress={() => setShowChatModal(true)}
               name="sparkles-outline"
               color={theme.palette.AWE_Red}
               style={{ fontSize: 24 }}
@@ -761,9 +747,10 @@ const CreateWorkoutScreen: FunctionComponent = () => {
               <SchemeField
                 schemeType={schemeType}
                 schemeRounds={schemeRounds}
-                setSchemeRounds={(t) =>
-                  setSchemeRounds(limitTextLength(t, SchemeTextLimit))
-                }
+                setSchemeRounds={(t) => {
+                  schemeRoundsRef.current = t;
+                  setSchemeRounds(limitTextLength(t, SchemeTextLimit));
+                }}
                 setInstruction={(t) =>
                   setInstruction(
                     limitTextLength(t, CreateSchemeInstructionLimit)
@@ -883,13 +870,18 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         modalVisible={showAlert}
         onRequestClose={() => setShowAlert(false)}
       />
-      <CreateWorkoutPrompt
-        visible={showChatModal}
-        schemeTypeText={WORKOUT_TYPES[schemeType]}
-        userID={userId}
-        setAIItems={setAIItems}
-        onClose={() => setShowChatModal(false)}
-      />
+
+      {showChatModal ? (
+        <CreateWorkoutPrompt
+          visible={showChatModal}
+          schemeTypeText={WORKOUT_TYPES[schemeType]}
+          userID={userId}
+          setAIItems={setAIItems}
+          onClose={() => setShowChatModal(false)}
+        />
+      ) : (
+        <></>
+      )}
     </PageContainer>
   );
 };
