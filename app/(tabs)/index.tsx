@@ -33,6 +33,7 @@ import twrnc from "twrnc";
 import { TestIDs } from "@/src/utils/constants";
 import Input from "@/src/app_components/Input/input";
 import { debounce } from "@/src/utils/algos";
+import { useGenerate531Template } from "@/src/app_components/templates/fivethreeone";
 
 /** Must match backend!!!
  *
@@ -76,7 +77,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
     isError: isErrorWG,
     error: errorWG,
   } = useGetProfileWorkoutGroupsQuery(page);
-
+  const { five_3_1, isLoading: isTemplateLoading } = useGenerate531Template();
   const [workouts, setWorkouts] = useState<WorkoutGroupProps[]>([]); // Recent works list
   const maxPage = Math.ceil((dataWG?.count ? dataWG?.count : 1) / PAGE_SIZE);
 
@@ -142,6 +143,12 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
         ownedByClass: 0,
         ownerID: data.user.id as string,
       },
+    });
+  };
+  const handleNavViewTemplateWorkoutScreen = () => {
+    console.log("Navigating to handleNavViewTemplateWorkoutScreen");
+    router.push({
+      pathname: "/TemplateWorkouts",
     });
   };
 
@@ -212,6 +219,28 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
             >
               <Icon
                 name="add"
+                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+                color={theme.palette.text}
+                style={{ fontSize: 20, padding: 2 }}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.69}
+            onPress={handleNavViewTemplateWorkoutScreen}
+            style={{
+              padding: 4,
+              borderRadius: 112,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: theme.palette.AWE_Green,
+                borderRadius: 8,
+              }}
+            >
+              <Icon
+                name="home"
                 testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
                 color={theme.palette.text}
                 style={{ fontSize: 20, padding: 2 }}
@@ -329,6 +358,35 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
                     style={{ fontSize: 32, marginRight: 16 }}
                   />
                   <TSParagrapghText>New workout</TSParagrapghText>
+                </View>
+              </RegularButton>
+              <RegularButton
+                underlayColor="#cacaca30"
+                btnStyles={{
+                  backgroundColor: "#cacaca00",
+                  borderTopColor: "#cacaca92",
+                  borderBottomColor: "#cacaca92",
+                  borderWidth: 2,
+                  width: "100%",
+                }}
+                onPress={() => {
+                  five_3_1();
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Icon
+                    name="add"
+                    color={theme.palette.text}
+                    style={{ fontSize: 32, marginRight: 16 }}
+                  />
+                  <TSParagrapghText>Gen Template</TSParagrapghText>
                 </View>
               </RegularButton>
             </View>

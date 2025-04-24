@@ -1,38 +1,13 @@
-import React, { FunctionComponent, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  ScrollView,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import React, { FunctionComponent, useState } from "react";
+import { Platform, ScrollView, TouchableHighlight, View } from "react-native";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components/native";
-import {
-  TSButtonText,
-  TSCaptionText,
-  TSSnippetText,
-  TSTitleText,
-} from "@/src/app_components/Text/Text";
-import {
-  Container,
-  SCREEN_HEIGHT,
-  CalcWorkoutStats,
-  formatLongDate,
-} from "@/src/app_components/shared";
+import { TSButtonText, TSCaptionText } from "@/src/app_components/Text/Text";
+import { Container, formatLongDate } from "@/src/app_components/shared";
 import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
-import {
-  useGetCompletedWorkoutGroupsForUserByDateRangeQuery,
-  useGetProfileViewQuery,
-  useGetUserWorkoutMaxesQuery,
-} from "@/src/redux/api/apiSlice";
-import {
-  AnyWorkoutItem,
-  WorkoutCardProps,
-  WorkoutGroupProps,
-} from "@/src/app_components/Cards/types";
+import { useGetCompletedWorkoutGroupsForUserByDateRangeQuery } from "@/src/redux/api/apiSlice";
+
 import DatePicker from "react-native-date-picker";
 
 import TotalsBarChart from "@/src/app_components/charts/barChart";
@@ -42,10 +17,9 @@ import FreqCalendar from "@/src/app_components/charts/freqCalendar";
 import BannerAddMembership from "@/src/app_components/ads/BannerAd";
 import { StatsPanel } from "@/src/app_components/Stats/StatsPanel";
 import { dateFormat } from "@/src/utils/algos";
-import twrnc from "twrnc";
-import { WorkoutMaxProps } from "../WorkoutItemMaxes";
-import { useMaxes } from "@/hooks/useMaxes";
 import FullScreenSpinner from "@/src/app_components/Spinner";
+import { useStats } from "@/hooks/useStats";
+
 export type Props = StackScreenProps<RootStackParamList, "StatsScreen">;
 
 const ScreenContainer = styled(Container)`
@@ -86,53 +60,16 @@ const StatsScreen: FunctionComponent<Props> = () => {
     });
 
   const {
-    userId,
-    workoutItemMaxesMap,
-    isLoading: isUSerMaxesLoading,
-    error: userMaxesError,
-  } = useMaxes();
+    isUserMaxesLoading,
+    workoutTagStats,
+    workoutNameStats,
+    totalTags,
+    totalNames,
+  } = useStats({ workoutGroups: data });
 
-  const [allWorkouts, workoutTagStats, workoutNameStats] = useMemo(() => {
-    if (data && data.length > 0) {
-      let _allWorkouts: WorkoutCardProps[] = [];
-      let _workoutTagStats: {}[] = [];
-      let _workoutNameStats: {}[] = [];
-      const calc = new CalcWorkoutStats(workoutItemMaxesMap);
+  const tagLabels: string[] = Array.from(new Set(Object.keys(totalTags)));
+  const nameLabels: string[] = Array.from(new Set(Object.keys(totalNames)));
 
-      data.forEach((workoutGroup: WorkoutGroupProps) => {
-        const workouts: WorkoutCardProps[] =
-          (workoutGroup.completed_workouts
-            ? workoutGroup.completed_workouts
-            : workoutGroup.workouts) ?? [];
-
-        _allWorkouts.push(...workouts); // Collect all workouts for bar data
-
-        calc.calcMulti(workouts);
-        // calc.calcMultiJSON(workouts);
-        const [tags, names] = calc.getStats();
-
-        _workoutTagStats.push({ ...tags, date: workoutGroup.for_date });
-        _workoutNameStats.push({ ...names, date: workoutGroup.for_date });
-        calc.reset();
-      });
-      return [_allWorkouts, _workoutTagStats, _workoutNameStats];
-    }
-    return [[], [], []];
-  }, [data, workoutItemMaxesMap]);
-
-  const [tags, names] = useMemo(() => {
-    const calc = new CalcWorkoutStats(workoutItemMaxesMap);
-    calc.calcMulti(allWorkouts);
-    // calc.calcMultiJSON(allWorkouts);
-    return calc.getStats();
-  }, [allWorkouts, data, workoutItemMaxesMap]);
-
-  const tagLabels: string[] = Array.from(new Set(Object.keys(tags)));
-  const nameLabels: string[] = Array.from(new Set(Object.keys(names)));
-
-  // I dont need to show all of these
-  // This is on both Bar and Line Chart....
-  // But if the current dataset shows zero for one of these, it should not show.
   const dataTypes = [
     "totalDistanceM",
     "totalKgM",
@@ -163,7 +100,7 @@ const StatsScreen: FunctionComponent<Props> = () => {
   return (
     <ScreenContainer>
       {/* Date Picker */}
-      {isLoading || isUSerMaxesLoading ? (
+      {isLoading || isUserMaxesLoading ? (
         <FullScreenSpinner></FullScreenSpinner>
       ) : (
         <></>
@@ -288,10 +225,14 @@ const StatsScreen: FunctionComponent<Props> = () => {
               )}
 
               <View style={{ marginBottom: 24 }}>
-                <StatsPanel tags={tags} names={names} />
+                <StatsPanel tags={totalTags} names={totalNames} />
               </View>
 
-              <TotalsBarChart dataTypes={dataTypes} tags={tags} names={names} />
+              <TotalsBarChart
+                dataTypes={dataTypes}
+                tags={totalTags}
+                names={totalNames}
+              />
 
               <View
                 style={{
@@ -320,7 +261,11 @@ const StatsScreen: FunctionComponent<Props> = () => {
                 }}
               ></View>
 
-              <TotalsPieChart dataTypes={dataTypes} tags={tags} names={names} />
+              <TotalsPieChart
+                dataTypes={dataTypes}
+                tags={totalTags}
+                names={totalNames}
+              />
             </>
           ) : (
             <></>

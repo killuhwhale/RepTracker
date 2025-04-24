@@ -5,6 +5,7 @@ import {
   useGetUserWorkoutMaxesQuery,
 } from "@/src/redux/api/apiSlice";
 import { WorkoutMaxProps } from "@/app/WorkoutItemMaxes";
+import { WorkoutNameProps } from "@/src/app_components/Cards/types";
 
 // export interface CurrentMaxProps {
 //   id: string;
@@ -59,6 +60,28 @@ export const useMaxes = (userId?: string) => {
     );
   }, [workoutItemMaxes]);
 
+  const workoutNamesByNameMap = useMemo(() => {
+    if (!workoutItemMaxes) return new Map<string, WorkoutMaxProps>();
+
+    return new Map<string, WorkoutNameProps>(
+      workoutItemMaxes.map((max: WorkoutMaxProps) => {
+        const { current_max, ...rest } = max;
+
+        return [max.name, rest];
+      })
+    );
+  }, [workoutItemMaxes]);
+
+  const workoutItemMaxesByNameMap = useMemo(() => {
+    if (!workoutItemMaxes) return new Map<string, WorkoutMaxProps>();
+
+    return new Map<string, WorkoutMaxProps>(
+      workoutItemMaxes.map((max: WorkoutMaxProps) => {
+        return [max.name, max];
+      })
+    );
+  }, [workoutItemMaxes]);
+
   // Helper function to get a max by ID
   const getMaxById = (id: string): WorkoutMaxProps | undefined => {
     return workoutItemMaxesMap.get(id.toString());
@@ -71,12 +94,33 @@ export const useMaxes = (userId?: string) => {
   };
 
   // Helper to get max value with unit
-  const getMaxValueWithUnit = (id: string): string => {
+  const getMaxValueWithUnit = (
+    id: string
+  ): { maxValue: number; maxUnit: string } => {
     const max = workoutItemMaxesMap.get(id.toString());
     if (max && max.current_max) {
-      return `${max.current_max.max_value} ${max.current_max.unit}`;
+      // return `${max.current_max.max_value} ${max.current_max.unit}`;
+      return {
+        maxValue: max.current_max.max_value,
+        maxUnit: max.current_max.unit,
+      };
     }
-    return "Not set";
+    return { maxValue: 0, maxUnit: "kg" };
+  };
+
+  const getMaxValueWithUnitByName = (
+    name: string
+  ): { maxValue: number; maxUnit: string } => {
+    const max = workoutItemMaxesByNameMap.get(name);
+
+    if (max && max.current_max) {
+      // return `${max.current_max.max_value} ${max.current_max.unit}`;
+      return {
+        maxValue: max.current_max.max_value,
+        maxUnit: max.current_max.unit,
+      };
+    }
+    return { maxValue: 0, maxUnit: "kg" };
   };
 
   // Helper to get just the numeric max value
@@ -94,6 +138,7 @@ export const useMaxes = (userId?: string) => {
     profileData,
     workoutItemMaxes,
     workoutItemMaxesMap,
+    workoutNamesByNameMap,
 
     // Loading states
     isLoading: isUserLoading || isMaxesLoading,
@@ -110,5 +155,6 @@ export const useMaxes = (userId?: string) => {
     hasMax,
     getMaxValueWithUnit,
     getMaxValue,
+    getMaxValueWithUnitByName,
   };
 };

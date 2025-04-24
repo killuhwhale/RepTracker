@@ -102,7 +102,7 @@ const WorkoutItemWeights: FunctionComponent<{
         flex: 1,
         flexDirection: "row",
         width: "100%",
-        justifyContent: "space-around",
+        justifyContent: "center",
       }}
     >
       <TSCaptionText
@@ -120,16 +120,7 @@ const WorkoutItemWeights: FunctionComponent<{
               : ""
           } `
         ) : (
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <TSInputTextSm textStyles={{ fontSize: 6 }}>No </TSInputTextSm>
-            <TSInputTextSm textStyles={{ fontSize: 6 }}>Weight</TSInputTextSm>
-          </View>
+          <></>
         )}
 
         {/* {weightUnit === "%" ? percentOf : ""} */}
@@ -182,7 +173,7 @@ const WorkoutItemRepsDurDistance: FunctionComponent<{
       style={{
         flex: 1,
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "center",
         width: "100%",
       }}
     >
@@ -230,8 +221,19 @@ const WorkoutItemPanel: FunctionComponent<{
   itemWidth: number;
   itemHeight: number;
   ownedByClass: boolean;
+  maxValue: number;
+  maxUnit: string;
   idx?: number;
-}> = ({ item, schemeType, itemWidth, itemHeight, idx, ownedByClass }) => {
+}> = ({
+  item,
+  schemeType,
+  itemWidth,
+  itemHeight,
+  idx,
+  ownedByClass,
+  maxValue,
+  maxUnit,
+}) => {
   const theme = useTheme();
 
   const [currentPenalty, setCurrentPenalty] = useState("");
@@ -260,7 +262,7 @@ const WorkoutItemPanel: FunctionComponent<{
       },
     });
   };
-
+  const itemMax = `(${maxValue}${maxUnit})`;
   return (
     <LinearGradient
       // colors={["#00000000", "#4682B4"]} // Steel BLUE
@@ -309,7 +311,7 @@ const WorkoutItemPanel: FunctionComponent<{
               }}
             >
               <TSCaptionText textStyles={{ textAlign: "center" }}>
-                {_item.name.name} asd
+                {_item.name.name}
               </TSCaptionText>
               <View
                 style={{
@@ -329,9 +331,21 @@ const WorkoutItemPanel: FunctionComponent<{
             </View>
           </TouchableHighlight>
         ) : (
-          <TSCaptionText textStyles={{ textAlign: "center" }}>
-            {_item.name.name}
-          </TSCaptionText>
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <TSCaptionText textStyles={{ textAlign: "center" }}>
+              {_item.name.name}
+            </TSCaptionText>
+            <TSCaptionText
+              textStyles={{
+                textAlign: "center",
+                fontSize: 9,
+                color: theme.palette.AWE_Green,
+              }}
+            >
+              {" "}
+              {itemMax}
+            </TSCaptionText>
+          </View>
         )}
 
         {item.pause_duration > 0 ? (
@@ -395,20 +409,35 @@ const WorkoutItemPanel: FunctionComponent<{
         </TouchableHighlight>
       </View>
 
+      {item.sets > 1 ? (
+        <View
+          style={{
+            alignSelf: "center",
+            flex: 2,
+            width: "100%",
+            justifyContent: "center",
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TSCaptionText textStyles={{ textAlign: "center" }}>
+            {schemeType === 0 ? `${item.sets} x ` : ""}
+          </TSCaptionText>
+        </View>
+      ) : (
+        <></>
+      )}
+
       <View
         style={{
           alignSelf: "center",
-          flex: 4,
+          flex: 2,
           width: "100%",
           justifyContent: "center",
           alignContent: "center",
           alignItems: "center",
         }}
       >
-        <TSCaptionText textStyles={{ textAlign: "center" }}>
-          {item.sets > 0 && schemeType === 0 ? `${item.sets} x ` : ""}
-        </TSCaptionText>
-
         <WorkoutItemRepsDurDistance
           item={item}
           ownedByClass={ownedByClass}

@@ -168,6 +168,7 @@ export const apiSlice = createApi({
     "GymClasses",
     "GymClassWorkoutGroups",
     "UserWorkoutGroups",
+    "UserTemplateWorkoutGroups",
     "WorkoutGroupWorkouts",
     "Workouts",
     "Coaches",
@@ -748,6 +749,18 @@ export const apiSlice = createApi({
       }),
     }),
 
+    bulkCreateTemplates: builder.mutation({
+      query: (body) => {
+        console.log("APLSLICE Bulk Template: body", body);
+        return {
+          url: `bulktemplates/create_template/`,
+          method: "POST",
+          data: body,
+        };
+      },
+      invalidatesTags: [{ type: "WorkoutGroupWorkouts" }],
+    }),
+
     // User and Profile
     getProfileView: builder.query({
       query: () => {
@@ -764,6 +777,16 @@ export const apiSlice = createApi({
         { type: "UserWorkoutGroups", id: page },
       ],
     }),
+
+    getTemplateWorkoutGroups: builder.query({
+      query: (templateName) => {
+        return {
+          url: `profile/template_workout_groups/?template_name=${templateName}`,
+        };
+      },
+      providesTags: (result, error, page) => [{ type: "UserWorkoutGroups" }],
+    }),
+
     getLastXWorkoutGroups: builder.query({
       query: (userID) => {
         return {
@@ -922,6 +945,7 @@ export const {
   useGetUserGymsQuery,
   useGetProfileViewQuery,
   useGetProfileWorkoutGroupsQuery,
+  useGetTemplateWorkoutGroupsQuery,
   useGetLastXWorkoutGroupsQuery,
   useSearchWorkoutGroupsQuery,
   useCreateWorkoutPromptMutation,
@@ -938,6 +962,7 @@ export const {
   useGetCompletedWorkoutByWorkoutIDQuery,
   useDeleteCompletedWorkoutGroupMutation,
   useDeleteCompletedWorkoutMutation,
+  useBulkCreateTemplatesMutation,
 
   useCreateGymMutation,
   useDeleteGymMutation,

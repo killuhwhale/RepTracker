@@ -1,8 +1,14 @@
 import { FunctionComponent } from "react";
 import WorkoutItemPanel from "../WorkoutItems/ItemPanel";
-import { WorkkoutItemsList, WorkoutDualItemProps } from "./types";
+import {
+  AnyWorkoutItem,
+  WorkkoutItemsList,
+  WorkoutDualItemProps,
+} from "./types";
 import { useTheme } from "styled-components";
 import { FlatList } from "react-native";
+import { useMaxes } from "@/hooks/useMaxes";
+import FullScreenSpinner from "../Spinner";
 
 const WorkoutItemPreviewHorizontalList: FunctionComponent<{
   data: WorkkoutItemsList;
@@ -13,6 +19,12 @@ const WorkoutItemPreviewHorizontalList: FunctionComponent<{
   ownedByClass: boolean;
 }> = (props) => {
   const theme = useTheme();
+  const { getMaxValueWithUnit, isLoading } = useMaxes();
+
+  if (isLoading) {
+    return <FullScreenSpinner></FullScreenSpinner>;
+  }
+
   return (
     <FlatList
       data={props.data}
@@ -34,10 +46,16 @@ const WorkoutItemPreviewHorizontalList: FunctionComponent<{
       }}
       renderItem={(renderProps) => {
         const index = renderProps.index == undefined ? 0 : renderProps.index;
+        const item = renderProps.item as AnyWorkoutItem;
+        const { maxUnit, maxValue } = getMaxValueWithUnit(
+          item.name.id.toString()
+        );
 
         return (
           <WorkoutItemPanel
-            item={renderProps.item as WorkoutDualItemProps}
+            item={item}
+            maxValue={maxValue}
+            maxUnit={maxUnit}
             schemeType={props.schemeType}
             itemWidth={props.itemWidth}
             itemHeight={props.itemHeight}

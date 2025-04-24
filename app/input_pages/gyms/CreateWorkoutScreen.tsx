@@ -326,7 +326,6 @@ const CreateWorkoutScreen: FunctionComponent = () => {
   // TODO() AI Items do not remain in the list like normal items do when leaving the page.
 
   useEffect(() => {
-    console.log("UseEffect Ai Items: ", aiItems);
     if (aiItems && workoutNames) {
       setShowChatModal(false);
       // console.log("useEffect workoutNames: ", workoutNames);
@@ -460,7 +459,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
       calc.calc();
       const [tags, names] = calc.getStats();
 
-      console.log("Stats calc: ", schemeRounds, tags, names);
+      // console.log("Stats calc: ", schemeRounds, tags, names);
 
       data.append("items", JSON.stringify(items));
       data.append("names", JSON.stringify(names));
@@ -488,7 +487,7 @@ const CreateWorkoutScreen: FunctionComponent = () => {
         }
       }
 
-      console.log("Workout item res", createdItems);
+      // console.log("Workout item res", createdItems);
 
       // TODO handle errors
       if (createdItems) {
@@ -638,8 +637,6 @@ const CreateWorkoutScreen: FunctionComponent = () => {
 
   const isUpdateMode = initItems.length > 2 || initItems.length == 0;
   const INPUT_HEADER_HEIGHT = 25;
-
-  console.log("\n\n\n\n Why modal open?: ", showChatModal, "\n\n\n\n");
 
   return (
     <PageContainer style={{ flex: 1, flexDirection: "column" }}>

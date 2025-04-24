@@ -8,11 +8,13 @@ import {
   WorkoutDualItemProps,
   AnyWorkoutItem,
   WorkoutItemProps,
+  WorkoutNameProps,
 } from "./Cards/types";
 
 import twrnc from "twrnc";
 import { UserProps } from "@/app/types";
 import { WorkoutMaxProps } from "@/app/WorkoutItemMaxes";
+import { StatProps } from "@/hooks/useStats";
 
 export const Container = styled.View`
   flex: 1;
@@ -175,6 +177,78 @@ export function jsonCopy<T>(item: T): T {
   return JSON.parse(JSON.stringify(item));
 }
 
+export const TEMPLATE_NAMES = ["5_3_1", "GIL_CYCLE"];
+
+export function fillTemplateWorkoutItems(
+  rawItems: Array<{
+    workout: number;
+    name: WorkoutNameProps;
+    sets: number;
+    reps: number[];
+    weights: number[];
+    duration?: number[];
+    distance?: number[];
+    duration_unit?: number;
+    distance_unit?: number;
+    weight_unit?: string;
+    order?: number;
+  }>
+): AnyWorkoutItem[] {
+  return rawItems.map((item, idx) => {
+    const {
+      workout,
+      name,
+      sets,
+      reps,
+      weights,
+      duration,
+      distance,
+      duration_unit,
+      distance_unit,
+      weight_unit,
+      order,
+    } = item;
+    console.log("We have a prob with weights: ", weights);
+    const weightString = weights.toString().replaceAll(",", " ");
+    console.log("weightString.length", weightString);
+    const ans = weightString.length > 2 ? weightString : "[0]";
+
+    console.log("repssss", reps);
+    console.log("dist", distance);
+    console.log("duration", duration);
+
+    return {
+      workout,
+      name,
+      ssid: -1,
+      constant: false,
+      pause_duration: 0,
+      sets: sets ? sets : 1,
+
+      // join arrays into comma-strings (the format your API expects)
+      reps: reps?.toString().replaceAll(",", " ") ?? "[0]",
+      duration: duration?.toString().replaceAll(",", " ") ?? "[0]",
+      distance: distance?.toString().replaceAll(",", " ") ?? "[0]",
+
+      duration_unit: duration_unit ?? 0,
+      distance_unit: distance_unit ?? 0,
+
+      //   weights: weights?.join(",") ?? "",
+      weights: ans,
+      //   weights: "[0]",
+      weight_unit: weight_unit ?? "kg",
+
+      rest_duration: 0,
+      rest_duration_unit: 0,
+      percent_of: "",
+
+      order: order ?? idx,
+      date: "",
+      id: 0,
+    } as AnyWorkoutItem;
+  });
+}
+
 export const defaultStats = {
   totalReps: 0,
   totalLbs: 0,
@@ -272,7 +346,7 @@ export class CalcWorkoutStats {
     }
 
     this.isFormatted = true;
-    return [this.fTags, this.fNames];
+    return [this.fTags, this.fNames] as StatProps[];
   }
 
   setWorkoutParams(
@@ -434,13 +508,20 @@ export class CalcWorkoutStats {
     pCat: string,
     workoutName: string
   ) {
+    console.log("calcStandardScheme obj: ", item);
     const weights = JSON.parse(item.weights);
+    console.log("calcStandardScheme weights: ", item.sets, weights);
     // Expand a single value arrray
     const itemWeights = expandArray(weights, item.sets);
+    console.log("calcStandardScheme itemWeights");
     const itemReps = JSON.parse(item.reps);
+    console.log("calcStandardScheme itemReps");
     const itemDuration = JSON.parse(item.duration);
+    console.log("calcStandardScheme itemDuration");
     const durationUnit = item.duration_unit;
+    console.log("calcStandardScheme durationUnit");
     const itemDistance = JSON.parse(item.distance);
+    console.log("calcStandardScheme itemDistance");
 
     // Quantity is single, weights are mutlitple
     const quantity = itemReps[0]
@@ -454,7 +535,7 @@ export class CalcWorkoutStats {
     const totalVol =
       quantity *
       (weights.length == 0 ? 0 : itemWeights.reduce((p, c) => p + c, 0));
-
+    console.log("Calcccc: ", quantity, totalVol, itemWeights, weights);
     const [loadFactorKG, loadFactorLB] = this.getLoadFactors(
       item,
       totalVol,
@@ -840,11 +921,13 @@ export class CalcWorkoutStats {
         if (pCat === undefined) {
           console.error("Primary category is undefined: ", item.name, item);
         }
+
         // Title
         const workoutName = item.name.name;
         this.checkInItemTagAndName(pCat, workoutName);
 
         if (WORKOUT_TYPES[this.schemeType] == STANDARD_W) {
+          console.log("Calculating statndard");
           // console.log('calculating Standarad!!!!!!!!!!111');
           // TODO () Add maxVal to this so we an use it to calculate loads
           this.calcStandardScheme(item, maxVal, maxUnit, pCat, workoutName);
