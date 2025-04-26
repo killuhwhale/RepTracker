@@ -198,7 +198,7 @@ export default function TemplateWorkoutsScreen() {
         )}
       </View>
 
-      <View style={{}}>
+      <View style={{ flex: 1 }}>
         {/* Workout groups grid */}
         {selected &&
           (loading || isCreating || fetchingMore ? (

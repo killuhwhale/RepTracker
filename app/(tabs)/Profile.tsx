@@ -57,7 +57,8 @@ import {
   StyleSheet,
 } from "react-native";
 
-import thanks from "@/assets/images/thanks.png";
+// import thanks from "@/assets/images/thanks.png";
+import champs from "@/assets/images/champs_logo.png";
 
 import {
   GymCardProps,
@@ -732,16 +733,18 @@ const Profile: FunctionComponent<Props> = () => {
                   </View>
                 </View>
               ) : (
-                <View style={{ flex: 4, alignItems: "center" }}>
-                  <TSParagrapghText textStyles={{ textAlign: "center" }}>
+                <View style={{ flex: 5, alignItems: "center" }}>
+                  <TSParagrapghText
+                    textStyles={{ textAlign: "center", marginBottom: 24 }}
+                  >
                     Thanks for your support!
                   </TSParagrapghText>
                   <Animated.Image
-                    source={thanks}
+                    source={champs}
                     style={[
                       {
                         width: SCREEN_WIDTH,
-                        height: SCREEN_HEIGHT / 3,
+                        height: 400,
                         borderRadius: 8,
                       },
                       { opacity: fadeAnim }, // Bind animated opacity to style
