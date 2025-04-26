@@ -3,14 +3,15 @@ import { View } from "react-native";
 import { useTheme } from "styled-components";
 import { WorkoutItemProps } from "../Cards/types";
 import { displayJList, DISTANCE_UNITS, DURATION_UNITS } from "../shared";
-import { TSCaptionText } from "../Text/Text";
+import { TSCaptionText, TSSnippetText } from "../Text/Text";
 
 const ItemString: FunctionComponent<{
   item: WorkoutItemProps;
   schemeType: number;
   prefix: string;
+  inclPenalty: boolean;
   color?: string;
-}> = ({ item, schemeType, prefix, color }) => {
+}> = ({ item, schemeType, prefix, color, inclPenalty = false }) => {
   const theme = useTheme();
 
   let isWeightsCorrect = false;
@@ -29,7 +30,7 @@ const ItemString: FunctionComponent<{
         padding: 4,
       }}
     >
-      <TSCaptionText textStyles={{ color: color ?? "white" }}>
+      <TSSnippetText textStyles={{ color: color ?? "white" }}>
         {`${prefix} `}
         {item.sets > 0 && schemeType === 0 ? `${item.sets} x ` : ""}
 
@@ -59,7 +60,15 @@ const ItemString: FunctionComponent<{
               DURATION_UNITS[item.rest_duration_unit]
             }`
           : ""}
-      </TSCaptionText>
+
+        {inclPenalty && item.penalty ? (
+          <TSCaptionText>
+            {" - "}Penalty: {item.penalty}
+          </TSCaptionText>
+        ) : (
+          <></>
+        )}
+      </TSSnippetText>
     </View>
   );
 };

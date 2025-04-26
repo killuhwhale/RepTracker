@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { TSParagrapghText, TSCaptionText } from "../Text/Text";
+import { TSParagrapghText, TSCaptionText, TSSnippetText } from "../Text/Text";
 
 import { Modal, ScrollView, View } from "react-native";
 
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { RegularButton } from "../Buttons/buttons";
 
-import { jList, jsonCopy, mdFontSize } from "../shared";
+import { jList, jsonCopy, lightenHexColor, mdFontSize } from "../shared";
 import { centeredViewStyle, modalViewStyle } from "./modalStyles";
 import {
   WorkoutCardProps,
@@ -120,11 +120,6 @@ const FinishDualWorkoutItems: FunctionComponent<{
 }) => {
   const theme = useTheme();
   let initGroup = jsonCopy(workoutGroup) as WorkoutGroupProps;
-  // console.log("Initial WG: ");
-
-  // initGroup.workouts?.map((workout) =>
-  //   workout.workout_items?.map((item) => console.log("Init Item: ", item))
-  // );
 
   const [editedWorkoutGroup, setEditedWorkoutGroup] =
     useState<WorkoutGroupProps>(initGroup);
@@ -278,8 +273,21 @@ const FinishDualWorkoutItems: FunctionComponent<{
           <View
             style={{ height: "100%", flex: 1, justifyContent: "space-between" }}
           >
-            <View style={{ marginTop: 50 }}>
-              <TSParagrapghText>{bodyText}</TSParagrapghText>
+            <View style={{ marginTop: 35, marginBottom: 42 }}>
+              <TSParagrapghText>
+                Creative workouts prescribe (Rx'd) a certain amount of work, the
+                amount work completed in these workouts vary.{" "}
+              </TSParagrapghText>
+              <TSSnippetText
+                textStyles={{
+                  textAlign: "center",
+                  marginTop: 8,
+                  fontSize: 18,
+                  color: lightenHexColor(theme.palette.primary.main, 1.95),
+                }}
+              >
+                How many reps did you finish?
+              </TSSnippetText>
             </View>
             <ScrollView style={{ flex: 1, width: "100%" }}>
               {editedWorkoutGroup.workouts?.map(
@@ -289,19 +297,38 @@ const FinishDualWorkoutItems: FunctionComponent<{
                     <View key={`${workout.id}_${workout.title}_recordWorkout`}>
                       {containsDualItems ? (
                         <>
-                          <TSCaptionText>{workout.title}</TSCaptionText>
+                          <TSSnippetText
+                            textStyles={{ color: theme.palette.AWE_Green }}
+                          >
+                            Workout Title:{" "}
+                            <TSCaptionText>{workout.title}</TSCaptionText>
+                          </TSSnippetText>
+                          <TSSnippetText
+                            textStyles={{ color: theme.palette.AWE_Blue }}
+                          >
+                            Instructions:{" "}
+                            <TSCaptionText>{workout.instruction}</TSCaptionText>
+                          </TSSnippetText>
                           {workout.workout_items?.map((item, itemIdx) => {
                             return (
                               <View
                                 key={`${item.id}_${item.order}_itemToUpdate`}
+                                style={{
+                                  borderWidth: 1,
+                                  borderColor: theme.palette.AWE_Yellow,
+                                  borderRadius: 8,
+                                  marginVertical: 6,
+                                }}
                               >
-                                <ItemString
-                                  item={item}
-                                  schemeType={workout.scheme_type}
-                                  key={`${item.id}_dualitemfinish`}
-                                  prefix="OG: "
-                                />
-                                <TSCaptionText>TEsss</TSCaptionText>
+                                <View style={{ padding: 4 }}>
+                                  <ItemString
+                                    item={item}
+                                    schemeType={workout.scheme_type}
+                                    key={`${item.id}_dualitemfinish`}
+                                    prefix="Rx'd: "
+                                    inclPenalty={false}
+                                  />
+                                </View>
 
                                 <DualItemUpdateFields
                                   item={item}
@@ -332,7 +359,9 @@ const FinishDualWorkoutItems: FunctionComponent<{
                   onRequestClose();
                 }}
                 btnStyles={{
-                  backgroundColor: theme.palette.tertiary.main,
+                  backgroundColor: theme.palette.AWE_Red,
+                  paddingVertical: 6,
+                  paddingHorizontal: 24,
                   width: "33%",
                 }}
                 text="Close"
@@ -343,7 +372,9 @@ const FinishDualWorkoutItems: FunctionComponent<{
                   // onRequestClose();
                 }}
                 btnStyles={{
-                  backgroundColor: theme.palette.tertiary.main,
+                  backgroundColor: theme.palette.AWE_Green,
+                  paddingVertical: 6,
+                  paddingHorizontal: 24,
                   width: "33%",
                 }}
                 text="Finish"

@@ -21,7 +21,10 @@ export const Container = styled.View`
   align-items: center;
   background-color: ${(props) => props.theme.palette.backgroundColor};
 `;
-
+export type ErrorProps = {
+  status: number;
+  data: string;
+};
 const KG2LB = 2.20462;
 const LB2KG = 0.453592;
 
@@ -145,6 +148,15 @@ export const withSpaceURL = (
 ) => {
   return `${SPACES_URL}/fitform/${mediaClass}/${mediaClassID}/${url}`;
 };
+
+export function shuffle<T>(array: T[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    // pick a random index from 0 to i
+    const j = Math.floor(Math.random() * (i + 1));
+    // swap array[i] and array[j]
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 export const nanOrNah = (str: string) => {
   return isNaN(parseInt(str)) ? 0 : parseInt(str);

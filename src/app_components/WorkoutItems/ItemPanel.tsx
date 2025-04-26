@@ -13,6 +13,7 @@ import {
   DISTANCE_UNITS,
   DURATION_UNITS,
   SCREEN_HEIGHT,
+  shuffle,
 } from "../shared";
 import { TSCaptionText, TSInputTextSm } from "../Text/Text";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -159,6 +160,22 @@ const WorkoutItemWeights: FunctionComponent<{
   );
 };
 
+const WORKOUT_NAME_ICONS = [
+  "american-football-outline",
+  "barbell-outline",
+  "baseball-sharp",
+  "basketball-sharp",
+  "bicycle-sharp",
+  "flask-outline",
+  "football-outline",
+  "game-controller-outline",
+  "globe-outline",
+  "nutrition-outline",
+  "paw-outline",
+  "pizza",
+  "pulse-outline",
+];
+shuffle(WORKOUT_NAME_ICONS);
 const WorkoutItemRepsDurDistance: FunctionComponent<{
   item: AnyWorkoutItem;
   ownedByClass: boolean;
@@ -223,7 +240,7 @@ const WorkoutItemPanel: FunctionComponent<{
   ownedByClass: boolean;
   maxValue: number;
   maxUnit: string;
-  idx?: number;
+  idx: number;
 }> = ({
   item,
   schemeType,
@@ -382,7 +399,7 @@ const WorkoutItemPanel: FunctionComponent<{
           >
             <Icon
               // name="reader"
-              name={["reader", "map", "receipt", "menu"][(idx ?? 0) % 4]}
+              name={WORKOUT_NAME_ICONS[(idx - 1) % WORKOUT_NAME_ICONS.length]}
               onPress={navToWorkoutNameDetail}
               color={
                 schemeType == 0 && item.ssid >= 0

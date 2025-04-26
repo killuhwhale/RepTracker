@@ -1,6 +1,6 @@
 // src/screens/TemplateWorkoutsScreen.tsx
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -9,12 +9,18 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Animated,
+  Platform,
+  UIManager,
+  LayoutAnimation,
 } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Container, TEMPLATE_NAMES } from "@/src/app_components/shared";
 import {
   TSCaptionText,
+  TSInputText,
   TSParagrapghText,
+  TSSnippetText,
 } from "@/src/app_components/Text/Text";
 import { RegularButton } from "@/src/app_components/Buttons/buttons";
 import { WorkoutGroupSquares } from "@/src/app_components/Grids/WorkoutGroups/WorkoutGroupSquares";
@@ -28,9 +34,79 @@ const TEMPLATE_NAMES_DISPLAY = {
   [TEMPLATE_NAMES[1]]: "Gillispie",
 };
 
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+export function CollapsibleDescription({
+  selected,
+  getTemplateDescription,
+}: {
+  selected: string | null;
+  getTemplateDescription: (name: string) => string;
+}) {
+  const theme = useTheme();
+  const [expanded, setExpanded] = useState(false);
+
+  // whenever we toggle, animate the next layout change
+  const toggle = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded((v) => !v);
+  };
+
+  // reset open or not when we pick a new template
+  useEffect(() => {
+    setExpanded(expanded);
+  }, [selected]);
+
+  if (!selected) return null;
+
+  return (
+    <View
+      style={{
+        marginHorizontal: 16,
+        marginBottom: 12,
+      }}
+    >
+      <TouchableOpacity
+        onPress={toggle}
+        style={{
+          paddingVertical: 8,
+        }}
+      >
+        <TSCaptionText
+          textStyles={{
+            color: theme.palette.AWE_Green,
+            fontSize: 16,
+          }}
+        >
+          {expanded ? "Hide description ▼" : "Show description ▲"}
+        </TSCaptionText>
+      </TouchableOpacity>
+
+      {expanded && (
+        <View
+          style={[
+            styles.descriptionCard,
+            { backgroundColor: theme.palette.AWE_Green },
+          ]}
+        >
+          <TSParagrapghText textStyles={{ color: theme.palette.text }}>
+            {getTemplateDescription(selected)}
+          </TSParagrapghText>
+        </View>
+      )}
+    </View>
+  );
+}
+
 export default function TemplateWorkoutsScreen() {
   const theme = useTheme();
   const [selected, setSelected] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const {
     data: groups,
@@ -52,7 +128,9 @@ export default function TemplateWorkoutsScreen() {
       refetch();
     } else if (selected == TEMPLATE_NAMES[1]) {
       console.log("Generating template for: ", TEMPLATE_NAMES[1]);
+      setIsCreating(true);
       await generateGillispieTemplate();
+      setIsCreating(false);
       refetch();
     }
   };
@@ -62,7 +140,7 @@ export default function TemplateWorkoutsScreen() {
       style={{ flex: 1, backgroundColor: theme.palette.backgroundColor }}
     >
       {/* Header */}
-      <View style={{ flex: 3 }}>
+      <View style={{}}>
         <TSCaptionText
           textStyles={{
             color: theme.palette.text,
@@ -73,8 +151,9 @@ export default function TemplateWorkoutsScreen() {
         >
           Select a Template
         </TSCaptionText>
+      </View>
 
-        {/* Pill-style picker */}
+      <View style={{}}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -108,26 +187,21 @@ export default function TemplateWorkoutsScreen() {
             );
           })}
         </ScrollView>
+      </View>
 
-        {/* Description card */}
+      <View style={{}}>
         {selected && (
-          <View
-            style={[
-              styles.descriptionCard,
-              { backgroundColor: theme.palette.AWE_Green },
-            ]}
-          >
-            <TSParagrapghText textStyles={{ color: theme.palette.text }}>
-              {getTemplateDescription(selected)}
-            </TSParagrapghText>
-          </View>
+          <CollapsibleDescription
+            getTemplateDescription={getTemplateDescription}
+            selected={selected}
+          />
         )}
       </View>
 
-      <View style={{ flex: 8 }}>
+      <View style={{}}>
         {/* Workout groups grid */}
         {selected &&
-          (loading ? (
+          (loading || isCreating || fetchingMore ? (
             <ActivityIndicator
               size="large"
               color={theme.palette.primary.main}
@@ -140,7 +214,7 @@ export default function TemplateWorkoutsScreen() {
               extraProps={{}}
             />
           ) : (
-            <View style={{ flex: 3 }}>
+            <View style={{}}>
               <RegularButton
                 underlayColor="#cacaca30"
                 btnStyles={{
@@ -167,7 +241,15 @@ export default function TemplateWorkoutsScreen() {
                     color={theme.palette.text}
                     style={{ fontSize: 32, marginRight: 16 }}
                   />
-                  <TSParagrapghText>Gen Template</TSParagrapghText>
+                  <TSSnippetText>
+                    Generate{" "}
+                    <TSParagrapghText
+                      textStyles={{ color: theme.palette.AWE_Green }}
+                    >
+                      {TEMPLATE_NAMES_DISPLAY[selected]}
+                    </TSParagrapghText>{" "}
+                    Template
+                  </TSSnippetText>
                 </View>
               </RegularButton>
             </View>
@@ -181,9 +263,9 @@ export default function TemplateWorkoutsScreen() {
 function getTemplateDescription(name: string): string {
   switch (name) {
     case TEMPLATE_NAMES[0]:
-      return "The classic Wendler 5/3/1 cycle: four weeks of strength focus using percentage of your 1RM.";
+      return "A four-week cycle built around one main lift per session (squat, bench, deadlift, press) using percentage rep schemes of 65%/75%/85%, 70%/80%/90%, and 75%/85%/95% of your training max, with the final set taken to an AMRAP to drive intensity. Simple assistance templates (like “Boring But Big”) provide volume and hypertrophy without overcomplicating programming. Progression is linear and conservative—add 5 lb to upper-body lifts and 10 lb to lower-body lifts each cycle—emphasizing slow, sustainable strength gains and solid technique.";
     case TEMPLATE_NAMES[1]:
-      return "Push / Pull / Legs split, 6 days a week. Great for hypertrophy.";
+      return "The Gillespie Strength Program revolves around three weekly bench sessions—one heavy top-set day for maximal load, one high-volume day paired with accessory movements for triceps, shoulders, back, and core, and one technique day using paused reps and speed work to solidify pressing mechanics. Each bench variation is complemented by targeted assistance lifts that shore up weak points and promote balanced muscular development and shoulder health. Progression is systematic, with weekly increases in load or volume and planned lighter “recovery” weeks to optimize adaptation and long‐term strength gains.";
 
     default:
       return "";
@@ -207,4 +289,5 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 16,
   },
+  toggle: { padding: 8, fontWeight: "600" },
 });

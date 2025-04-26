@@ -174,7 +174,7 @@ export function useGillispieTemplate() {
   async function generateGillispieTemplate() {
     const payload: any[] = [];
 
-    for (let week = 1; week <= 1; week++) {
+    for (let week = 1; week <= 8; week++) {
       const scheme = ADV_WEEK_SCHEMES[week];
       const accPct = ADV_ACCESSORY_PCTS[week];
       let dayIndex = 1;

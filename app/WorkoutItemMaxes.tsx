@@ -30,6 +30,7 @@ import { debounce, filter } from "@/src/utils/algos";
 import Input from "@/src/app_components/Input/input";
 import PickerFilterListView from "@/src/app_components/modals/pickerFilterListView";
 import { lightenHexColor } from "@/src/app_components/shared";
+import FullScreenSpinner from "@/src/app_components/Spinner";
 // import debounce from 'lodash/debounce';
 
 export interface CurrentMaxProps {
@@ -49,7 +50,7 @@ export interface WorkoutMaxProps {
 const EditWorkoutMax = ({
   workoutNameId,
   initialValue = "",
-  initialUnit = "kg",
+  initialUnit = "lb",
   onSave,
   onCancel,
   theme,
@@ -249,7 +250,7 @@ const WorkoutItemRow: FunctionComponent<WorkoutItemRowProps> = React.memo(
                   : ""
               }
               initialUnit={
-                maxItem?.current_max ? maxItem.current_max.unit : "kg"
+                maxItem?.current_max ? maxItem.current_max.unit : "lb"
               }
               onSave={onSaveMax}
               onCancel={() => onEdit(null)}
@@ -407,8 +408,14 @@ const WorkoutMaxes = () => {
   // Loading state
   if (isLoading || isItemsLoading) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#4a90e2" />
+      <View
+        style={[
+          styles.centered,
+          { backgroundColor: theme.palette.backgroundColor },
+        ]}
+      >
+        {/* <ActivityIndicator size="large" color="#4a90e2" /> */}
+        <FullScreenSpinner />
         <Text style={styles.loadingText}>Loading workout items...</Text>
       </View>
     );

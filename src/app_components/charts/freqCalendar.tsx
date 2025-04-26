@@ -99,15 +99,16 @@ const FreqCalendar: FunctionComponent<{
   return (
     <View
       style={{
-        flex: 3,
         width: "100%",
         marginBottom: 12,
         paddingBottom: 12,
-        // borderBottomWidth: 1,
-        // borderColor: theme.palette.text,
+        borderWidth: 1,
+        borderColor: theme.palette.text,
       }}
     >
-      <TSParagrapghText>{calendarText}</TSParagrapghText>
+      <TSParagrapghText textStyles={{ marginLeft: 12, padding: 8 }}>
+        {calendarText}
+      </TSParagrapghText>
       <ScrollView horizontal>
         <ContributionGraph
           tooltipDataAttrs={(

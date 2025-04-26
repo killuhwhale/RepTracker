@@ -12,6 +12,7 @@ import auth from "@/src/utils/auth";
 import { Member } from "@/src/app_components/modals/types";
 import { navigate } from "@/src/navigators/RootNavigation";
 import { getToken, storeToken } from "@/src/utils/tokenUtils";
+import { ErrorProps } from "@/src/app_components/shared";
 
 // Dump Asyn Storage
 // EncryptedStorage.getAllKeys((err, keys) => {
@@ -36,10 +37,7 @@ const asyncBaseQuery =
       params?: { contentType: string };
     },
     any,
-    {
-      status: number;
-      data: string;
-    }
+    ErrorProps
   > =>
   async ({ url, method, data, params }) => {
     try {

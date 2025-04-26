@@ -66,6 +66,7 @@ export const ItemStringDisplayList: React.FC<ItemStringDisplayListProps> = ({
                 item={item}
                 schemeType={schemeType}
                 prefix=""
+                inclPenalty={true}
               />
             );
           })}

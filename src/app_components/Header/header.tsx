@@ -75,7 +75,7 @@ const Header: FunctionComponent<{
             }}
           /> */}
           <GradientText
-            text="FitTrackrr"
+            text="RepTracker"
             reversed={true}
             textStyles={{ fontFamily: "SpaceMono-Regular" }}
           />
@@ -108,7 +108,7 @@ const Header: FunctionComponent<{
           }}
         >
           <Icon
-            name="cloudy-night-outline"
+            name="flame-outline"
             color={theme.palette.AWE_Green}
             style={{
               fontSize: 24,

@@ -107,13 +107,13 @@ const WorkoutGroupGridItem: FunctionComponent<{
 
               {props.card.finished ? (
                 <Icon
-                  name="checkmark-done"
+                  name="checkmark-circle-sharp"
                   size={24}
                   color={theme.palette.AWE_Green}
                 />
               ) : (
                 <Icon
-                  name="play-circle-outline"
+                  name="ellipse-outline"
                   size={24}
                   color={theme.palette.AWE_Green}
                 />

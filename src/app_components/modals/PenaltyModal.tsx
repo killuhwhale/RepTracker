@@ -3,7 +3,7 @@ import { MediumText } from "../Text/Text";
 
 import { Keyboard, Modal, TouchableWithoutFeedback, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { RegularButton } from "../Buttons/buttons";
 import Input, { AutoCaptilizeEnum } from "../Input/input";
 import { mdFontSize } from "../shared";
@@ -99,8 +99,9 @@ const PenaltyModal: FunctionComponent<{
                     onRequestClose();
                   }}
                   btnStyles={{
-                    backgroundColor: theme.palette.tertiary.main,
+                    backgroundColor: theme.palette.AWE_Red,
                     justifyContent: "center",
+                    paddingHorizontal: 24,
                   }}
                   text={closeText}
                 />
@@ -111,8 +112,9 @@ const PenaltyModal: FunctionComponent<{
                     onRequestClose();
                   }}
                   btnStyles={{
-                    backgroundColor: theme.palette.tertiary.main,
+                    backgroundColor: theme.palette.AWE_Green,
                     justifyContent: "center",
+                    paddingHorizontal: 24,
                   }}
                   text="Submit"
                 />

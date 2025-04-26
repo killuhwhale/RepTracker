@@ -2,7 +2,11 @@ import React, { FunctionComponent, useState } from "react";
 import { Platform, ScrollView, TouchableHighlight, View } from "react-native";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components/native";
-import { TSButtonText, TSCaptionText } from "@/src/app_components/Text/Text";
+import {
+  TSButtonText,
+  TSCaptionText,
+  TSSnippetText,
+} from "@/src/app_components/Text/Text";
 import { Container, formatLongDate } from "@/src/app_components/shared";
 import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -106,7 +110,7 @@ const StatsScreen: FunctionComponent<Props> = () => {
         <></>
       )}
       <BannerAddMembership />
-      <View style={{ flex: 2, width: "100%", alignItems: "center" }}>
+      <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
         <View
           style={{
             flexDirection: "row",
@@ -204,11 +208,11 @@ const StatsScreen: FunctionComponent<Props> = () => {
       </View>
 
       <View style={{ flex: 8 }}>
-        <View style={{ height: 20 }}>
-          <TSCaptionText>
+        <View style={{ height: 20, alignSelf: "flex-end", marginRight: 12 }}>
+          <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
             Found {dataReady ? data?.length : 0}{" "}
             {dataReady && data?.length == 1 ? "workout" : "workouts"}
-          </TSCaptionText>
+          </TSSnippetText>
         </View>
 
         <ScrollView>

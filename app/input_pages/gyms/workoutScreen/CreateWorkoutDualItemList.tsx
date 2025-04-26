@@ -4,8 +4,10 @@ import {
   ScrollView,
   Switch,
   TouchableWithoutFeedback,
+  GestureResponderEvent,
+  Pressable,
 } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { TSCaptionText } from "@/src/app_components/Text/Text";
 import { SCREEN_HEIGHT } from "@/src/app_components/shared";
 import {
@@ -90,7 +92,7 @@ const CreateWorkoutDualItemList: FunctionComponent<{
   };
 
   return (
-    <View style={{ flex: 4, width: "100%", height: "100%" }}>
+    <View style={{ flex: 4, width: "100%", height: "100%", marginBottom: 8 }}>
       <View
         style={{
           flex: 1,
@@ -148,27 +150,40 @@ const CreateWorkoutDualItemList: FunctionComponent<{
                 }}
               >
                 <View style={{ flex: 10 }}>
-                  <ItemString item={item} schemeType={schemeType} prefix="" />
+                  <ItemString
+                    item={item}
+                    schemeType={schemeType}
+                    prefix=""
+                    inclPenalty={false}
+                  />
                 </View>
                 <View
                   style={{
                     flex: 6,
-                    backgroundColor: theme.palette.darkGray,
-                    paddingVertical: 3,
+                    backgroundColor: theme.palette.AWE_Green,
                     borderRadius: 8,
                   }}
                 >
-                  <TouchableOpacity
-                    onPress={() => {
+                  <Pressable
+                    onPress={(event?: GestureResponderEvent) => {
+                      event?.stopPropagation();
                       setCurItem(idx);
                       setText(hasPenalty(item) ? item.penalty! : "");
                       setShowPenaltyModal(true);
                     }}
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      borderRadius: 8,
-                    }}
+                    style={({ pressed }) => [
+                      {
+                        // on iOS (and as a fallback), fade the opacity
+                        opacity: pressed ? 0.6 : 1,
+                      },
+                      {
+                        borderRadius: 8,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        height: "90%",
+                      },
+                    ]}
                   >
                     {hasPenalty(item) ? (
                       <TSCaptionText textStyles={{ textAlign: "center" }}>
@@ -177,9 +192,7 @@ const CreateWorkoutDualItemList: FunctionComponent<{
                     ) : (
                       <TSCaptionText>Penalty +</TSCaptionText>
                     )}
-                  </TouchableOpacity>
-                  {/* </View>
-                <View style={{flex: 1}}> */}
+                  </Pressable>
                 </View>
               </View>
             </ItemRowButton>

@@ -108,7 +108,7 @@ export function useGenerate531Template() {
   async function five_3_1() {
     const templatePayload: any[] = [];
 
-    for (let week = 1; week <= 1; week++) {
+    for (let week = 1; week <= 4; week++) {
       const scheme = WEEK_SCHEMES[week];
       const accessoryPct = ACCESSORY_CYCLE_PCTS[week];
 

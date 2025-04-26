@@ -217,15 +217,17 @@ export const StatsPanel: FunctionComponent<{ tags: {}; names: {} }> = ({
     .sort((a, b) => (a < b ? -1 : 1))
     .map((key) => names[key]);
   return (
-    <View style={{ margin: 4, flex: 1 }}>
+    <View style={{ margin: 4 }}>
       {Object.values(tags).length > 0 ? (
         <>
           <View
-            style={{
-              borderTopWidth: 1,
-              height: 1,
-              borderColor: theme.palette.text,
-            }}
+            style={
+              {
+                // borderTopWidth: 1,
+                // height: 1,
+                // borderColor: theme.palette.text,
+              }
+            }
           />
           <View style={{ alignItems: "flex-start" }}>
             <View
@@ -235,21 +237,27 @@ export const StatsPanel: FunctionComponent<{ tags: {}; names: {} }> = ({
             </View>
             <WorkoutStatsByTagHorizontalList data={Object.values(sTags)} />
           </View>
-          <View style={{ alignItems: "flex-start" }}>
-            <View
-              style={{ borderBottomWidth: 1, borderColor: theme.palette.text }}
-            >
+
+          <View
+            style={{
+              alignItems: "flex-start",
+              borderTopWidth: 1,
+              height: 2,
+              borderColor: theme.palette.text,
+              marginVertical: 6,
+            }}
+          />
+
+          <View
+            style={{
+              alignItems: "flex-start",
+            }}
+          >
+            <View style={{}}>
               <TSParagrapghText>Item Summary</TSParagrapghText>
             </View>
             <WorkoutStatsByNameHorizontalList data={Object.values(sNames)} />
           </View>
-          <View
-            style={{
-              borderTopWidth: 1,
-              height: 1,
-              borderColor: theme.palette.text,
-            }}
-          />
         </>
       ) : (
         <></>

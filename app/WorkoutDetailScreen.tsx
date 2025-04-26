@@ -118,90 +118,85 @@ const WorkoutDetailScreen: FunctionComponent = () => {
     <ScreenContainer>
       <BannerAddMembership />
 
-      <View style={{ flex: 1, width: "100%" }}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "flex-end",
-            width: "100%",
-            flexDirection: "row",
-          }}
-        >
-          <TSSnippetText textStyles={{ color: theme.palette.accent }}>
-            {isSuccess && !isLoading
-              ? `Exercises (${workout.workout_items.length})`
-              : "no items"}
-          </TSSnippetText>
+      <View
+        style={{
+          justifyContent: "flex-end",
+          width: "100%",
+          flexDirection: "row",
+          marginVertical: 2,
+        }}
+      >
+        <TSSnippetText textStyles={{ color: theme.palette.accent }}>
+          {isSuccess && !isLoading
+            ? `Exercises (${workout.workout_items.length})`
+            : "no items"}
+        </TSSnippetText>
+      </View>
+
+      <View style={{ marginVertical: 6, width: "100%" }}>
+        <TSTitleText>
+          {title.length < 1 ? "Title here... (you didnt give a title)" : title}
+        </TSTitleText>
+
+        <TSCaptionText textStyles={{ padding: 6 }}>
+          {desc.length < 1
+            ? "Description here... (you didnt give a description)"
+            : desc}
+        </TSCaptionText>
+
+        <TSDateText textStyles={{ padding: 6 }}>
+          {for_date
+            ? formatLongDate(new Date(for_date))
+            : "Unsure which date this is for..."}
+        </TSDateText>
+      </View>
+
+      <View style={{ marginVertical: 12, width: "100%" }}>
+        <StatsPanel tags={tags} names={names} />
+      </View>
+
+      <View
+        style={{
+          justifyContent: "center",
+          width: "100%",
+          marginVertical: 12,
+        }}
+      >
+        <View style={{ marginTop: 8, padding: 6 }}>
+          <TSParagrapghText>
+            Type: {WORKOUT_TYPES[scheme_type]}{" "}
+            {scheme_rounds.length > 0 &&
+            scheme_rounds.indexOf("undefined") == -1
+              ? displayJList(scheme_rounds)
+              : ""}
+          </TSParagrapghText>
         </View>
 
-        <View style={{ flexGrow: 2, flexShrink: 1, flexBasis: 0 }}>
-          <TSTitleText>
-            {title.length < 1
-              ? "Title here... (you didnt give a title)"
-              : title}
-          </TSTitleText>
-
-          <TSCaptionText textStyles={{ padding: 6 }}>
-            {desc.length < 1
-              ? "Description here... (you didnt give a description)"
-              : desc}
-          </TSCaptionText>
-
-          {instruction && instruction !== "undefined" ? (
-            <TSSnippetText textStyles={{ padding: 6 }}>
-              {instruction}
-            </TSSnippetText>
-          ) : (
-            <></>
-          )}
-
-          <TSDateText textStyles={{ padding: 6 }}>
-            {for_date
-              ? formatLongDate(new Date(for_date))
-              : "Unsure which date this is for..."}
-          </TSDateText>
-        </View>
-
-        <View style={{ flexGrow: 4, flexBasis: 0, flexShrink: 1 }}>
-          <StatsPanel tags={tags} names={names} />
-        </View>
-
-        <View
-          style={{
-            flexGrow: 6,
-            flexBasis: 0,
-            flexShrink: 1,
-            justifyContent: "center",
-          }}
-        >
-          <View style={{ marginTop: 8, padding: 6 }}>
-            <TSParagrapghText>
-              Type: {WORKOUT_TYPES[scheme_type]}{" "}
-              {scheme_rounds.length > 0 &&
-              scheme_rounds.indexOf("undefined") == -1
-                ? displayJList(scheme_rounds)
-                : ""}
-            </TSParagrapghText>
-          </View>
-
-          {!isLoading && isSuccess ? (
-            // <WorkoutItemPreviewHorizontalList
-            //   testID={""}
-            //   data={workout.workout_items}
-            //   schemeType={scheme_type}
-            //   itemWidth={WORKOUTITEM_WIDTH}
-            //   itemHeight={WORKOUTITEM_HEIGHT}
-            //   ownedByClass={ownedByClass == 1 ? true : false}
-            // />
-
+        {!isLoading && isSuccess ? (
+          // <WorkoutItemPreviewHorizontalList
+          //   testID={""}
+          //   data={workout.workout_items}
+          //   schemeType={scheme_type}
+          //   itemWidth={WORKOUTITEM_WIDTH}
+          //   itemHeight={WORKOUTITEM_HEIGHT}
+          //   ownedByClass={ownedByClass == 1 ? true : false}
+          // />
+          <View>
+            {instruction && instruction !== "undefined" ? (
+              <TSSnippetText textStyles={{ padding: 6 }}>
+                {instruction}
+              </TSSnippetText>
+            ) : (
+              <></>
+            )}
             <ItemStringDisplayList
               items={workout.workout_items}
               schemeType={scheme_type}
             />
-          ) : (
-            <></>
-          )}
-        </View>
+          </View>
+        ) : (
+          <></>
+        )}
       </View>
     </ScreenContainer>
   );

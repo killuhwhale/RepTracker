@@ -51,12 +51,11 @@ const RegularButton: FunctionComponent<ButtonProps> = (props) => {
       underlayColor={props.underlayColor || theme.palette.backgroundColor}
       style={[
         { backgroundColor: theme.palette.darkGray },
-        props.btnStyles,
         {
-          paddingVertical: 4,
           alignItems: "center",
           borderRadius: 8,
         },
+        props.btnStyles,
       ]}
     >
       {props.text ? (

@@ -194,110 +194,97 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       }}
     >
       <BannerAddMembership />
-      <View style={{ padding: 12, flex: 1, height: "100%", width: "100%" }}>
-        <View
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+        }}
+      >
+        <TouchableOpacity
+          activeOpacity={0.69}
+          onPress={handleNavCreateWorkoutGroupScreen}
           style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            flex: 1,
+            padding: 4,
+            borderRadius: 112,
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.69}
-            onPress={handleNavCreateWorkoutGroupScreen}
+          <View
             style={{
-              padding: 4,
-              borderRadius: 112,
+              backgroundColor: theme.palette.AWE_Green,
+              borderRadius: 8,
             }}
           >
-            <View
-              style={{
-                backgroundColor: theme.palette.AWE_Green,
-                borderRadius: 8,
-              }}
-            >
-              <Icon
-                name="add"
-                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
-                color={theme.palette.text}
-                style={{ fontSize: 20, padding: 2 }}
-              />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.69}
-            onPress={handleNavViewTemplateWorkoutScreen}
+            <Icon
+              name="add"
+              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+              color={theme.palette.text}
+              style={{ fontSize: 16, padding: 4 }}
+            />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.69}
+          onPress={handleNavViewTemplateWorkoutScreen}
+          style={{
+            padding: 4,
+            borderRadius: 112,
+          }}
+        >
+          <View
             style={{
-              padding: 4,
-              borderRadius: 112,
+              backgroundColor: theme.palette.AWE_Green,
+              borderRadius: 8,
             }}
           >
-            <View
-              style={{
-                backgroundColor: theme.palette.AWE_Green,
-                borderRadius: 8,
-              }}
-            >
-              <Icon
-                name="home"
-                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
-                color={theme.palette.text}
-                style={{ fontSize: 20, padding: 2 }}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ flex: 15 }}>
-          <View style={{ flex: 1, marginBottom: 12 }}>
-            <Input
-              onChangeText={handleSearchChange}
-              value={searchTextDisplay}
-              inputStyles={{ fontSize: 14 }}
-              focus={false}
-              containerStyle={{
-                width: "100%",
-                backgroundColor: theme.palette.backgroundColor,
-                borderRadius: 8,
-                height: 45,
-                borderWidth: 1,
-                borderColor: theme.palette.text,
-              }}
-              leading={
-                <Icon
-                  name="search"
-                  style={{ fontSize: 16 }}
-                  color={theme.palette.text}
-                />
-              }
-              label=""
-              placeholder="Search workouts..."
+            <Icon
+              name="clipboard-outline"
+              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+              color={theme.palette.text}
+              style={{ fontSize: 16, padding: 4 }}
             />
           </View>
-
-          <View style={{ flex: 10, marginBottom: 12 }}>
-            <WorkoutGroupSquares
-              data={listToRender}
-              loadMore={!isSearching ? loadMore : undefined}
-              extraProps={{}}
-            />
-          </View>
-
-          {/* <FilterGrid
-            searchTextPlaceHolder="Search Workouts"
-            uiView={WorkoutGroupSquares}
-            items={workouts}
-            loadMore={loadMore}
-            extraProps={{
-              editable: true, // not useful, not going to use
-            }}
-          /> */}
-        </View>
+        </TouchableOpacity>
       </View>
 
       {workouts.length ? (
-        <></>
+        <View style={{ padding: 12, height: "100%", width: "100%" }}>
+          <View style={{ flex: 15 }}>
+            <View style={{ flex: 1, marginBottom: 12 }}>
+              <Input
+                onChangeText={handleSearchChange}
+                value={searchTextDisplay}
+                inputStyles={{ fontSize: 14 }}
+                focus={false}
+                containerStyle={{
+                  width: "100%",
+                  backgroundColor: theme.palette.backgroundColor,
+                  borderRadius: 8,
+                  height: 45,
+                  borderWidth: 1,
+                  borderColor: theme.palette.text,
+                }}
+                leading={
+                  <Icon
+                    name="search"
+                    style={{ fontSize: 16 }}
+                    color={theme.palette.text}
+                  />
+                }
+                label=""
+                placeholder="Search workouts..."
+              />
+            </View>
+
+            <View style={{ flex: 10, marginBottom: 12 }}>
+              <WorkoutGroupSquares
+                data={listToRender}
+                loadMore={!isSearching ? loadMore : undefined}
+                extraProps={{}}
+              />
+            </View>
+          </View>
+        </View>
       ) : isLoadingWG || dataWG?.count > 0 ? (
         <View
           style={{
@@ -358,35 +345,6 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
                     style={{ fontSize: 32, marginRight: 16 }}
                   />
                   <TSParagrapghText>New workout</TSParagrapghText>
-                </View>
-              </RegularButton>
-              <RegularButton
-                underlayColor="#cacaca30"
-                btnStyles={{
-                  backgroundColor: "#cacaca00",
-                  borderTopColor: "#cacaca92",
-                  borderBottomColor: "#cacaca92",
-                  borderWidth: 2,
-                  width: "100%",
-                }}
-                onPress={() => {
-                  five_3_1();
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
-                  <Icon
-                    name="add"
-                    color={theme.palette.text}
-                    style={{ fontSize: 32, marginRight: 16 }}
-                  />
-                  <TSParagrapghText>Gen Template</TSParagrapghText>
                 </View>
               </RegularButton>
             </View>

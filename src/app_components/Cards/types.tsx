@@ -97,6 +97,7 @@ export interface WorkoutItemProps {
   date: string;
   workout: number;
   uuid?: string;
+  penalty?: string;
 }
 
 export interface WorkoutDualItemProps {

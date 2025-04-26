@@ -391,6 +391,7 @@ const ProfileSettingsModal: FunctionComponent<{
               onPress={props.onRequestClose}
               btnStyles={{
                 backgroundColor: theme.palette.primary.main,
+                padding: 6,
                 width: "75%",
               }}
               text="Close"

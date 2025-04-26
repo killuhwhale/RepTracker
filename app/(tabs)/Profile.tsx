@@ -14,6 +14,7 @@ import {
   smFontSize,
   isDateInFuture,
   SCREEN_HEIGHT,
+  ErrorProps,
 } from "@/src/app_components/shared";
 import {
   TSCaptionText,
@@ -53,6 +54,7 @@ import {
   ViewStyle,
   Image,
   Animated,
+  StyleSheet,
 } from "react-native";
 
 import thanks from "@/assets/images/thanks.png";
@@ -77,6 +79,7 @@ import Purchases, {
 } from "react-native-purchases";
 import { store } from "@/src/redux/store";
 import AuthManager from "@/src/utils/auth";
+import LinearGradient from "react-native-linear-gradient";
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
 const PageContainer = styled(Container)`
@@ -161,6 +164,8 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
     <View style={{ width: "100%" }}>
       <View
         style={{
+          width: "100%",
+
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -214,19 +219,28 @@ const UserInfoPanel: FunctionComponent<UserInfoPanelProps> = (props) => {
               </TSInputText>
             </View>
 
-            <View style={{ flexBasis: 0, flexShrink: 1, flexGrow: 2 }}>
-              <TSCaptionText
+            <View
+              style={{
+                flexBasis: 0,
+                flexShrink: 1,
+                flexGrow: 2,
+                justifyContent: "center",
+              }}
+            >
+              <TSSnippetText
                 textStyles={{
-                  color: `${isDateInFuture(user) ? "#FFD700" : "#C0C000"}`,
-                  marginLeft: 10,
-                  textAlign: "left",
+                  color: `${
+                    isDateInFuture(user)
+                      ? theme.palette.AWE_Yellow
+                      : theme.palette.AWE_Red
+                  }`,
+                  textAlign: "right",
                   textAlignVertical: "center",
-                  alignContent: "center",
-                  alignItems: "center",
+                  alignItems: "flex-end",
                 }}
               >
                 {isDateInFuture(user) ? "Member" : "Non-member"}
-              </TSCaptionText>
+              </TSSnippetText>
             </View>
           </View>
         )}
@@ -440,7 +454,7 @@ const Profile: FunctionComponent<Props> = () => {
         invalidateUser();
         setMakePurchaseLoading(false);
         startThankYouFadeIn();
-      }, 2200);
+      }, 150);
     } catch (err) {
       console.log("Error invalidating user after makepurchase: ", err);
     }
@@ -488,9 +502,9 @@ const Profile: FunctionComponent<Props> = () => {
 
   const startThankYouFadeIn = () => {
     Animated.timing(fadeAnim, {
-      delay: 500,
+      delay: 250,
       toValue: 1, // Final opacity value (fully visible)
-      duration: 7000, // Duration of the fade-in effect (10 second)
+      duration: 4000, // Duration of the fade-in effect (10 second)
       useNativeDriver: true, // Optimize performance
     }).start();
   };
@@ -510,13 +524,29 @@ const Profile: FunctionComponent<Props> = () => {
       .catch((err) => console.log("ProfileSettings Logout Error", err));
   };
 
+  let errorMessage = "";
+  if ((typeof error).toString() == "SerializedError") {
+    const _error = error as any;
+    errorMessage = "error: " + _error.toString();
+  } else if ((typeof error).toString() == "ErrorProps") {
+    const _error = error as ErrorProps;
+    errorMessage = `${_error.status} - ${_error.data}`;
+  }
+
   return (
     <PageContainer>
       <BannerAddMembership />
       {isLoading ? (
         <ActivityIndicator size="small" color={theme.palette.text} />
       ) : isSuccess ? (
-        <View style={{ flex: 1, width: "100%", marginTop: 12 }}>
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            marginTop: 12,
+            paddingHorizontal: 12,
+          }}
+        >
           <View
             style={{
               flex: 1,
@@ -536,11 +566,11 @@ const Profile: FunctionComponent<Props> = () => {
               }}
             >
               <Icon
-                name="settings"
+                name="settings-outline"
                 color={theme.palette.text}
                 style={{
                   fontSize: 24,
-                  marginRight: 24,
+                  marginRight: 0,
                 }}
               />
             </TouchableHighlight>
@@ -560,7 +590,7 @@ const Profile: FunctionComponent<Props> = () => {
           {Platform.OS === "ios" || Platform.OS === "android" ? (
             <View
               style={{
-                flex: 8,
+                flex: 14,
                 flexDirection: "row",
 
                 justifyContent: "flex-start",
@@ -570,13 +600,8 @@ const Profile: FunctionComponent<Props> = () => {
                 <View
                   style={{
                     width: "100%",
-                    flex: 1,
                   }}
                 >
-                  <View style={{ flex: 1 }}>
-                    <TSTitleText>In App Purchase</TSTitleText>
-                  </View>
-
                   <View
                     style={{
                       flex: 9,
@@ -595,8 +620,6 @@ const Profile: FunctionComponent<Props> = () => {
                         style={{
                           width: "100%",
                           flex: 1,
-                          marginTop: 12,
-
                           borderRadius: 8,
                           justifyContent: "center",
                         }}
@@ -609,7 +632,7 @@ const Profile: FunctionComponent<Props> = () => {
                             width: "100%",
                           }}
                         >
-                          {curProducts ? (
+                          {curProducts || true ? (
                             <View
                               style={{
                                 width: "100%",
@@ -617,7 +640,10 @@ const Profile: FunctionComponent<Props> = () => {
                                 flex: 1,
                               }}
                             >
-                              {curProducts.map((product) => {
+                              {[
+                                ...(curProducts ?? []),
+                                { identifier: "fake" } as PurchasesStoreProduct,
+                              ].map((product) => {
                                 return (
                                   <View
                                     style={{
@@ -628,7 +654,11 @@ const Profile: FunctionComponent<Props> = () => {
                                     }}
                                     key={product.identifier}
                                   >
-                                    <TouchableHighlight
+                                    <SubscriptionOffer
+                                      makePurchase={makePurchase}
+                                      product={product}
+                                    />
+                                    {/* <TouchableHighlight
                                       onPress={() =>
                                         makePurchase(product).catch((err) =>
                                           console.error(
@@ -661,28 +691,33 @@ const Profile: FunctionComponent<Props> = () => {
                                           / Month
                                         </TSSnippetText>
                                       </View>
-                                    </TouchableHighlight>
+                                    </TouchableHighlight> */}
                                   </View>
                                 );
                               })}
                               <View
-                                style={{ flex: 1, alignItems: "flex-start" }}
+                                style={{
+                                  flex: 1,
+                                  alignItems: "flex-start",
+                                  width: "75%",
+                                }}
                               >
                                 <TSCaptionText>
                                   With a Subscription:
                                 </TSCaptionText>
-                                <TSCaptionText>- remove all ads</TSCaptionText>
-                                <TSCaptionText>
-                                  - create unlimited workouts{" "}
+                                <TSSnippetText>- Remove all ads</TSSnippetText>
+                                <TSSnippetText>
+                                  - Create up to 15 workouts per day{" "}
                                   <TSCaptionText
                                     textStyles={{ color: "red", fontSize: 9 }}
                                   >
                                     (limit 1 per day without subscription)
                                   </TSCaptionText>
-                                </TSCaptionText>
-                                <TSCaptionText>
-                                  - support an independent developer
-                                </TSCaptionText>
+                                </TSSnippetText>
+                                <TSSnippetText>
+                                  - Access to use AI to Generate your own
+                                  Workouts!
+                                </TSSnippetText>
                               </View>
                             </View>
                           ) : (
@@ -697,7 +732,7 @@ const Profile: FunctionComponent<Props> = () => {
                   </View>
                 </View>
               ) : (
-                <View style={{ flex: 4 }}>
+                <View style={{ flex: 4, alignItems: "center" }}>
                   <TSParagrapghText textStyles={{ textAlign: "center" }}>
                     Thanks for your support!
                   </TSParagrapghText>
@@ -771,10 +806,7 @@ const Profile: FunctionComponent<Props> = () => {
         </View>
       ) : isError ? (
         <View>
-          <TSCaptionText>
-            Error.... {error.data} {error.status} {error.toString()}{" "}
-            {Object.keys(error.data).toString()}
-          </TSCaptionText>
+          <TSCaptionText>Error.... {errorMessage}</TSCaptionText>
           <TouchableHighlight
             underlayColor="#00000022"
             style={{ borderRadius: 8 }}
@@ -858,3 +890,102 @@ export default Profile;
   // };
  *
  */
+
+type IAPSub = {
+  makePurchase: (product: PurchasesStoreProduct) => Promise<void>;
+  product: PurchasesStoreProduct;
+};
+
+function SubscriptionOffer({ product, makePurchase }: IAPSub) {
+  const theme = useTheme();
+
+  return (
+    <LinearGradient
+      colors={[theme.palette.primary.main, theme.palette.AWE_Green]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.card}
+    >
+      <TSCaptionText textStyles={styles.headline}>Go Premium</TSCaptionText>
+
+      <TSButtonText textStyles={styles.price}>
+        {product.price} {product.currencyCode}/mo
+      </TSButtonText>
+
+      <View style={styles.features}>
+        <View style={styles.featureRow}>
+          <Icon name="close-outline" size={20} color="#FFF" />
+          <TSSnippetText textStyles={styles.featureText}>
+            Ad-free experience
+          </TSSnippetText>
+        </View>
+        <View style={styles.featureRow}>
+          <Icon name="apps-outline" size={20} color="#FFF" />
+          <TSSnippetText textStyles={styles.featureText}>
+            Create up to 15 workouts/day
+          </TSSnippetText>
+        </View>
+        <View style={styles.featureRow}>
+          <Icon name="barbell-outline" size={20} color="#FFF" />
+          <TSSnippetText textStyles={styles.featureText}>
+            AI-powered workout generator
+          </TSSnippetText>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.palette.AWE_Green }]}
+        onPress={() => makePurchase(product).catch(console.error)}
+      >
+        <TSButtonText textStyles={styles.buttonText}>
+          Unlock Premium
+        </TSButtonText>
+      </TouchableOpacity>
+    </LinearGradient>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    width: "85%",
+    alignSelf: "center",
+    borderRadius: 12,
+    padding: 20,
+    marginVertical: 16,
+    elevation: 5,
+  },
+  headline: {
+    color: "#FFF",
+    fontSize: 24,
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  price: {
+    color: "#FFF",
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  features: {
+    marginVertical: 12,
+  },
+  featureRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  featureText: {
+    color: "#FFF",
+    marginLeft: 8,
+  },
+  button: {
+    backgroundColor: "#FFF",
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginTop: 12,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 16,
+  },
+});

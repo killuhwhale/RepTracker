@@ -404,7 +404,7 @@ const AddItem: FunctionComponent<{
                     <View
                       style={{
                         flex: 1,
-                        backgroundColor: theme.palette.primary.main,
+                        backgroundColor: theme.palette.backgroundColor,
                       }}
                     >
                       <Input
