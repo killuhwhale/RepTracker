@@ -122,7 +122,7 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
           onPress={() => onClose()}
           style={{
             width: "100%",
-            height: "100%",
+            height: SCREEN_HEIGHT * 0.8,
             backgroundColor: theme.palette.backgroundColor,
             borderRadius: 16,
             padding: 20,

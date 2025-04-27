@@ -19,15 +19,8 @@ import AuthNavComp from "./Auth/AuthNavComp";
 
 const PageContainer = styled(Container)`
   background-color: ${(props) => props.theme.palette.backgroundColor};
-  justify-content: space-between;
-
   width: 100%;
   height: 100%;
-`;
-
-const AuthContainer = styled.View`
-  width: 80%;
-  padding-top: 45px;
 `;
 
 const AuthScreen: FunctionComponent = () => {
@@ -197,62 +190,61 @@ const AuthScreen: FunctionComponent = () => {
   // RootNavigation.navigate("HomePage", {})
   return (
     <PageContainer>
-      <AuthContainer style={{ flex: 10 }}>
-        {authModes[authMode] == 0 ? (
-          <SignInComp
-            email={email}
-            showSignInFailedText={showSignInFailedText}
-            emailHelperText={emailHelperText}
-            hidePassword={hidePassword}
-            login={login}
-            onEmailChange={onEmailChange}
-            onPasswordChange={onPasswordChange}
-            password={password}
-            setHidePassword={setHidePassword}
-            setAuthMode={setAuthMode}
-          />
-        ) : authModes[authMode] == 1 ? (
-          <RegisterComp
-            hideNewPassword={hideNewPassword}
-            mismatchPasswordText={mismatchPasswordText}
-            newEmail={newEmail}
-            newEmailHelperText={newEmailHelperText}
-            newPassword={newPassword}
-            newPasswordConfirm={newPasswordConfirm}
-            onNewEmailChange={onNewEmailChange}
-            onNewPasswordChange={onNewPasswordChange}
-            onNewPasswordConfirmChange={onNewPasswordConfirmChange}
-            register={register}
-            registerError={registerError}
-            setAuthMode={setAuthMode}
-            setHideNewPassword={setHideNewPassword}
-          />
-        ) : authModes[authMode] == 2 ? (
-          <ResetPasswordAuthPage setAuthMode={setAuthMode} />
-        ) : (
-          <CodeResetPasswordPage
-            changePassword={changePassword}
-            hideResetPassword={hideResetPassword}
-            resetCode={resetCode}
-            resetEmail={resetEmail}
-            resetEmailError={resetEmailError}
-            resetPassword={resetPassword}
-            resetPasswordError={resetPasswordError}
-            setAuthMode={setAuthMode}
-            setHideResetPassword={setHideResetPassword}
-            setResetCode={setResetCode}
-            setResetEmail={setResetEmail}
-            setResetEmailError={setResetEmailError}
-            setResetPassword={setResetPassword}
-            validEmailRegex={validEmailRegex}
-          />
-        )}
-      </AuthContainer>
-      <AuthNavComp
-        authMode={authMode}
-        authModes={authModes}
-        setAuthMode={setAuthMode}
-      />
+      {authModes[authMode] == 0 ? (
+        <SignInComp
+          email={email}
+          showSignInFailedText={showSignInFailedText}
+          emailHelperText={emailHelperText}
+          hidePassword={hidePassword}
+          login={login}
+          onEmailChange={onEmailChange}
+          onPasswordChange={onPasswordChange}
+          password={password}
+          setHidePassword={setHidePassword}
+          setAuthMode={setAuthMode}
+        />
+      ) : authModes[authMode] == 1 ? (
+        <RegisterComp
+          hideNewPassword={hideNewPassword}
+          mismatchPasswordText={mismatchPasswordText}
+          newEmail={newEmail}
+          newEmailHelperText={newEmailHelperText}
+          newPassword={newPassword}
+          newPasswordConfirm={newPasswordConfirm}
+          onNewEmailChange={onNewEmailChange}
+          onNewPasswordChange={onNewPasswordChange}
+          onNewPasswordConfirmChange={onNewPasswordConfirmChange}
+          register={register}
+          registerError={registerError}
+          setAuthMode={setAuthMode}
+          setHideNewPassword={setHideNewPassword}
+        />
+      ) : authModes[authMode] == 2 ? (
+        <ResetPasswordAuthPage
+          setAuthMode={setAuthMode}
+          resetEmail={resetEmail}
+          setResetEmail={setResetEmail}
+          resetEmailError={resetEmailError}
+          setResetEmailError={setResetEmailError}
+        />
+      ) : (
+        <CodeResetPasswordPage
+          changePassword={changePassword}
+          hideResetPassword={hideResetPassword}
+          resetCode={resetCode}
+          resetEmail={resetEmail}
+          resetEmailError={resetEmailError}
+          resetPassword={resetPassword}
+          resetPasswordError={resetPasswordError}
+          setAuthMode={setAuthMode}
+          setHideResetPassword={setHideResetPassword}
+          setResetCode={setResetCode}
+          setResetEmail={setResetEmail}
+          setResetEmailError={setResetEmailError}
+          setResetPassword={setResetPassword}
+          validEmailRegex={validEmailRegex}
+        />
+      )}
     </PageContainer>
   );
 };

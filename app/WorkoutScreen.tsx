@@ -871,7 +871,7 @@ const WorkoutScreen: FunctionComponent = () => {
                   borderRadius: 16,
                   backgroundColor: lightenHexColor(
                     theme.palette.AWE_Blue,
-                    0.55
+                    0.25
                   ),
                   padding: 4,
                 }}

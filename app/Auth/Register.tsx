@@ -1,14 +1,23 @@
 import React, { FunctionComponent } from "react";
-import { ScrollView, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RegularButton } from "@/src/app_components/Buttons/buttons";
 import Input, { AutoCaptilizeEnum } from "@/src/app_components/Input/input";
 import {
   TSParagrapghText,
   TSCaptionText,
+  TSSnippetText,
 } from "@/src/app_components/Text/Text";
 import { TestIDs } from "@/src/utils/constants";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
+import { SCREEN_WIDTH } from "@/src/app_components/shared";
 
 interface RegisterCompProps {
   registerError: string;
@@ -36,121 +45,202 @@ const RegisterComp: FunctionComponent<RegisterCompProps> = ({
   mismatchPasswordText,
   onNewEmailChange,
   onNewPasswordChange,
-  setHideNewPassword,
   onNewPasswordConfirmChange,
+  setHideNewPassword,
   setAuthMode,
   register,
 }) => {
   const theme = useTheme();
+
   return (
-    <View style={{ flex: 10 }}>
-      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.palette.backgroundColor }}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+        style={{ flex: 1 }}
+      >
         <View
           style={{
-            height: "35%",
-            alignContent: "space-between",
-            justifyContent: "space-evenly",
-            flex: 4,
+            flex: 1,
+            justifyContent: "center",
+            padding: 24,
+            width: SCREEN_WIDTH * 0.85,
           }}
         >
-          <TSParagrapghText
-            textStyles={{ textAlign: "center", marginBottom: 16 }}
-          >
-            Sign Up
-          </TSParagrapghText>
-          <TSCaptionText
-            textStyles={{ textAlign: "center", marginVertical: 8 }}
-          >
-            {registerError}
-          </TSCaptionText>
-          <View style={{ height: 35, marginBottom: 24 }}>
-            <Input
-              testID={TestIDs.AuthSignUpEmail.name()}
-              keyboardType="email-address"
-              onChangeText={onNewEmailChange}
-              autoCapitalize={AutoCaptilizeEnum.None}
-              label=""
-              isError={newEmailHelperText.length > 0}
-              placeholder="Email"
-              containerStyle={{
-                backgroundColor: theme.palette.gray,
-                borderTopStartRadius: 8,
-                borderTopEndRadius: 8,
-              }}
-              value={newEmail}
-              leading={
-                <Icon name="person" style={{ color: theme.palette.text }} />
-              }
-              helperText={newEmailHelperText}
-            />
-          </View>
-
-          <View style={{ height: 35, marginBottom: 24 }}>
-            <Input
-              testID={TestIDs.AuthSignUpPassword.name()}
-              containerStyle={{
-                backgroundColor: theme.palette.gray,
-                paddingLeft: 16,
-              }}
-              label=""
-              placeholder="Password"
-              value={newPassword}
-              onChangeText={onNewPasswordChange.bind(this)}
-              secureTextEntry={hideNewPassword}
-            />
-          </View>
-
-          <View style={{ height: 35 }}>
-            <Input
-              testID={TestIDs.AuthSignUpPasswordConfirm.name()}
-              containerStyle={{
-                backgroundColor: theme.palette.gray,
-                paddingLeft: 16,
-                borderBottomStartRadius: 8,
-                borderBottomEndRadius: 8,
-              }}
-              placeholder="Password Confirm"
-              label=""
-              value={newPasswordConfirm}
-              onChangeText={onNewPasswordConfirmChange}
-              secureTextEntry={hideNewPassword}
-              helperText={mismatchPasswordText}
-              isError={mismatchPasswordText.length > 0}
-              trailing={
-                <Icon
-                  name="eye"
-                  style={{ fontSize: 24, color: theme.palette.text }}
-                  onPress={() => setHideNewPassword(!hideNewPassword)}
-                />
-              }
-            />
-          </View>
-        </View>
-
-        <View style={{ flex: 5, flexDirection: "row", marginTop: 32 }}>
+          {/* Card */}
           <View
             style={{
-              width: "100%",
-              height: 45,
-              paddingHorizontal: 8,
-              justifyContent: "center",
+              backgroundColor: theme.palette.AWE_Green,
+              borderRadius: 16,
+              padding: 24,
+              elevation: 6,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 3 },
+              shadowOpacity: 0.1,
+              shadowRadius: 6,
             }}
           >
+            {/* Title */}
+            <TSParagrapghText
+              textStyles={{
+                textAlign: "center",
+                fontSize: 26,
+                fontWeight: "600",
+                marginBottom: 18,
+                color: theme.palette.text,
+              }}
+            >
+              Sign Up
+            </TSParagrapghText>
+
+            {/* Server/Validation Error */}
+            {registerError.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <TSCaptionText
+                  textStyles={{
+                    textAlign: "center",
+                    color: theme.palette.AWE_Red,
+                  }}
+                >
+                  {registerError}
+                </TSCaptionText>
+              </View>
+            )}
+            <View style={{ height: 28, marginVertical: 6 }}>
+              <Input
+                testID={TestIDs.AuthSignUpEmail.name()}
+                placeholder="Email"
+                label="Email"
+                keyboardType="email-address"
+                autoCapitalize={AutoCaptilizeEnum.None}
+                value={newEmail}
+                isError={!!newEmailHelperText}
+                helperText={newEmailHelperText}
+                onChangeText={onNewEmailChange}
+                leading={
+                  <Icon
+                    name="mail-outline"
+                    size={10}
+                    color={theme.palette.text}
+                  />
+                }
+                containerStyle={{
+                  backgroundColor: theme.palette.backgroundColor,
+                  borderRadius: 8,
+                }}
+              />
+            </View>
+            <View style={{ height: 28, marginVertical: 6 }}>
+              <Input
+                testID={TestIDs.AuthSignUpPassword.name()}
+                placeholder="Password"
+                label="Password"
+                secureTextEntry={hideNewPassword}
+                value={newPassword}
+                onChangeText={onNewPasswordChange}
+                leading={
+                  <Icon
+                    name={
+                      hideNewPassword
+                        ? "lock-closed-outline"
+                        : "lock-open-outline"
+                    }
+                    size={10}
+                    color={theme.palette.text}
+                    onPress={() => setHideNewPassword(!hideNewPassword)}
+                  />
+                }
+                containerStyle={{
+                  backgroundColor: theme.palette.backgroundColor,
+                  borderRadius: 8,
+                }}
+              />
+            </View>
+            <View style={{ height: 28, marginVertical: 6 }}>
+              <Input
+                testID={TestIDs.AuthSignUpPasswordConfirm.name()}
+                secureTextEntry={hideNewPassword}
+                placeholder="Confirm Password"
+                label="Confirm Password"
+                value={newPasswordConfirm}
+                onChangeText={onNewPasswordConfirmChange}
+                isError={!!mismatchPasswordText}
+                helperText={mismatchPasswordText}
+                leading={
+                  <Icon
+                    name={
+                      hideNewPassword
+                        ? "lock-closed-outline"
+                        : "lock-open-outline"
+                    }
+                    size={10}
+                    color={theme.palette.AWE_Yellow}
+                    onPress={() => setHideNewPassword(!hideNewPassword)}
+                  />
+                }
+                trailing={
+                  <Icon
+                    name={hideNewPassword ? "eye-off-outline" : "eye-outline"}
+                    size={16}
+                    color={theme.palette.text}
+                    onPress={() => setHideNewPassword(!hideNewPassword)}
+                  />
+                }
+                containerStyle={{
+                  backgroundColor: theme.palette.backgroundColor,
+                  borderRadius: 8,
+                }}
+              />
+            </View>
+
+            {/* Register Button */}
             <RegularButton
               testID={TestIDs.AuthSignUpRegisterBtn.name()}
-              onPress={() => {
-                register();
-              }}
+              onPress={register}
               btnStyles={{
                 backgroundColor: theme.palette.primary.main,
-                paddingVertical: 8,
+                paddingVertical: 14,
+                borderRadius: 8,
               }}
               text="Register"
             />
           </View>
+
+          {/* Footer Links */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: 24,
+              paddingHorizontal: 8,
+            }}
+          >
+            <Pressable onPress={() => setAuthMode(0)}>
+              <View>
+                <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
+                  Already have an account?
+                </TSSnippetText>
+                <TSSnippetText
+                  textStyles={{
+                    color: theme.palette.AWE_Green,
+                    textAlign: "center",
+                  }}
+                >
+                  Sign In
+                </TSSnippetText>
+              </View>
+            </Pressable>
+            <Pressable onPress={() => setAuthMode(2)}>
+              <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
+                Forgot Password?
+              </TSSnippetText>
+            </Pressable>
+          </View>
         </View>
-      </ScrollView>
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
