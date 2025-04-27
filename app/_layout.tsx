@@ -249,7 +249,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     const getThemePref = async () => {
-      const themePrefrence = await getThemePreference();
+      const themePrefrence = await getThemePreference(DEFAULT_USER_THEME);
       setUserTheme(themePrefrence);
       setUserThemeLoading(false);
     };

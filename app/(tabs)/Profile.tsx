@@ -588,78 +588,73 @@ const Profile: FunctionComponent<Props> = () => {
               <UserInfoPanel user={data.user} />
             </View>
           </View>
-          {Platform.OS === "ios" || Platform.OS === "android" ? (
-            <View
-              style={{
-                flex: 14,
-                flexDirection: "row",
+          <View
+            style={{
+              flex: 14,
+              flexDirection: "row",
 
-                justifyContent: "flex-start",
-              }}
-            >
-              {!isDateInFuture(data.user, true) ? (
+              justifyContent: "flex-start",
+            }}
+          >
+            {!isDateInFuture(data.user, true) ? (
+              <View
+                style={{
+                  width: "100%",
+                }}
+              >
                 <View
                   style={{
-                    width: "100%",
+                    flex: 9,
+                    justifyContent: "flex-start",
+                    alignContent: "flex-start",
+                    alignItems: "flex-start",
                   }}
                 >
-                  <View
-                    style={{
-                      flex: 9,
-                      justifyContent: "flex-start",
-                      alignContent: "flex-start",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    {makePurchaseLoading ? (
-                      <ActivityIndicator
-                        size="small"
-                        color={theme.palette.text}
-                      />
-                    ) : (
+                  {makePurchaseLoading ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={theme.palette.text}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: "100%",
+                        flex: 1,
+                        borderRadius: 8,
+                        justifyContent: "center",
+                      }}
+                    >
                       <View
                         style={{
-                          width: "100%",
                           flex: 1,
-                          borderRadius: 8,
-                          justifyContent: "center",
+                          justifyContent: "flex-start",
+                          alignItems: "center",
+                          width: "100%",
                         }}
                       >
-                        <View
-                          style={{
-                            flex: 1,
-                            justifyContent: "flex-start",
-                            alignItems: "center",
-                            width: "100%",
-                          }}
-                        >
-                          {curProducts || true ? (
-                            <View
-                              style={{
-                                width: "100%",
-                                alignItems: "center",
-                                flex: 1,
-                              }}
-                            >
-                              {[
-                                ...(curProducts ?? []),
-                                { identifier: "fake" } as PurchasesStoreProduct,
-                              ].map((product) => {
-                                return (
-                                  <View
-                                    style={{
-                                      width: "80%",
-                                      backgroundColor:
-                                        theme.palette.primary.main,
-                                      borderRadius: 8,
-                                    }}
-                                    key={product.identifier}
-                                  >
-                                    <SubscriptionOffer
-                                      makePurchase={makePurchase}
-                                      product={product}
-                                    />
-                                    {/* <TouchableHighlight
+                        {curProducts ? (
+                          <View
+                            style={{
+                              width: "100%",
+                              alignItems: "center",
+                              flex: 1,
+                            }}
+                          >
+                            {(curProducts ?? []).map((product) => {
+                              return (
+                                <View
+                                  style={{
+                                    width: "80%",
+                                    backgroundColor: theme.palette.primary.main,
+                                    borderRadius: 8,
+                                  }}
+                                  key={product.identifier}
+                                >
+                                  <SubscriptionOffer
+                                    makePurchase={makePurchase}
+                                    product={product}
+                                  />
+                                  {/* <TouchableHighlight
                                       onPress={() =>
                                         makePurchase(product).catch((err) =>
                                           console.error(
@@ -693,69 +688,64 @@ const Profile: FunctionComponent<Props> = () => {
                                         </TSSnippetText>
                                       </View>
                                     </TouchableHighlight> */}
-                                  </View>
-                                );
-                              })}
-                              <View
-                                style={{
-                                  flex: 1,
-                                  alignItems: "flex-start",
-                                  width: "75%",
-                                }}
+                                </View>
+                              );
+                            })}
+                            <View
+                              style={{
+                                flex: 1,
+                                alignItems: "flex-start",
+                                width: "85%",
+                                marginTop: 8,
+                              }}
+                            >
+                              <TSCaptionText>
+                                With a Subscription:
+                              </TSCaptionText>
+                              <TSSnippetText>- Remove all ads</TSSnippetText>
+                              <TSSnippetText>
+                                - Access to use AI to Generate your own
+                                Workouts!
+                              </TSSnippetText>
+                              <TSSnippetText
+                                textStyles={{ color: theme.palette.AWE_Red }}
                               >
-                                <TSCaptionText>
-                                  With a Subscription:
-                                </TSCaptionText>
-                                <TSSnippetText>- Remove all ads</TSSnippetText>
-                                <TSSnippetText>
-                                  - Create up to 15 workouts per day{" "}
-                                  <TSCaptionText
-                                    textStyles={{ color: "red", fontSize: 9 }}
-                                  >
-                                    (limit 1 per day without subscription)
-                                  </TSCaptionText>
-                                </TSSnippetText>
-                                <TSSnippetText>
-                                  - Access to use AI to Generate your own
-                                  Workouts!
-                                </TSSnippetText>
-                              </View>
+                                - Limit 1 workout per day without subscription
+                              </TSSnippetText>
                             </View>
-                          ) : (
-                            <ActivityIndicator
-                              size="small"
-                              color={theme.palette.text}
-                            />
-                          )}
-                        </View>
+                          </View>
+                        ) : (
+                          <ActivityIndicator
+                            size="small"
+                            color={theme.palette.text}
+                          />
+                        )}
                       </View>
-                    )}
-                  </View>
+                    </View>
+                  )}
                 </View>
-              ) : (
-                <View style={{ flex: 5, alignItems: "center" }}>
-                  <TSParagrapghText
-                    textStyles={{ textAlign: "center", marginBottom: 24 }}
-                  >
-                    Thanks for your support!
-                  </TSParagrapghText>
-                  <Animated.Image
-                    source={champs}
-                    style={[
-                      {
-                        width: SCREEN_WIDTH,
-                        height: 400,
-                        borderRadius: 8,
-                      },
-                      { opacity: fadeAnim }, // Bind animated opacity to style
-                    ]}
-                  />
-                </View>
-              )}
-            </View>
-          ) : (
-            <></>
-          )}
+              </View>
+            ) : (
+              <View style={{ flex: 5, alignItems: "center" }}>
+                <TSParagrapghText
+                  textStyles={{ textAlign: "center", marginBottom: 24 }}
+                >
+                  Thanks for your support!
+                </TSParagrapghText>
+                <Animated.Image
+                  source={champs}
+                  style={[
+                    {
+                      width: SCREEN_WIDTH,
+                      height: 400,
+                      borderRadius: 8,
+                    },
+                    { opacity: fadeAnim }, // Bind animated opacity to style
+                  ]}
+                />
+              </View>
+            )}
+          </View>
 
           {/* {dataGymFavs?.favorite_gyms?.length > 0 ? (
             <View style={{ flex: 4, width: "100%" }}>

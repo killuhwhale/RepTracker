@@ -76,7 +76,7 @@ export const storeThemePreference = async (
  * @returns Promise<string> The name of the selected theme
  */
 export const getThemePreference = async (
-  defaultTheme: string = "dark"
+  defaultTheme: string
 ): Promise<string> => {
   try {
     const themePreference = await RNSecureStorage.get(THEME_MODE_KEY);
