@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,8 +31,9 @@ import { useTheme } from "styled-components/native";
 import { debounce, filter } from "@/src/utils/algos";
 import Input from "@/src/app_components/Input/input";
 import PickerFilterListView from "@/src/app_components/modals/pickerFilterListView";
-import { lightenHexColor } from "@/src/app_components/shared";
+import { SCREEN_HEIGHT, lightenHexColor } from "@/src/app_components/shared";
 import FullScreenSpinner from "@/src/app_components/Spinner";
+import { TSSnippetText } from "@/src/app_components/Text/Text";
 // import debounce from 'lodash/debounce';
 
 export interface CurrentMaxProps {
@@ -446,10 +449,12 @@ const WorkoutMaxes = () => {
         { backgroundColor: theme.palette.backgroundColor },
       ]}
     >
-      <Text style={[styles.description, { color: theme.palette.text }]}>
+      <TSSnippetText
+        textStyles={[styles.description, { color: theme.palette.text }]}
+      >
         Record your current max for each exercise. This helps calculate your
         intensity factor during workouts.
-      </Text>
+      </TSSnippetText>
 
       {/* Search input */}
       <View
@@ -486,14 +491,22 @@ const WorkoutMaxes = () => {
 
       {/* List view */}
       <View style={{ flex: 1 }}>
-        <PickerFilterListView
-          data={filteredWorkoutItems}
-          extraProps={{
-            onSelect: (item: WorkoutNameProps) =>
-              console.log("User selected: ", item),
-          }}
-          RowView={renderWorkoutItem}
-        />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={
+            Platform.OS === "ios" ? SCREEN_HEIGHT * 0.3 : 0
+          }
+          style={{ flex: 1 }}
+        >
+          <PickerFilterListView
+            data={filteredWorkoutItems}
+            extraProps={{
+              onSelect: (item: WorkoutNameProps) =>
+                console.log("User selected: ", item),
+            }}
+            RowView={renderWorkoutItem}
+          />
+        </KeyboardAvoidingView>
       </View>
     </View>
   );
