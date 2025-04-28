@@ -61,7 +61,8 @@ const AuthScreen: FunctionComponent = () => {
     if (emailHelperText.length > 0) {
       setEmailHelperText("");
     }
-    auth.login(email, password);
+    setEmailHelperText(`Trying login w/: ${email}, ${password}`);
+    // auth.login(email, password);
   };
 
   auth.listenLogin((loggedIn, msg) => {
