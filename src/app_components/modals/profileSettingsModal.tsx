@@ -25,6 +25,9 @@ import { router } from "expo-router";
 import { DOMAIN_NAME } from "@/src/utils/constants";
 import { apiSlice } from "@/src/redux/api/apiSlice";
 import { store } from "@/src/redux/store";
+import { UserProps } from "@/app/types";
+import { dateFormatDayOfWeek } from "@/src/utils/algos";
+import { isDateInFuture, lightenHexColor } from "../shared";
 
 const invalidateUser = () => {
   store.dispatch(apiSlice.util.invalidateTags(["User"]));
@@ -122,7 +125,7 @@ const ProfileSettingsModalRow: FunctionComponent<{
 };
 
 const ProfileSettingsModal: FunctionComponent<{
-  user: { email: string; id: string; username: string };
+  user: UserProps;
   modalVisible: boolean;
   onRequestClose(): void;
 }> = (props) => {
@@ -154,7 +157,7 @@ const ProfileSettingsModal: FunctionComponent<{
       pathname: "/input_pages/gyms/CreateWorkoutGroupScreen",
       params: {
         ownedByClass: 0,
-        ownerID: props.user.id as string,
+        ownerID: props.user.id.toString(),
       },
     });
     props.onRequestClose();
@@ -167,6 +170,7 @@ const ProfileSettingsModal: FunctionComponent<{
     props.onRequestClose();
   };
 
+  const isMember = isDateInFuture(props.user);
   return (
     <Modal
       animationType="slide"
@@ -275,6 +279,42 @@ const ProfileSettingsModal: FunctionComponent<{
               title="Create Gym Class"
             />
              */}
+
+            <View
+              style={{
+                // padding: 12,
+                // paddingLeft: 24,
+                backgroundColor: lightenHexColor(theme.palette.AWE_Blue, 0.2),
+                marginBottom: 24,
+                borderColor: theme.palette.text,
+                borderRadius: 8,
+              }}
+            >
+              {isMember ? (
+                <TSSnippetText
+                  textStyles={{
+                    color: theme.palette.AWE_Blue,
+                    textAlign: "center",
+                  }}
+                >
+                  Sub renews:{" "}
+                  <TSCaptionText
+                    textStyles={{ color: theme.palette.text, fontSize: 9 }}
+                  >
+                    {dateFormatDayOfWeek(props.user.sub_end_date)}
+                  </TSCaptionText>
+                </TSSnippetText>
+              ) : (
+                <TSSnippetText
+                  textStyles={{
+                    color: theme.palette.AWE_Red,
+                    textAlign: "center",
+                  }}
+                >
+                  Not a member
+                </TSSnippetText>
+              )}
+            </View>
 
             <View
               style={{

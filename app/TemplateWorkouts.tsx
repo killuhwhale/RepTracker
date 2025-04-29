@@ -15,7 +15,11 @@ import {
   LayoutAnimation,
 } from "react-native";
 import { useTheme } from "styled-components/native";
-import { Container, TEMPLATE_NAMES } from "@/src/app_components/shared";
+import {
+  Container,
+  TEMPLATE_NAMES,
+  isDateInFuture,
+} from "@/src/app_components/shared";
 import {
   TSCaptionText,
   TSInputText,
@@ -24,10 +28,14 @@ import {
 } from "@/src/app_components/Text/Text";
 import { RegularButton } from "@/src/app_components/Buttons/buttons";
 import { WorkoutGroupSquares } from "@/src/app_components/Grids/WorkoutGroups/WorkoutGroupSquares";
-import { useGetTemplateWorkoutGroupsQuery } from "@/src/redux/api/apiSlice";
+import {
+  useGetProfileViewQuery,
+  useGetTemplateWorkoutGroupsQuery,
+} from "@/src/redux/api/apiSlice";
 import { useGenerate531Template } from "@/src/app_components/templates/fivethreeone";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useGillispieTemplate } from "@/src/app_components/templates/gillispie";
+import { useRouter } from "expo-router";
 
 const TEMPLATE_NAMES_DISPLAY = {
   [TEMPLATE_NAMES[0]]: "Wendler",
@@ -105,8 +113,17 @@ export function CollapsibleDescription({
 
 export default function TemplateWorkoutsScreen() {
   const theme = useTheme();
+  const router = useRouter();
+
   const [selected, setSelected] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [showNeedMembership, setShowNeedMembership] = useState(false);
+
+  const {
+    data: profileData,
+    isLoading: isUserLoading,
+    error: userError,
+  } = useGetProfileViewQuery("", {});
 
   const {
     data: groups,
@@ -114,7 +131,7 @@ export default function TemplateWorkoutsScreen() {
     isFetching: fetchingMore,
     refetch,
   } = useGetTemplateWorkoutGroupsQuery(selected ?? "", {
-    skip: !selected,
+    skip: !selected || isUserLoading,
   });
 
   const loadMore = () => console.log("Not paginated...");
@@ -122,6 +139,15 @@ export default function TemplateWorkoutsScreen() {
   const { generateGillispieTemplate } = useGillispieTemplate();
 
   const handleGenerateTemplate = async () => {
+    if (
+      (!profileData && !profileData.user) ||
+      !isDateInFuture(profileData.user)
+    ) {
+      console.log("Prompt non-user to get membership")!;
+      setShowNeedMembership(true);
+      return;
+    }
+
     if (selected == TEMPLATE_NAMES[0]) {
       console.log("Generating template for: ", TEMPLATE_NAMES[0]);
       await five_3_1();
@@ -133,6 +159,13 @@ export default function TemplateWorkoutsScreen() {
       setIsCreating(false);
       refetch();
     }
+  };
+
+  const navToProfile = () => {
+    router.push({
+      pathname: "/(tabs)/Profile",
+      params: {},
+    });
   };
 
   return (
@@ -201,7 +234,7 @@ export default function TemplateWorkoutsScreen() {
       <View style={{ flex: 1 }}>
         {/* Workout groups grid */}
         {selected &&
-          (loading || isCreating || fetchingMore ? (
+          (loading || isCreating || fetchingMore || isUserLoading ? (
             <ActivityIndicator
               size="large"
               color={theme.palette.primary.main}
@@ -215,43 +248,82 @@ export default function TemplateWorkoutsScreen() {
             />
           ) : (
             <View style={{}}>
-              <RegularButton
-                underlayColor="#cacaca30"
-                btnStyles={{
-                  backgroundColor: "#cacaca00",
-                  borderTopColor: "#cacaca92",
-                  borderBottomColor: "#cacaca92",
-                  borderWidth: 2,
-                  width: "100%",
-                }}
-                onPress={() => {
-                  handleGenerateTemplate();
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
+              {showNeedMembership ? (
+                <View style={{ padding: 24 }}>
+                  <TSSnippetText
+                    textStyles={{ marginVertical: 6, textAlign: "center" }}
+                  >
+                    Sign up for a membership to create templates!
+                  </TSSnippetText>
+                  <RegularButton
+                    underlayColor="#cacaca30"
+                    btnStyles={{
+                      backgroundColor: "#cacaca00",
+                      borderTopColor: "#cacaca92",
+                      borderBottomColor: "#cacaca92",
+                      borderWidth: 2,
+                      width: "100%",
+                      marginVertical: 8,
+                    }}
+                    onPress={() => {
+                      navToProfile();
+                    }}
+                  >
+                    <TSSnippetText
+                      textStyles={{
+                        padding: 6,
+                        color: theme.palette.AWE_Blue,
+                      }}
+                    >
+                      Become a Member
+                    </TSSnippetText>
+                  </RegularButton>
+                </View>
+              ) : (
+                <></>
+              )}
+
+              {!showNeedMembership ? (
+                <RegularButton
+                  underlayColor="#cacaca30"
+                  btnStyles={{
+                    backgroundColor: "#cacaca00",
+                    borderTopColor: "#cacaca92",
+                    borderBottomColor: "#cacaca92",
+                    borderWidth: 2,
                     width: "100%",
                   }}
+                  onPress={() => {
+                    handleGenerateTemplate();
+                  }}
                 >
-                  <Icon
-                    name="add"
-                    color={theme.palette.text}
-                    style={{ fontSize: 32, marginRight: 16 }}
-                  />
-                  <TSSnippetText>
-                    Generate{" "}
-                    <TSParagrapghText
-                      textStyles={{ color: theme.palette.AWE_Green }}
-                    >
-                      {TEMPLATE_NAMES_DISPLAY[selected]}
-                    </TSParagrapghText>{" "}
-                    Template
-                  </TSSnippetText>
-                </View>
-              </RegularButton>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Icon
+                      name="add"
+                      color={theme.palette.text}
+                      style={{ fontSize: 32, marginRight: 16 }}
+                    />
+                    <TSSnippetText>
+                      Generate{" "}
+                      <TSParagrapghText
+                        textStyles={{ color: theme.palette.AWE_Green }}
+                      >
+                        {TEMPLATE_NAMES_DISPLAY[selected]}
+                      </TSParagrapghText>{" "}
+                      Template
+                    </TSSnippetText>
+                  </View>
+                </RegularButton>
+              ) : (
+                <></>
+              )}
             </View>
           ))}
       </View>
