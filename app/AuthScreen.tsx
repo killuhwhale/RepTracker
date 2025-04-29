@@ -57,12 +57,12 @@ const AuthScreen: FunctionComponent = () => {
   const [hideResetPassword, setHideResetPassword] = useState(true);
 
   const login = async () => {
-    console.log("Send login: ", email, password);
+    console.error("Send login: ", email, password);
     if (emailHelperText.length > 0) {
       setEmailHelperText("");
     }
     setEmailHelperText(`Trying login w/: ${email}, ${password}`);
-    // auth.login(email, password);
+    auth.login(email, password);
   };
 
   auth.listenLogin((loggedIn, msg) => {

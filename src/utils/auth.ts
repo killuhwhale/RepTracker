@@ -60,6 +60,7 @@ class AuthManager {
   async login(email: string, password: string) {
     // Perform login, update tokens access and fresh tokens
     try {
+      console.error("Login debug: ", email);
       const res = await post(`${BASEURL}token/`, { email: email, password });
       const result = await res.json();
       console.log("Login res: ", result);
@@ -94,7 +95,7 @@ class AuthManager {
       });
       // Only call this on successful login.
     } catch (error) {
-      console.log("Error logging in: ", error);
+      console.error("Error logging in: ", error);
     }
   }
 
