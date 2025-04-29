@@ -12,6 +12,7 @@ import RegisterComp from "./Auth/Register";
 import ResetPasswordAuthPage from "./Auth/ResetPasswordAuthPage";
 import CodeResetPasswordPage from "./Auth/CodeResetPassword";
 import AuthNavComp from "./Auth/AuthNavComp";
+import { View } from "react-native";
 
 // import { RootStackParamList } from "../navigators/RootStack";
 // import { StackScreenProps } from "@react-navigation/stack";
@@ -190,7 +191,13 @@ const AuthScreen: FunctionComponent = () => {
 
   // RootNavigation.navigate("HomePage", {})
   return (
-    <PageContainer>
+    <View style={{ flex: 1, alignItems: "center", width: "100%" }}>
+      <View
+        style={{
+          flex: 1,
+        }}
+      ></View>
+
       {authModes[authMode] == 0 ? (
         <SignInComp
           email={email}
@@ -246,7 +253,12 @@ const AuthScreen: FunctionComponent = () => {
           validEmailRegex={validEmailRegex}
         />
       )}
-    </PageContainer>
+      <View
+        style={{
+          flex: 3,
+        }}
+      ></View>
+    </View>
   );
 };
 

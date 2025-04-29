@@ -1,11 +1,5 @@
 import React, { FunctionComponent, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  View,
-} from "react-native";
+import { Platform, Pressable, SafeAreaView, View } from "react-native";
 import { RegularButton } from "@/src/app_components/Buttons/buttons";
 import { BASEURL, TestIDs } from "@/src/utils/constants";
 import {
@@ -68,131 +62,125 @@ const ResetPasswordAuthPage: FunctionComponent<ResetPasswordAuthPageProps> = ({
     <SafeAreaView
       style={{ flex: 1, backgroundColor: theme.palette.backgroundColor }}
     >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          padding: 24,
+          width: SCREEN_WIDTH * 0.85,
+        }}
       >
+        {/* Card */}
         <View
           style={{
-            flex: 1,
-            justifyContent: "center",
+            backgroundColor: theme.palette.AWE_Green,
+            borderRadius: 16,
             padding: 24,
-            width: SCREEN_WIDTH * 0.85,
+            elevation: 6,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
           }}
         >
-          {/* Card */}
-          <View
-            style={{
-              backgroundColor: theme.palette.AWE_Green,
-              borderRadius: 16,
-              padding: 24,
-              elevation: 6,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 3 },
-              shadowOpacity: 0.1,
-              shadowRadius: 6,
+          {/* Instruction */}
+          <TSParagrapghText
+            textStyles={{
+              textAlign: "center",
+              fontSize: 18,
+              marginBottom: 16,
+              color: theme.palette.text,
             }}
           >
-            {/* Instruction */}
-            <TSParagrapghText
-              textStyles={{
-                textAlign: "center",
-                fontSize: 18,
-                marginBottom: 16,
-                color: theme.palette.text,
-              }}
-            >
-              Enter the email associated with your account
-            </TSParagrapghText>
+            Enter the email associated with your account
+          </TSParagrapghText>
 
-            {/* Email Input */}
-            <View style={{ height: 28, marginVertical: 6 }}>
-              <Input
-                testID="resetEmailField"
-                label="Email"
-                placeholder="Email"
-                autoCapitalize={AutoCaptilizeEnum.None}
-                keyboardType="email-address"
-                value={resetEmail}
-                isError={!!emailError}
-                helperText={emailError}
-                onChangeText={(txt) => {
-                  setResetEmail(txt);
-                  if (emailError && validEmailRegex.test(txt)) {
-                    // setEmailError("");
+          {/* Email Input */}
+          <View style={{ height: 28, marginVertical: 6 }}>
+            <Input
+              testID="resetEmailField"
+              label="Email"
+              placeholder="Email"
+              autoCapitalize={AutoCaptilizeEnum.None}
+              keyboardType="email-address"
+              value={resetEmail}
+              isError={!!emailError}
+              helperText={emailError}
+              onChangeText={(txt) => {
+                setResetEmail(txt);
+                if (emailError && validEmailRegex.test(txt)) {
+                  // setEmailError("");
 
-                    setResetEmailError("");
-                  }
-                }}
-                leading={
-                  <Icon
-                    name="mail-outline"
-                    size={10}
-                    color={theme.palette.AWE_Yellow}
-                  />
+                  setResetEmailError("");
                 }
-                containerStyle={{
-                  backgroundColor: theme.palette.backgroundColor,
-                  borderRadius: 8,
-                }}
-              />
-            </View>
+              }}
+              leading={
+                <Icon
+                  name="mail-outline"
+                  size={10}
+                  color={theme.palette.AWE_Yellow}
+                />
+              }
+              containerStyle={{
+                backgroundColor: theme.palette.backgroundColor,
+                borderRadius: 8,
+              }}
+            />
+          </View>
 
-            {/* Send Button */}
+          {/* Send Button */}
+          <View style={{ marginTop: 16 }}>
+            <RegularButton
+              btnStyles={{
+                backgroundColor: theme.palette.primary.main,
+                paddingVertical: 12,
+                borderRadius: 8,
+              }}
+              text="Send Reset Code"
+              textStyles={{ textAlign: "center" }}
+              onPress={sendEmail}
+              disabled={showHint}
+            />
+          </View>
+
+          {/* Feedback */}
+          {(resetEmailError.length > 0 || showHint) && (
             <View style={{ marginTop: 16 }}>
-              <RegularButton
-                btnStyles={{
-                  backgroundColor: theme.palette.primary.main,
-                  paddingVertical: 12,
-                  borderRadius: 8,
+              <TSCaptionText
+                textStyles={{
+                  textAlign: "center",
+                  color: resetEmailError
+                    ? theme.palette.AWE_Red
+                    : theme.palette.AWE_Green,
                 }}
-                text="Send Reset Code"
-                textStyles={{ textAlign: "center" }}
-                onPress={sendEmail}
-                disabled={showHint}
-              />
+              >
+                {resetEmailError ||
+                  "A reset code has been sent. Please check your inbox."}
+              </TSCaptionText>
             </View>
-
-            {/* Feedback */}
-            {(resetEmailError.length > 0 || showHint) && (
-              <View style={{ marginTop: 16 }}>
-                <TSCaptionText
-                  textStyles={{
-                    textAlign: "center",
-                    color: resetEmailError
-                      ? theme.palette.AWE_Red
-                      : theme.palette.AWE_Green,
-                  }}
-                >
-                  {resetEmailError ||
-                    "A reset code has been sent. Please check your inbox."}
-                </TSCaptionText>
-              </View>
-            )}
-          </View>
-
-          {/* Back to Sign In */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              marginTop: 24,
-            }}
-          >
-            <Pressable onPress={() => setAuthMode(0)}>
-              <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
-                Back to Sign In
-              </TSSnippetText>
-            </Pressable>
-            <Pressable onPress={() => setAuthMode(3)}>
-              <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
-                Submit Code
-              </TSSnippetText>
-            </Pressable>
-          </View>
+          )}
         </View>
-      </KeyboardAvoidingView>
+
+        {/* Back to Sign In */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 24,
+          }}
+        >
+          <Pressable onPress={() => setAuthMode(0)}>
+            <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
+              Back to Sign In
+            </TSSnippetText>
+          </Pressable>
+          <Pressable onPress={() => setAuthMode(3)}>
+            <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
+              Submit Code
+            </TSSnippetText>
+          </Pressable>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

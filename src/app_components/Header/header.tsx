@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { useTheme } from "styled-components/native";
 import { RootStackParamList } from "@/src/navigators/RootStack";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -7,9 +7,6 @@ import { NavigationContext, useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as RootNavigation from "@/src/navigators/RootNavigation";
 import { TouchableOpacity, View } from "react-native";
-import { TSParagrapghText } from "../Text/Text";
-import { TestIDs } from "@/src/utils/constants";
-import LinearGradient from "react-native-linear-gradient";
 import GradientText from "./gradientText";
 import { router } from "expo-router";
 import { storeThemePreference } from "@/src/utils/tokenUtils";
@@ -21,9 +18,13 @@ const Header: FunctionComponent<{
   const theme = useTheme();
 
   const handleNavToHome = () => {
-    router.push({
-      pathname: "/",
-    });
+    try {
+      router.push({
+        pathname: "/",
+      });
+    } catch (err) {
+      console.log("Cant go home from header: ", err);
+    }
   };
 
   return (
