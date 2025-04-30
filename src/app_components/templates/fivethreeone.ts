@@ -13,6 +13,9 @@ import {
   WorkoutNameProps,
 } from "../Cards/types";
 
+const NUM_WEEKS = 1;
+// const NUM_WEEKS = 4;
+
 const WEEK_SCHEMES: Record<number, [number, number, number][]> = {
   1: [
     [1, 5, 0.65],
@@ -108,7 +111,7 @@ export function useGenerate531Template() {
   async function five_3_1() {
     const templatePayload: any[] = [];
 
-    for (let week = 1; week <= 4; week++) {
+    for (let week = 1; week <= NUM_WEEKS; week++) {
       const scheme = WEEK_SCHEMES[week];
       const accessoryPct = ACCESSORY_CYCLE_PCTS[week];
 

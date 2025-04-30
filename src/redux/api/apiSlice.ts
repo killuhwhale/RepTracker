@@ -477,6 +477,43 @@ export const apiSlice = createApi({
       },
     }),
 
+    updateWorkoutGroupTitle: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutGroups/update_title/",
+        method: "POST",
+        data: data,
+        params: { contentType: "application/json" },
+      }),
+      invalidatesTags: [
+        { type: "UserWorkoutGroups" },
+        { type: "WorkoutGroupWorkouts" },
+      ],
+    }),
+    updateWorkoutGroupCaption: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutGroups/update_caption/",
+        method: "POST",
+        data: data,
+        params: { contentType: "application/json" },
+      }),
+      invalidatesTags: [
+        { type: "UserWorkoutGroups" },
+        { type: "WorkoutGroupWorkouts" },
+      ],
+    }),
+    updateWorkoutGroupForDate: builder.mutation({
+      query: (data = {}) => ({
+        url: "workoutGroups/update_for_date/",
+        method: "POST",
+        data: data,
+        params: { contentType: "application/json" },
+      }),
+      invalidatesTags: [
+        { type: "UserWorkoutGroups" },
+        { type: "WorkoutGroupWorkouts" },
+      ],
+    }),
+
     createWorkout: builder.mutation({
       query: (data = {}) => ({
         url: "workouts/",
@@ -758,6 +795,16 @@ export const apiSlice = createApi({
       },
       invalidatesTags: [{ type: "WorkoutGroupWorkouts" }],
     }),
+    resetTemplates: builder.mutation({
+      query: (body) => {
+        return {
+          url: `bulktemplates/reset_template/`,
+          method: "POST",
+          data: body,
+        };
+      },
+      invalidatesTags: [{ type: "WorkoutGroupWorkouts" }],
+    }),
 
     // User and Profile
     getProfileView: builder.query({
@@ -773,6 +820,7 @@ export const apiSlice = createApi({
       },
       providesTags: (result, error, page) => [
         { type: "UserWorkoutGroups", id: page },
+        { type: "UserWorkoutGroups" },
       ],
     }),
 
@@ -961,6 +1009,7 @@ export const {
   useDeleteCompletedWorkoutGroupMutation,
   useDeleteCompletedWorkoutMutation,
   useBulkCreateTemplatesMutation,
+  useResetTemplatesMutation,
 
   useCreateGymMutation,
   useDeleteGymMutation,
@@ -979,6 +1028,9 @@ export const {
   useCreateWorkoutGroupMutation,
   useDuplicateWorkoutGroupMutation,
   useDeleteWorkoutGroupMutation,
+  useUpdateWorkoutGroupTitleMutation,
+  useUpdateWorkoutGroupCaptionMutation,
+  useUpdateWorkoutGroupForDateMutation,
   useCreateWorkoutMutation,
   useUpdateWorkoutMutation,
   useCreateWorkoutItemsMutation,

@@ -13,6 +13,7 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  Pressable,
 } from "react-native";
 import { useTheme } from "styled-components/native";
 import {
@@ -31,11 +32,13 @@ import { WorkoutGroupSquares } from "@/src/app_components/Grids/WorkoutGroups/Wo
 import {
   useGetProfileViewQuery,
   useGetTemplateWorkoutGroupsQuery,
+  useResetTemplatesMutation,
 } from "@/src/redux/api/apiSlice";
 import { useGenerate531Template } from "@/src/app_components/templates/fivethreeone";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useGillispieTemplate } from "@/src/app_components/templates/gillispie";
 import { useRouter } from "expo-router";
+import ActionCancelModal from "@/src/app_components/modals/ActionCancelModal";
 
 const TEMPLATE_NAMES_DISPLAY = {
   [TEMPLATE_NAMES[0]]: "Wendler",
@@ -134,6 +137,21 @@ export default function TemplateWorkoutsScreen() {
     skip: !selected || isUserLoading,
   });
 
+  const [_resetTemplate, {}] = useResetTemplatesMutation();
+  const [showResetTemplateModal, setShowResetTemplateModal] = useState(false);
+  const resetTemplate = async () => {
+    console.log("Removing template: ");
+    const templateData = {
+      user_id: profileData.user.id,
+      template_name: selected,
+    };
+    const res = await _resetTemplate(templateData).unwrap();
+    setShowResetTemplateModal(false);
+    if (res.data) {
+      refetch();
+    }
+  };
+
   const loadMore = () => console.log("Not paginated...");
   const { five_3_1, isLoading: isTemplateLoading } = useGenerate531Template();
   const { generateGillispieTemplate } = useGillispieTemplate();
@@ -220,6 +238,42 @@ export default function TemplateWorkoutsScreen() {
             );
           })}
         </ScrollView>
+      </View>
+
+      <View style={{}}>
+        {!loading && groups && groups.length > 0 ? (
+          <Pressable onPress={() => setShowResetTemplateModal(true)}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 12,
+                marginTop: 8,
+              }}
+            >
+              <TSInputText>Reset</TSInputText>
+              <Icon
+                name="refresh"
+                color={theme.palette.text}
+                style={{ fontSize: 16, marginLeft: 8 }}
+              />
+            </View>
+            <ActionCancelModal
+              actionText="Reset"
+              closeText="Cancel"
+              modalText={`Reset ${
+                TEMPLATE_NAMES_DISPLAY[selected ?? ""]
+              } template?`}
+              onAction={() => {
+                resetTemplate();
+              }}
+              modalVisible={showResetTemplateModal}
+              onRequestClose={() => setShowResetTemplateModal(false)}
+            />
+          </Pressable>
+        ) : (
+          <></>
+        )}
       </View>
 
       <View style={{}}>

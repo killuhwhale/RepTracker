@@ -58,6 +58,9 @@ import {
   useGetUserInfoQuery,
   useGetWorkoutsForGymClassWorkoutGroupQuery,
   useGetWorkoutsForUsersWorkoutGroupQuery,
+  useUpdateWorkoutGroupCaptionMutation,
+  useUpdateWorkoutGroupForDateMutation,
+  useUpdateWorkoutGroupTitleMutation,
 } from "../src/redux/api/apiSlice";
 
 import Icon from "react-native-vector-icons/Ionicons";
@@ -73,6 +76,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import DuplicateWorkoutGroupModal from "@/src/app_components/modals/DuplicateWorkoutGroupModal";
 import { dateFormatDayOfWeek } from "@/src/utils/algos";
 import FullScreenSpinner from "@/src/app_components/Spinner";
+import DatePicker from "react-native-date-picker";
+import TextFieldModal from "@/src/app_components/modals/TextFieldModal";
+import { UserProps } from "./types";
 export type Props = StackScreenProps<RootStackParamList, "WorkoutScreen">;
 
 const Row = styled.View`
@@ -96,6 +102,7 @@ const hasUnfinsihedDualItems = (workouts: WorkoutCardProps[]) => {
 };
 
 type WSHeaderProps = {
+  user: UserProps;
   isSuccess: boolean;
   completedIsSuccess: boolean;
   showingOGWorkoutGroup: boolean;
@@ -110,6 +117,7 @@ type WSHeaderProps = {
 };
 
 const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
+  user,
   isSuccess,
   completedIsSuccess,
   showingOGWorkoutGroup,
@@ -123,6 +131,33 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
   setShowDuplicateModal,
 }) => {
   const theme = useTheme();
+  const [updatedTitle, setUpdatedTitle] = useState(workoutGroup.title);
+  const [showUpdateTitle, setShowUpdateTitle] = useState(false);
+  const [updateTitleMutation, {}] = useUpdateWorkoutGroupTitleMutation();
+
+  useEffect(() => {
+    if (workoutGroup.title != updatedTitle) {
+      setUpdatedTitle(workoutGroup.title);
+    }
+  }, [workoutGroup]);
+
+  const updateTitle = async (title: string) => {
+    try {
+      const res = await updateTitleMutation({
+        id: workoutGroup.id,
+        title: title,
+        user_id: user.id,
+      }).unwrap();
+    } catch (err) {
+      console.log("Failed to update caption: ", title, err);
+    }
+  };
+
+  console.log(
+    "workoutGroup.title, updatedTitle",
+    workoutGroup.title,
+    updatedTitle
+  );
   return (
     <View style={{ width: "100%" }}>
       <View
@@ -160,9 +195,41 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
         </View>
 
         <View style={{}}>
-          <TSTitleText textStyles={{ textAlign: "center", marginVertical: 8 }}>
-            {workoutGroup.title}
-          </TSTitleText>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <TSTitleText
+              textStyles={{ textAlign: "center", marginVertical: 8 }}
+            >
+              {updatedTitle}
+            </TSTitleText>
+
+            <Icon
+              style={{ fontSize: 14, marginLeft: 12 }}
+              name="pencil-outline"
+              color="yellow"
+              onPress={() => setShowUpdateTitle(true)}
+            />
+          </View>
+          <TextFieldModal
+            bodyText="Update Group Title"
+            closeText="Close"
+            modalVisible={showUpdateTitle}
+            onAction={(text: string) => {
+              console.log("User wants new title to be: ", text);
+              setUpdatedTitle(text);
+              updateTitle(text)
+                .then()
+                .catch((err) => console.log(err));
+            }}
+            onRequestClose={() => setShowUpdateTitle(false)}
+            initText={updatedTitle}
+            key="updateTitleModal"
+          />
         </View>
 
         <View
@@ -302,7 +369,7 @@ const WorkoutScreen: FunctionComponent = () => {
   } = useGetWorkoutsForUsersWorkoutGroupQuery(curGroupID);
 
   const [workoutGroup, setWorkoutGroup] = useState(
-    data ?? ({} as WorkoutGroupProps)
+    data ?? ({ for_date: new Date().toISOString() } as WorkoutGroupProps)
   );
 
   const [workouts, setWorkouts] = useState(
@@ -318,6 +385,9 @@ const WorkoutScreen: FunctionComponent = () => {
     if (!data) return;
 
     setWorkoutGroup(data);
+    setUpdatedCaption(data.caption);
+    setUpdateForDate(new Date(data.for_date));
+
     setWorkouts(
       data.workouts
         ? data.workouts
@@ -619,6 +689,42 @@ const WorkoutScreen: FunctionComponent = () => {
     });
   };
 
+  const [updatedCaption, setUpdatedCaption] = useState(workoutGroup.caption);
+
+  const [updateForDate, setUpdateForDate] = useState(
+    new Date(workoutGroup.for_date) ?? new Date()
+  );
+
+  const [showUpdateCaption, setShowUpdateCaption] = useState(false);
+  const [showUpdateForDate, setShowUpdateForDate] = useState(false);
+
+  const [updateDescMutation, {}] = useUpdateWorkoutGroupCaptionMutation();
+  const [updateForDateMutation, {}] = useUpdateWorkoutGroupForDateMutation();
+
+  const updateCaption = async (caption: string) => {
+    try {
+      const res = await updateDescMutation({
+        id: workoutGroup.id,
+        caption: caption,
+        user_id: userData.id,
+      }).unwrap();
+    } catch (err) {
+      console.log("Failed to update caption: ", caption, err);
+    }
+  };
+
+  const updateDate = async (date: Date) => {
+    try {
+      const res = await updateForDateMutation({
+        id: workoutGroup.id,
+        for_date: date,
+        user_id: userData.id,
+      }).unwrap();
+    } catch (err) {
+      console.log("Failed to update for date: ", date, err);
+    }
+  };
+
   return (
     <View
       style={{
@@ -635,6 +741,7 @@ const WorkoutScreen: FunctionComponent = () => {
         }}
       >
         <WorkoutScreenHeader
+          user={userData}
           WGOwner={WGOwner}
           completedIsSuccess={completedIsSuccess}
           isFinished={isFinished}
@@ -648,11 +755,77 @@ const WorkoutScreen: FunctionComponent = () => {
           setShowDuplicateModal={setShowDuplicateModal}
         />
 
-        <TSSnippetText>{workoutGroup.caption}</TSSnippetText>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <TSSnippetText>{updatedCaption}</TSSnippetText>
 
-        <TSDateText>
-          {dateFormatDayOfWeek(new Date(workoutGroup.for_date))}
-        </TSDateText>
+          <Icon
+            style={{ fontSize: 14, marginLeft: 12 }}
+            name="pencil-outline"
+            color="yellow"
+            onPress={() => setShowUpdateCaption(true)}
+          />
+          <TextFieldModal
+            bodyText="Update Group Caption"
+            closeText="Close"
+            modalVisible={showUpdateCaption}
+            onAction={(text: string) => {
+              console.log("User wants new cap to be: ", text);
+              setUpdatedCaption(text);
+              updateCaption(text)
+                .then()
+                .catch((err) => console.log(err));
+            }}
+            onRequestClose={() => setShowUpdateCaption(false)}
+            initText={updatedCaption}
+            key="updateCaptionModal"
+          />
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <TSDateText>
+            <TSSnippetText>Date:</TSSnippetText>{" "}
+            {/* {dateFormatDayOfWeek(new Date(workoutGroup.for_date))} */}
+            {dateFormatDayOfWeek(new Date(updateForDate))}
+          </TSDateText>
+          <Icon
+            style={{ fontSize: 14, marginLeft: 12 }}
+            name="pencil-outline"
+            color="yellow"
+            onPress={() => setShowUpdateForDate(true)}
+          />
+          <DatePicker
+            date={updateForDate}
+            onDateChange={setUpdateForDate}
+            mode="date"
+            locale="en"
+            // theme="dark"
+            theme="dark"
+            maximumDate={new Date("2100-01-01")}
+            onCancel={() => setShowUpdateForDate(false)}
+            onConfirm={(date) => {
+              setUpdateForDate(date);
+              updateDate(date)
+                .then((res) => console.log(res))
+                .catch((err) => console.log(err));
+              setShowUpdateForDate(false);
+            }}
+            modal={true}
+            open={showUpdateForDate}
+            title={"Start Date"}
+          />
+        </View>
       </View>
 
       <View

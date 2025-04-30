@@ -64,7 +64,6 @@ const ResetPasswordAuthPage: FunctionComponent<ResetPasswordAuthPageProps> = ({
     >
       <View
         style={{
-          flex: 1,
           justifyContent: "center",
           padding: 24,
           width: SCREEN_WIDTH * 0.85,
