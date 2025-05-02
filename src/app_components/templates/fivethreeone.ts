@@ -13,8 +13,8 @@ import {
   WorkoutNameProps,
 } from "../Cards/types";
 
-const NUM_WEEKS = 1;
-// const NUM_WEEKS = 4;
+// const NUM_WEEKS = 1;
+const NUM_WEEKS = 4;
 
 const WEEK_SCHEMES: Record<number, [number, number, number][]> = {
   1: [

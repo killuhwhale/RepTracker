@@ -21,10 +21,11 @@ import {
   TSSnippetText,
   TSTitleText,
 } from "../Text/Text";
-import { SCREEN_HEIGHT } from "../shared";
+import { isDateInFuture, SCREEN_HEIGHT } from "../shared";
 import { AnyWorkoutItem } from "../Cards/types";
 import { useMaxes } from "@/hooks/useMaxes";
 import FullScreenSpinner from "../Spinner";
+import { useRouter } from "expo-router";
 
 type ChatPromptModalProps = {
   visible: boolean;
@@ -56,6 +57,7 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
 
   const {
     userId,
+    profileData,
     workoutItemMaxes,
     workoutItemMaxesMap,
     isLoading: isMaxesLoading,
@@ -70,8 +72,17 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
     error: errorWG,
   } = useGetLastXWorkoutGroupsQuery(userId, { skip: isMaxesLoading });
 
+  const [showBecomeMember, setShowBecomeMember] = useState(false);
+
   const handleSubmit = async () => {
     if (!text.trim()) return;
+    console.log("profileData.user: ", profileData.user);
+    if (!profileData.user) return;
+    if (!isDateInFuture(profileData.user)) {
+      setShowBecomeMember(true);
+      return;
+    }
+
     try {
       const userMaxesNoID = workoutItemMaxes.map(
         ({ id, ...rest }: any) => rest
@@ -94,6 +105,11 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
     } catch (err) {
       console.error("Submission failed:", err);
     }
+  };
+  const router = useRouter();
+
+  const navHome = () => {
+    router.push("/(tabs)/Profile");
   };
 
   if (isLoading || isMaxesLoading) {
@@ -228,9 +244,11 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
             </View>
             <TouchableOpacity
               disabled={isLoading}
-              onPress={handleSubmit}
+              onPress={showBecomeMember ? navHome : handleSubmit}
               style={{
-                backgroundColor: theme.palette.AWE_Green,
+                backgroundColor: showBecomeMember
+                  ? theme.palette.AWE_Blue
+                  : theme.palette.AWE_Green,
                 paddingVertical: 12,
                 borderRadius: 12,
                 justifyContent: "center",
@@ -240,6 +258,10 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
             >
               {isLoading ? (
                 <ActivityIndicator color={theme.palette.white} />
+              ) : showBecomeMember ? (
+                <View>
+                  <TSSnippetText>Become a member!</TSSnippetText>
+                </View>
               ) : (
                 <Text style={{ color: theme.palette.white, fontWeight: "600" }}>
                   Submit

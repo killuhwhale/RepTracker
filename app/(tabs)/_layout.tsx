@@ -1,5 +1,6 @@
 import { lightenHexColor } from "@/src/app_components/shared";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -84,7 +85,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               size={ICONSIZE}
-              name="user-secret"
+              name="user-circle-o"
               color={focused ? theme.palette.primary.main : color}
             />
           ),

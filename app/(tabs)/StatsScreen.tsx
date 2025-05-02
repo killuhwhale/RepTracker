@@ -211,7 +211,7 @@ const StatsScreen: FunctionComponent<Props> = () => {
         <View style={{ height: 20, alignSelf: "flex-end", marginRight: 12 }}>
           <TSSnippetText textStyles={{ color: theme.palette.AWE_Green }}>
             Found {dataReady ? data?.length : 0}{" "}
-            {dataReady && data?.length == 1 ? "workout" : "workouts"}
+            {dataReady && data?.length == 1 ? "Workout" : "Workouts"}
           </TSSnippetText>
         </View>
 

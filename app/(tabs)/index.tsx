@@ -23,6 +23,7 @@ import {
 import {
   TSParagrapghText,
   TSCaptionText,
+  TSInputTextSm,
 } from "@/src/app_components/Text/Text";
 import { RegularButton } from "@/src/app_components/Buttons/buttons";
 
@@ -199,6 +200,9 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
           width: "100%",
           flexDirection: "row",
           justifyContent: "flex-end",
+          paddingLeft: 8,
+          paddingTop: 8,
+          paddingRight: 8,
         }}
       >
         <TouchableOpacity
@@ -209,18 +213,22 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
             borderRadius: 112,
           }}
         >
-          <View
-            style={{
-              backgroundColor: theme.palette.AWE_Green,
-              borderRadius: 8,
-            }}
-          >
+          <View style={{ alignItems: "center" }}>
             <Icon
               name="add"
               testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               color={theme.palette.text}
-              style={{ fontSize: 16, padding: 4 }}
+              style={{
+                backgroundColor: theme.palette.AWE_Green,
+                borderRadius: 8,
+                fontSize: 24,
+                width: 28,
+                padding: 2,
+              }}
             />
+            <TSInputTextSm textStyles={{ textAlign: "center" }}>
+              New Workout
+            </TSInputTextSm>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -231,18 +239,23 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
             borderRadius: 112,
           }}
         >
-          <View
-            style={{
-              backgroundColor: theme.palette.AWE_Green,
-              borderRadius: 8,
-            }}
-          >
+          <View style={{ alignItems: "center" }}>
             <Icon
               name="clipboard-outline"
               testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
               color={theme.palette.text}
-              style={{ fontSize: 16, padding: 4 }}
+              style={{
+                backgroundColor: theme.palette.AWE_Green,
+                borderRadius: 8,
+                fontSize: 24,
+                width: 28,
+
+                padding: 2,
+              }}
             />
+            <TSInputTextSm textStyles={{ textAlign: "center" }}>
+              Templates
+            </TSInputTextSm>
           </View>
         </TouchableOpacity>
       </View>
@@ -250,7 +263,7 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
       {workouts.length ? (
         <View style={{ padding: 12, height: "100%", width: "100%" }}>
           <View style={{ flex: 15 }}>
-            <View style={{ flex: 1, marginBottom: 12 }}>
+            <View style={{ flex: 1 }}>
               <Input
                 onChangeText={handleSearchChange}
                 value={searchTextDisplay}
@@ -260,9 +273,11 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
                   width: "100%",
                   backgroundColor: theme.palette.backgroundColor,
                   borderRadius: 8,
-                  height: 45,
                   borderWidth: 1,
-                  borderColor: theme.palette.text,
+                  borderLeftColor: theme.palette.AWE_Yellow,
+                  borderTopColor: theme.palette.AWE_Blue,
+                  borderRightColor: theme.palette.AWE_Red,
+                  borderBottomColor: theme.palette.AWE_Green,
                 }}
                 leading={
                   <Icon
