@@ -210,22 +210,25 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
           onPress={handleNavCreateWorkoutGroupScreen}
           style={{
             padding: 4,
-            borderRadius: 112,
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <Icon
-              name="add"
-              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
-              color={theme.palette.text}
+            <View
               style={{
-                backgroundColor: theme.palette.AWE_Green,
                 borderRadius: 8,
-                fontSize: 24,
-                width: 28,
-                padding: 2,
+                backgroundColor: theme.palette.AWE_Green,
+                padding: 4,
               }}
-            />
+            >
+              <Icon
+                name="add"
+                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+                color={theme.palette.text}
+                style={{
+                  fontSize: 24,
+                }}
+              />
+            </View>
             <TSInputTextSm textStyles={{ textAlign: "center" }}>
               New Workout
             </TSInputTextSm>
@@ -236,23 +239,26 @@ const UserWorkoutsScreen: FunctionComponent = (props) => {
           onPress={handleNavViewTemplateWorkoutScreen}
           style={{
             padding: 4,
-            borderRadius: 112,
+            borderRadius: 12,
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <Icon
-              name="clipboard-outline"
-              testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
-              color={theme.palette.text}
+            <View
               style={{
-                backgroundColor: theme.palette.AWE_Green,
                 borderRadius: 8,
-                fontSize: 24,
-                width: 28,
-
-                padding: 2,
+                backgroundColor: theme.palette.AWE_Green,
+                padding: 4,
               }}
-            />
+            >
+              <Icon
+                name="clipboard-outline"
+                testID={TestIDs.CreateWorkoutGroupScreenBtn.name()}
+                color={theme.palette.text}
+                style={{
+                  fontSize: 24,
+                }}
+              />
+            </View>
             <TSInputTextSm textStyles={{ textAlign: "center" }}>
               Templates
             </TSInputTextSm>
