@@ -463,41 +463,43 @@ const Profile: FunctionComponent<Props> = () => {
 
   // console.log("Profile user: ", error, data);
 
-  if (data && !isLoading && !loadedProductsRef.current) {
-    const setup = async () => {
-      try {
-        if (Platform.OS == "ios") {
-          await Purchases.configure({
-            apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
+  useEffect(() => {
+    if (data && !isLoading && !loadedProductsRef.current) {
+      const setup = async () => {
+        try {
+          if (Platform.OS == "ios") {
+            await Purchases.configure({
+              apiKey: "appl_oJUBkeeihLnvPlQUJVxhUTCkHWo",
+            });
+            const products = await Purchases.getProducts(["sub_remove_ads"]);
+            console.log("Got ios product: ", products);
+            loadedProductsRef.current = true;
+            setCurProducts(products);
+          } else if (Platform.OS == "android") {
+            await Purchases.configure({
+              apiKey: "goog_ruuVJMgQrGOBuoxnbJSgzHnIQph",
+            });
+            const products = await Purchases.getProducts(["sub_remove_ads"]);
+            console.log("Got android product: ", products);
+            loadedProductsRef.current = true;
+            setCurProducts(products);
+          }
+
+          await Purchases.setAttributes({
+            userID: data?.user.id.toString(),
           });
-          const products = await Purchases.getProducts(["sub_remove_ads"]);
-          console.log("Got ios product: ", products);
-          loadedProductsRef.current = true;
-          setCurProducts(products);
-        } else if (Platform.OS == "android") {
-          await Purchases.configure({
-            apiKey: "goog_ruuVJMgQrGOBuoxnbJSgzHnIQph",
-          });
-          const products = await Purchases.getProducts(["sub_remove_ads"]);
-          console.log("Got android product: ", products);
-          loadedProductsRef.current = true;
-          setCurProducts(products);
+          await Purchases.syncAttributesAndOfferingsIfNeeded();
+        } catch (err) {
+          console.log("Error getting offerings: ", err);
         }
+      };
 
-        await Purchases.setAttributes({
-          userID: data?.user.id.toString(),
-        });
-        await Purchases.syncAttributesAndOfferingsIfNeeded();
-      } catch (err) {
-        console.log("Error getting offerings: ", err);
-      }
-    };
-
-    Purchases.setDebugLogsEnabled(true);
-    setup()
-      .then(() => (loadedProductsRef.current = true))
-      .catch(console.log);
-  }
+      Purchases.setDebugLogsEnabled(true);
+      setup()
+        .then(() => (loadedProductsRef.current = true))
+        .catch(console.log);
+    }
+  }, [data]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 

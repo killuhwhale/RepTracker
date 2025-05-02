@@ -109,6 +109,7 @@ const CreateWorkoutPrompt: React.FC<ChatPromptModalProps> = ({
   const router = useRouter();
 
   const navHome = () => {
+    onClose();
     router.push("/(tabs)/Profile");
   };
 
