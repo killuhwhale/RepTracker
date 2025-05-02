@@ -1,12 +1,12 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from "react-native";
 
 const modalViewStyle = StyleSheet.create({
   modalView: {
     margin: 20,
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -19,12 +19,12 @@ const modalViewStyle = StyleSheet.create({
 
 const settingsModalViewStyle = StyleSheet.create({
   settingsModalView: {
-    width: '90%',
-    height: '90%',
+    width: "90%",
+    height: "90%",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -36,12 +36,12 @@ const settingsModalViewStyle = StyleSheet.create({
 });
 const filterInputModalViewStyle = StyleSheet.create({
   filterInputModalView: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 20,
     paddingHorizontal: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -55,14 +55,14 @@ const filterInputModalViewStyle = StyleSheet.create({
 const modalTextStyle = StyleSheet.create({
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 const centeredViewStyle = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
 });

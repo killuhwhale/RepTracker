@@ -97,8 +97,13 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
     >
       <View
         style={[
-          centeredViewStyle.centeredView,
-          { backgroundColor: "#000000DD" },
+          {
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            marginTop: 100,
+            backgroundColor: "#000000DD",
+          },
         ]}
         onTouchStart={() => {
           Keyboard.dismiss();
@@ -110,7 +115,7 @@ const DuplicateWorkoutGroupModal: FunctionComponent<{
             {
               backgroundColor: theme.palette.darkGray,
               width: "80%",
-              height: "80%",
+              height: "55%",
             },
             props.containerStyle,
           ]}

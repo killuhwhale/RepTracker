@@ -654,40 +654,6 @@ const Profile: FunctionComponent<Props> = () => {
                                     makePurchase={makePurchase}
                                     product={product}
                                   />
-                                  {/* <TouchableHighlight
-                                      onPress={() =>
-                                        makePurchase(product).catch((err) =>
-                                          console.error(
-                                            "Error makePurchase: ",
-                                            err
-                                          )
-                                        )
-                                      }
-                                    >
-                                      <View
-                                        style={{
-                                          marginVertical: 12,
-                                          paddingHorizontal: 12,
-                                        }}
-                                      >
-                                        <TSButtonText
-                                          textStyles={{ textAlign: "center" }}
-                                        >
-                                          Remove Ads!
-                                        </TSButtonText>
-                                        <TSSnippetText
-                                          textStyles={{ textAlign: "center" }}
-                                        >
-                                          {product.description}
-                                        </TSSnippetText>
-                                        <TSSnippetText
-                                          textStyles={{ textAlign: "center" }}
-                                        >
-                                          {product.price} {product.currencyCode}{" "}
-                                          / Month
-                                        </TSSnippetText>
-                                      </View>
-                                    </TouchableHighlight> */}
                                 </View>
                               );
                             })}
@@ -702,15 +668,32 @@ const Profile: FunctionComponent<Props> = () => {
                               <TSCaptionText>
                                 With a Subscription:
                               </TSCaptionText>
-                              <TSSnippetText>- Remove all ads</TSSnippetText>
-                              <TSSnippetText>
+                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
+                                - Remove all ads
+                              </TSSnippetText>
+                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
+                                - Reach your goals with proven workout plans!
+                              </TSSnippetText>
+                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
                                 - Access to use AI to Generate your own
                                 Workouts!
                               </TSSnippetText>
                               <TSSnippetText
-                                textStyles={{ color: theme.palette.AWE_Red }}
+                                textStyles={{
+                                  color: theme.palette.AWE_Red,
+                                  marginVertical: 4,
+                                }}
                               >
                                 - Limit 1 workout per day without subscription
+                              </TSSnippetText>
+                              <TSSnippetText
+                                textStyles={{
+                                  color: theme.palette.AWE_Red,
+                                  marginVertical: 4,
+                                }}
+                              >
+                                - Limit 45 workoutss per free account. Must
+                                become a member to create new workouts.
                               </TSSnippetText>
                             </View>
                           </View>
@@ -916,6 +899,12 @@ function SubscriptionOffer({ product, makePurchase }: IAPSub) {
           <Icon name="apps-outline" size={20} color="#FFF" />
           <TSSnippetText textStyles={styles.featureText}>
             Create up to 15 workouts/day
+          </TSSnippetText>
+        </View>
+        <View style={styles.featureRow}>
+          <Icon name="barbell-outline" size={20} color="#FFF" />
+          <TSSnippetText textStyles={styles.featureText}>
+            World Class workout plans
           </TSSnippetText>
         </View>
         <View style={styles.featureRow}>

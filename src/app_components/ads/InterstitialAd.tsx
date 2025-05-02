@@ -12,7 +12,7 @@ import {
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
 import { useTheme } from "styled-components";
-import { RegularButton } from "@/src/app_components/Buttons/buttons";
+
 import { Platform, View } from "react-native";
 import { UserProps } from "@/app/types";
 
@@ -97,7 +97,7 @@ const InterstitialAdMembership: FunctionComponent<{
     }
   }, [props.show, loaded]);
 
-  return <View></View>;
+  return <View style={{ height: 400 }}></View>;
 };
 
 export default InterstitialAdMembership;

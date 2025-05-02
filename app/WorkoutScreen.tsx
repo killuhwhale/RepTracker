@@ -44,6 +44,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import {
   ActivityIndicator,
+  Pressable,
   Switch,
   TouchableHighlight,
   TouchableWithoutFeedback,
@@ -195,12 +196,13 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
         </View>
 
         <View style={{}}>
-          <View
+          <Pressable
             style={{
               flexDirection: "row",
               width: "100%",
               alignItems: "center",
             }}
+            onPress={() => setShowUpdateTitle(true)}
           >
             <TSTitleText
               textStyles={{ textAlign: "center", marginVertical: 8 }}
@@ -214,22 +216,22 @@ const WorkoutScreenHeader: FunctionComponent<WSHeaderProps> = ({
               color="yellow"
               onPress={() => setShowUpdateTitle(true)}
             />
-          </View>
-          <TextFieldModal
-            bodyText="Update Group Title"
-            closeText="Close"
-            modalVisible={showUpdateTitle}
-            onAction={(text: string) => {
-              console.log("User wants new title to be: ", text);
-              setUpdatedTitle(text);
-              updateTitle(text)
-                .then()
-                .catch((err) => console.log(err));
-            }}
-            onRequestClose={() => setShowUpdateTitle(false)}
-            initText={updatedTitle}
-            key="updateTitleModal"
-          />
+            <TextFieldModal
+              bodyText="Update Group Title"
+              closeText="Close"
+              modalVisible={showUpdateTitle}
+              onAction={(text: string) => {
+                console.log("User wants new title to be: ", text);
+                setUpdatedTitle(text);
+                updateTitle(text)
+                  .then()
+                  .catch((err) => console.log(err));
+              }}
+              onRequestClose={() => setShowUpdateTitle(false)}
+              initText={updatedTitle}
+              key="updateTitleModal"
+            />
+          </Pressable>
         </View>
 
         <View
@@ -755,12 +757,14 @@ const WorkoutScreen: FunctionComponent = () => {
           setShowDuplicateModal={setShowDuplicateModal}
         />
 
-        <View
+        <Pressable
           style={{
             flexDirection: "row",
             width: "100%",
             alignItems: "center",
+            marginBottom: 4,
           }}
+          onPress={() => setShowUpdateCaption(true)}
         >
           <TSSnippetText>{updatedCaption}</TSSnippetText>
 
@@ -785,14 +789,16 @@ const WorkoutScreen: FunctionComponent = () => {
             initText={updatedCaption}
             key="updateCaptionModal"
           />
-        </View>
+        </Pressable>
 
-        <View
+        <Pressable
           style={{
             flexDirection: "row",
             width: "100%",
             alignItems: "center",
+            marginBottom: 8,
           }}
+          onPress={() => setShowUpdateForDate(true)}
         >
           <TSDateText>
             <TSSnippetText>Date:</TSSnippetText>{" "}
@@ -823,9 +829,9 @@ const WorkoutScreen: FunctionComponent = () => {
             }}
             modal={true}
             open={showUpdateForDate}
-            title={"Start Date"}
+            title={"For Date"}
           />
-        </View>
+        </Pressable>
       </View>
 
       <View

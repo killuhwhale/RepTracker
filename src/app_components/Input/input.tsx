@@ -42,16 +42,18 @@ interface InputProps {
   multiline?: boolean;
   onSubmitEditing?: any;
 }
+
 function intercept(s: string, og: string): string {
   const lines = s.split("\n");
-  let violation = false;
+  // let violation = false;
   lines.forEach((line: string) => {
     if (line.length > 140) {
-      violation = true;
+      // violation = true;
+      return og;
     }
   });
-  const numLines = lines.length;
-  return numLines <= 10 && !violation ? s : og;
+
+  return lines.length <= 10 ? s : og;
 }
 
 const Input: FunctionComponent<InputProps> = (props) => {
@@ -59,12 +61,16 @@ const Input: FunctionComponent<InputProps> = (props) => {
   const inpRef = useRef<TTextInput>(null);
 
   return (
-    <View
-      style={[props.containerStyle, { width: "100%", flex: 1 }]}
-      hitSlop={{ bottom: 12, left: 12, right: 12, top: 12 }}
-    >
-      <TouchableWithoutFeedback>
-        <View style={{ width: "100%" }}>
+    <View style={[props.containerStyle, { width: "100%", flex: 1 }]}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          if (inpRef.current) {
+            inpRef.current.focus();
+          }
+        }}
+        hitSlop={{ bottom: 12, left: 12, right: 12, top: 12 }}
+      >
+        <View style={{ width: "100%", height: "100%" }}>
           <View style={{ flexDirection: "row", width: "100%", height: "100%" }}>
             <View
               style={{

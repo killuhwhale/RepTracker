@@ -15,6 +15,7 @@ const TextFieldModal: FunctionComponent<{
   closeText: string;
   bodyText: string;
   initText: string;
+  multiline?: boolean;
 
   onAction(penalty: string): void;
 }> = ({
@@ -23,6 +24,7 @@ const TextFieldModal: FunctionComponent<{
   closeText,
   bodyText,
   initText,
+  multiline = false,
 
   onAction,
 }) => {
@@ -30,11 +32,18 @@ const TextFieldModal: FunctionComponent<{
   const [text, setText] = useState(initText);
 
   useEffect(() => {
-    if (text != initText) {
+    if (text === "" || text != initText) {
       setText(initText);
     }
   }, [initText]);
 
+  useEffect(() => {
+    if (text === "") {
+      setText(initText);
+    }
+  }, [text]);
+
+  console.log("TFM text: ", text === "", initText);
   return (
     <Modal
       animationType="slide"
@@ -42,21 +51,28 @@ const TextFieldModal: FunctionComponent<{
       visible={modalVisible}
       onRequestClose={onRequestClose}
     >
-      <View style={centeredViewStyle.centeredView}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginTop: 100,
+        }}
+      >
         <TouchableWithoutFeedback
           onPress={() => {
             Keyboard.dismiss();
           }}
           style={[
             centeredViewStyle.centeredView,
-            { width: "100%", height: "100%" },
+            { width: "100%", height: "80%" },
           ]}
         >
           <View
             style={{
               ...modalViewStyle.modalView,
               backgroundColor: theme.palette.darkGray,
-              height: "90%",
+              height: "40%",
             }}
           >
             <View style={{ height: "100%", justifyContent: "space-between" }}>
@@ -64,14 +80,14 @@ const TextFieldModal: FunctionComponent<{
                 <MediumText>{bodyText}</MediumText>
               </View>
 
-              <View style={{ marginBottom: 50, flex: 9 }}>
+              <View style={{ marginBottom: 50, flex: 2 }}>
                 <Input
                   placeholder=""
                   onChangeText={setText}
                   value={text}
                   label=""
                   autoCapitalize={AutoCaptilizeEnum.Sent}
-                  multiline
+                  multiline={multiline}
                   containerStyle={{
                     width: "100%",
                     backgroundColor: theme.palette.backgroundColor,

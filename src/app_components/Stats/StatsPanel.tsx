@@ -253,7 +253,9 @@ export const StatsPanel: FunctionComponent<{ tags: {}; names: {} }> = ({
               alignItems: "flex-start",
             }}
           >
-            <View style={{}}>
+            <View
+              style={{ borderBottomWidth: 1, borderColor: theme.palette.text }}
+            >
               <TSParagrapghText>Item Summary</TSParagrapghText>
             </View>
             <WorkoutStatsByNameHorizontalList data={Object.values(sNames)} />
