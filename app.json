@@ -1,21 +1,24 @@
 {
   "expo": {
-    "name": "RepTracker",
-    "slug": "RepTracker",
-    "version": "2.0.37",
+    "name": "LiftL0g",
+    "slug": "LiftL0g",
+    "version": "2.0.39",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icon.png",
     "backgroundColor": "#000000",
-    "platforms": ["android", "ios"],
+    "platforms": [
+      "android",
+      "ios"
+    ],
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "37",
+      "buildNumber": "39",
       "bundleIdentifier": "com.killuhwhale.reptracker",
       "icon": "./assets/icon.png",
       "splash": {
@@ -32,7 +35,7 @@
       }
     },
     "android": {
-      "versionCode": 37,
+      "versionCode": 39,
       "runtimeVersion": "34",
       "package": "com.killuhwhale.reptracker",
       "permissions": [
@@ -44,7 +47,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "backgroundColor": "#1e293b",
       "splash": {
         "image": "./assets/splash.png"
@@ -74,18 +76,6 @@
           "androidAppId": "ca-app-pub-9369132738006643~2252555759",
           "iosAppId": "ca-app-pub-9369132738006643~4687147405"
         }
-      ],
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#000",
-          "image": "./assets/splash.png",
-          "dark": {
-            "image": "./assets/splash.png",
-            "backgroundColor": "#0f172a"
-          },
-          "imageWidth": 200
-        }
       ]
     ],
     "experiments": {
@@ -96,7 +86,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b9e7e013-44c2-4f79-85ea-b08f4b76137b"
+        "projectId": "b135096e-691c-4d2f-af6d-10bf592d2feb"
       }
     }
   }
