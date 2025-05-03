@@ -2,7 +2,7 @@
   "expo": {
     "name": "RepTracker",
     "slug": "RepTracker",
-    "version": "2.0.36",
+    "version": "2.0.37",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "backgroundColor": "#000000",
@@ -15,7 +15,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "36",
+      "buildNumber": "37",
       "bundleIdentifier": "com.killuhwhale.reptracker",
       "icon": "./assets/icon.png",
       "splash": {
@@ -32,7 +32,7 @@
       }
     },
     "android": {
-      "versionCode": 36,
+      "versionCode": 37,
       "runtimeVersion": "34",
       "package": "com.killuhwhale.reptracker",
       "permissions": [
