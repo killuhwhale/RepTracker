@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 
 import {
   Linking,
@@ -10,6 +10,7 @@ import {
   ViewStyle,
   StyleSheet,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 
 import { LargeButton, RegularButton } from "../Buttons/buttons";
@@ -114,7 +115,7 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
   makePurchase,
 }) => {
   const theme = useTheme();
-
+  const [isWaiting, setIsWaiting] = useState(false);
   return (
     <View
       style={[
@@ -152,14 +153,32 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
             pressed && { opacity: 0.7 },
             { backgroundColor: theme.palette.primary.main },
           ]}
-          onPress={() => makePurchase(product)}
+          onPress={() => {
+            setIsWaiting(true);
+            makePurchase(product).finally(() => setIsWaiting(false));
+          }}
           accessibilityRole="button"
         >
-          <TSSnippetText
-            textStyles={[styles.buttonText, { color: theme.palette.AWE_Green }]}
-          >
-            Subscribe {product?.priceString}
-          </TSSnippetText>
+          <View style={{ flexDirection: "row" }}>
+            {isWaiting ? (
+              <ActivityIndicator color={theme.palette.AWE_Green} style={{}} />
+            ) : (
+              <></>
+            )}
+            <TSSnippetText
+              textStyles={[
+                styles.buttonText,
+                { color: theme.palette.AWE_Green },
+              ]}
+            >
+              Subscribe {product?.priceString}
+            </TSSnippetText>
+            {isWaiting ? (
+              <ActivityIndicator color={theme.palette.AWE_Green} style={{}} />
+            ) : (
+              <></>
+            )}
+          </View>
         </Pressable>
       </View>
 
