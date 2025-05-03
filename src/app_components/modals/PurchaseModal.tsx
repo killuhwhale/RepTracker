@@ -9,6 +9,7 @@ import {
   View,
   ViewStyle,
   StyleSheet,
+  Platform,
 } from "react-native";
 
 import { LargeButton, RegularButton } from "../Buttons/buttons";
@@ -66,18 +67,11 @@ const PurchaseModal: FunctionComponent<{
                   width: "100%",
                 }}
               >
-                {product ? (
-                  //   <TSButtonText textStyles={{}}>
-                  //     {product.price} {product.currencyCode}/mo
-                  //   </TSButtonText>
-                  <PurchaseOptions
-                    product={product}
-                    websiteUrl="https://reptrackrr.com"
-                    makePurchase={makePurchase}
-                  />
-                ) : (
-                  <></>
-                )}
+                <PurchaseOptions
+                  product={product}
+                  websiteUrl="https://reptrackrr.com"
+                  makePurchase={makePurchase}
+                />
               </View>
 
               <View
@@ -109,7 +103,7 @@ const PurchaseModal: FunctionComponent<{
 
 interface PurchaseOptionsProps {
   /** The product object you fetched via your IAP library */
-  product: PurchasesStoreProduct;
+  product: PurchasesStoreProduct | null;
   /** URL to your Stripe-powered purchase page */
   websiteUrl: string;
   /** Called when user taps the in-app purchase button */
@@ -140,14 +134,16 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
         <TSSnippetText
           textStyles={[styles.title, { color: theme.palette.text }]}
         >
-          {product.title}
+          {product?.title}
         </TSSnippetText>
 
         <TSSnippetText
           textStyles={[styles.note, { color: theme.palette.text }]}
         >
-          Manage Subscription with Apple in the App Store.
+          Manage Subscription with {Platform.OS == "ios" ? "Apple" : "Android"}{" "}
+          in the {Platform.OS == "ios" ? "App" : "Play"} Store.
         </TSSnippetText>
+
         <Pressable
           style={({ pressed }) => [
             styles.button,
@@ -160,7 +156,7 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
           <TSSnippetText
             textStyles={[styles.buttonText, { color: theme.palette.AWE_Green }]}
           >
-            Subscribe {product.priceString}
+            Subscribe {product?.priceString}
           </TSSnippetText>
         </Pressable>
       </View>
