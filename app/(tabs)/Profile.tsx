@@ -81,6 +81,7 @@ import Purchases, {
 import { store } from "@/src/redux/store";
 import AuthManager from "@/src/utils/auth";
 import LinearGradient from "react-native-linear-gradient";
+import PurchaseModal from "@/src/app_components/modals/PurchaseModal";
 export type Props = StackScreenProps<RootStackParamList, "Profile">;
 
 const PageContainer = styled(Container)`
@@ -441,7 +442,8 @@ const Profile: FunctionComponent<Props> = () => {
     store.dispatch(apiSlice.util.invalidateTags(["User"]));
   };
 
-  const makePurchase = async (product: PurchasesStoreProduct) => {
+  const makePurchase = async (product: PurchasesStoreProduct | null) => {
+    if (!product) return console.log("Cannot make purchase with null product");
     try {
       console.log("Making purchase....");
       const purchaseRes = await Purchases.purchaseStoreProduct(product);
@@ -634,77 +636,64 @@ const Profile: FunctionComponent<Props> = () => {
                           width: "100%",
                         }}
                       >
-                        {curProducts ? (
+                        <View
+                          style={{
+                            width: "100%",
+                            alignItems: "center",
+                            flex: 1,
+                          }}
+                        >
                           <View
                             style={{
-                              width: "100%",
-                              alignItems: "center",
-                              flex: 1,
+                              width: "80%",
+                              backgroundColor: theme.palette.primary.main,
+                              borderRadius: 8,
                             }}
                           >
-                            {(curProducts ?? []).map((product) => {
-                              return (
-                                <View
-                                  style={{
-                                    width: "80%",
-                                    backgroundColor: theme.palette.primary.main,
-                                    borderRadius: 8,
-                                  }}
-                                  key={product.identifier}
-                                >
-                                  <SubscriptionOffer
-                                    makePurchase={makePurchase}
-                                    product={product}
-                                  />
-                                </View>
-                              );
-                            })}
-                            <View
-                              style={{
-                                flex: 1,
-                                alignItems: "flex-start",
-                                width: "85%",
-                                marginTop: 8,
+                            <SubscriptionOffer
+                              makePurchase={makePurchase}
+                              products={curProducts}
+                            />
+                          </View>
+
+                          {/* Member BeneFits */}
+                          <View
+                            style={{
+                              flex: 1,
+                              alignItems: "flex-start",
+                              width: "85%",
+                              marginTop: 8,
+                            }}
+                          >
+                            <TSCaptionText>With a Subscription:</TSCaptionText>
+                            <TSSnippetText textStyles={{ marginVertical: 4 }}>
+                              - Remove all ads
+                            </TSSnippetText>
+                            <TSSnippetText textStyles={{ marginVertical: 4 }}>
+                              - Reach your goals with proven workout plans!
+                            </TSSnippetText>
+                            <TSSnippetText textStyles={{ marginVertical: 4 }}>
+                              - Access to use AI to Generate your own Workouts!
+                            </TSSnippetText>
+                            <TSSnippetText
+                              textStyles={{
+                                color: theme.palette.AWE_Red,
+                                marginVertical: 4,
                               }}
                             >
-                              <TSCaptionText>
-                                With a Subscription:
-                              </TSCaptionText>
-                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
-                                - Remove all ads
-                              </TSSnippetText>
-                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
-                                - Reach your goals with proven workout plans!
-                              </TSSnippetText>
-                              <TSSnippetText textStyles={{ marginVertical: 4 }}>
-                                - Access to use AI to Generate your own
-                                Workouts!
-                              </TSSnippetText>
-                              <TSSnippetText
-                                textStyles={{
-                                  color: theme.palette.AWE_Red,
-                                  marginVertical: 4,
-                                }}
-                              >
-                                - Limit 1 workout per day without subscription
-                              </TSSnippetText>
-                              <TSSnippetText
-                                textStyles={{
-                                  color: theme.palette.AWE_Red,
-                                  marginVertical: 4,
-                                }}
-                              >
-                                - Limit 45 workoutss per free account. Must
-                                become a member to create new workouts.
-                              </TSSnippetText>
-                            </View>
+                              - Limit 1 workout per day without subscription
+                            </TSSnippetText>
+                            <TSSnippetText
+                              textStyles={{
+                                color: theme.palette.AWE_Red,
+                                marginVertical: 4,
+                              }}
+                            >
+                              - Limit 45 workoutss per free account. Must become
+                              a member to create new workouts.
+                            </TSSnippetText>
                           </View>
-                        ) : (
-                          <ActivityIndicator
-                            size="small"
-                            color={theme.palette.text}
-                          />
-                        )}
+                        </View>
                       </View>
                     </View>
                   )}
@@ -870,13 +859,15 @@ export default Profile;
  */
 
 type IAPSub = {
-  makePurchase: (product: PurchasesStoreProduct) => Promise<void>;
-  product: PurchasesStoreProduct;
+  makePurchase: (product: PurchasesStoreProduct | null) => Promise<void>;
+  products: PurchasesStoreProduct[] | null;
 };
 
-function SubscriptionOffer({ product, makePurchase }: IAPSub) {
+function SubscriptionOffer({ products, makePurchase }: IAPSub) {
   const theme = useTheme();
+  const product = products && products?.length > 0 ? products[0] : null;
 
+  const [showPurchaseModal, setShowPruchaseModal] = useState(false);
   return (
     <LinearGradient
       colors={[theme.palette.primary.main, theme.palette.AWE_Green]}
@@ -885,10 +876,12 @@ function SubscriptionOffer({ product, makePurchase }: IAPSub) {
       style={styles.card}
     >
       <TSCaptionText textStyles={styles.headline}>Go Premium</TSCaptionText>
-
-      <TSButtonText textStyles={styles.price}>
-        {product.price} {product.currencyCode}/mo
-      </TSButtonText>
+      <PurchaseModal
+        modalVisible={showPurchaseModal}
+        onRequestClose={() => setShowPruchaseModal(false)}
+        product={product}
+        makePurchase={makePurchase}
+      />
 
       <View style={styles.features}>
         <View style={styles.featureRow}>
@@ -919,7 +912,8 @@ function SubscriptionOffer({ product, makePurchase }: IAPSub) {
 
       <TouchableOpacity
         style={[styles.button, { backgroundColor: theme.palette.AWE_Green }]}
-        onPress={() => makePurchase(product).catch(console.error)}
+        onPress={() => setShowPruchaseModal(true)}
+        // onPress={() => makePurchase(product).catch(console.error)}
       >
         <TSButtonText textStyles={styles.buttonText}>
           Unlock Premium

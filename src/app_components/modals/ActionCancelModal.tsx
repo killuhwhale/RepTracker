@@ -8,8 +8,8 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { LargeButton, RegularButton } from "../Buttons/buttons";
-import { TSParagrapghText, TSSnippetText } from "../Text/Text";
+import { LargeButton } from "../Buttons/buttons";
+import { TSSnippetText } from "../Text/Text";
 import { centeredViewStyle, modalViewStyle } from "./modalStyles";
 import { useTheme } from "styled-components";
 
