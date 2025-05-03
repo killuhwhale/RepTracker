@@ -76,7 +76,7 @@ const Header: FunctionComponent<{
             }}
           /> */}
           <GradientText
-            text="RepTracker"
+            text="LiftLog"
             reversed={true}
             textStyles={{ fontFamily: "SpaceMono-Regular" }}
           />

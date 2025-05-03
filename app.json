@@ -39,7 +39,7 @@
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.INTERNET"
       ],
-
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -64,7 +64,7 @@
             "useFrameworks": "static"
           },
           "android": {
-            "windowSoftInputMode": "stateAlwaysHidden|adjustPan"
+            "windowSoftInputMode": "stateVisible|adjustNothing"
           }
         }
       ],

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import { MediumText } from "../Text/Text";
 
 import { Keyboard, Modal, TouchableWithoutFeedback, View } from "react-native";
@@ -30,20 +30,15 @@ const TextFieldModal: FunctionComponent<{
 }) => {
   const theme = useTheme();
   const [text, setText] = useState(initText);
+  const initRef = useRef(false);
 
   useEffect(() => {
-    if (text === "" || text != initText) {
+    if ((text === "" && !initRef.current) || text != initText) {
+      initRef.current = true;
       setText(initText);
     }
   }, [initText]);
 
-  useEffect(() => {
-    if (text === "") {
-      setText(initText);
-    }
-  }, [text]);
-
-  console.log("TFM text: ", text === "", initText);
   return (
     <Modal
       animationType="slide"
@@ -53,10 +48,10 @@ const TextFieldModal: FunctionComponent<{
     >
       <View
         style={{
-          flex: 1,
           justifyContent: "flex-start",
           alignItems: "center",
           marginTop: 100,
+          height: SCREEN_HEIGHT * 0.85,
         }}
       >
         <TouchableWithoutFeedback
@@ -114,7 +109,7 @@ const TextFieldModal: FunctionComponent<{
               >
                 <RegularButton
                   onPress={() => {
-                    setText("");
+                    setText(initText);
                     onRequestClose();
                   }}
                   btnStyles={{
