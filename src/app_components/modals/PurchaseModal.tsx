@@ -35,64 +35,60 @@ const PurchaseModal: FunctionComponent<{
     >
       <View
         style={[
-          centeredViewStyle.centeredView,
-          { backgroundColor: "#000000DD" },
+          {
+            backgroundColor: "#000000DD",
+            height: "100%",
+          },
         ]}
       >
         <TouchableOpacity
           style={[
-            centeredViewStyle.centeredView,
-            { width: "100%", height: "100%" },
+            {
+              paddingTop: 124,
+              paddingBottom: 124,
+            },
           ]}
           onPress={() => onRequestClose()}
         >
           <View
-            style={[
-              modalViewStyle.modalView,
-              {
-                backgroundColor: theme.palette.darkGray,
-                width: "80%",
-                height: "85%",
+            style={{
+              margin: 4,
+              borderRadius: 20,
+              padding: 12,
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
               },
-            ]}
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+              backgroundColor: theme.palette.darkGray,
+              height: "100%",
+              width: "100%",
+            }}
           >
-            <View style={{ width: "100%", height: "100%" }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingVertical: 6,
-                  marginBottom: 12,
-                  width: "100%",
+            <View
+              style={{
+                width: "100%",
+                paddingTop: 48,
+              }}
+            >
+              <PurchaseOptions
+                product={product}
+                websiteUrl="https://reptrackrr.com"
+                makePurchase={makePurchase}
+              />
+            </View>
+            <View style={{ marginTop: 124 }}>
+              <LargeButton
+                onPress={onRequestClose}
+                btnStyles={{
+                  backgroundColor: "#DB4437",
                 }}
-              >
-                <PurchaseOptions
-                  product={product}
-                  websiteUrl="https://reptrackrr.com"
-                  makePurchase={makePurchase}
-                />
-              </View>
-
-              <View
-                style={{
-                  flex: 2,
-                  flexDirection: "row",
-                  width: "100%",
-                  justifyContent: "space-around",
-                  alignContent: "center",
-                  alignItems: "center",
-                  paddingVertical: 12,
-                }}
-              >
-                <LargeButton
-                  onPress={onRequestClose}
-                  btnStyles={{
-                    backgroundColor: "#DB4437",
-                  }}
-                  text={"Close"}
-                />
-              </View>
+                text={"Close"}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -121,7 +117,11 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
     <View
       style={[
         styles.container,
-        { backgroundColor: theme.palette.backgroundColor, borderRadius: 8 },
+        {
+          backgroundColor: theme.palette.backgroundColor,
+          borderRadius: 8,
+          width: "100%",
+        },
       ]}
     >
       {/* 1. In-App Purchase Option */}
@@ -161,12 +161,18 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
         </Pressable>
       </View>
 
+      <View
+        style={{
+          borderWidth: 1,
+          height: 1,
+          borderColor: theme.palette.text,
+          marginVertical: 32,
+        }}
+      />
+
       {/* 2. External Site Option */}
       <TSSnippetText
-        textStyles={[
-          styles.heading,
-          { color: theme.palette.text, marginTop: 32 },
-        ]}
+        textStyles={[styles.heading, { color: theme.palette.text }]}
       >
         Subscribe via Website
       </TSSnippetText>
@@ -203,7 +209,7 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
+    padding: 8,
   },
   heading: {
     fontSize: 18,
@@ -236,7 +242,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   note: {
-    fontSize: 12,
+    fontSize: 13,
     fontStyle: "italic",
     marginBottom: 16,
   },
