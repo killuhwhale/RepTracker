@@ -6,7 +6,10 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "backgroundColor": "#000000",
-    "platforms": ["android", "ios"],
+    "platforms": [
+      "android",
+      "ios"
+    ],
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -44,7 +47,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "backgroundColor": "#1e293b",
       "splash": {
         "image": "./assets/splash.png"
@@ -84,7 +86,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b9e7e013-44c2-4f79-85ea-b08f4b76137b"
+        "projectId": "b135096e-691c-4d2f-af6d-10bf592d2feb"
       }
     }
   }
