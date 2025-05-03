@@ -189,7 +189,6 @@ const ProfileSettingsModal: FunctionComponent<{
             style={{
               flexDirection: "row",
               alignItems: "center",
-              marginBottom: 12,
               flex: 1,
             }}
           >
@@ -201,7 +200,6 @@ const ProfileSettingsModal: FunctionComponent<{
               alignItems: "flex-end",
               width: "100%",
               justifyContent: "flex-end",
-              marginBottom: 32,
               flexDirection: "row",
               flex: 1,
             }}
@@ -253,7 +251,7 @@ const ProfileSettingsModal: FunctionComponent<{
             </TouchableHighlight>
           </View>
 
-          <View style={{ flex: 4, width: "100%" }}>
+          <View style={{ flex: 6, width: "100%" }}>
             {/* <ProfileSettingsModalRow
               testID={TestIDs.CreateGymScreenBtn.name()}
               onAction={() => {
@@ -290,6 +288,14 @@ const ProfileSettingsModal: FunctionComponent<{
                 borderRadius: 8,
               }}
             >
+              <TSSnippetText
+                textStyles={{
+                  color: theme.palette.AWE_Blue,
+                  textAlign: "center",
+                }}
+              >
+                {props.user.email}
+              </TSSnippetText>
               {isMember ? (
                 <TSSnippetText
                   textStyles={{

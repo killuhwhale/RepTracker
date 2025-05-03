@@ -75,7 +75,8 @@ const PurchaseModal: FunctionComponent<{
               style={{
                 width: "100%",
                 height: "95%",
-                paddingTop: 48,
+                // paddingTop: 48,
+                justifyContent: "center",
               }}
             >
               <PurchaseOptions
@@ -122,6 +123,7 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
         styles.container,
         {
           backgroundColor: theme.palette.backgroundColor,
+          alignItems: "center",
           borderRadius: 8,
           width: "100%",
         },
@@ -184,15 +186,15 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
 
       <View
         style={{
-          borderWidth: 1,
-          height: 1,
-          borderColor: theme.palette.text,
-          marginVertical: 32,
+          // borderWidth: 1,
+          // height: 1,
+          // borderColor: theme.palette.text,
+          marginVertical: 16,
         }}
       />
 
       {/* 2. External Site Option */}
-      <TSSnippetText
+      {/* <TSSnippetText
         textStyles={[styles.heading, { color: theme.palette.text }]}
       >
         Subscribe via Website
@@ -223,7 +225,7 @@ const PurchaseOptions: React.FC<PurchaseOptionsProps> = ({
             Go to Website
           </TSSnippetText>
         </Pressable>
-      </View>
+      </View> */}
     </View>
   );
 };
