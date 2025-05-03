@@ -44,7 +44,8 @@ const PurchaseModal: FunctionComponent<{
         <TouchableOpacity
           style={[
             {
-              paddingTop: 124,
+              height: "95%",
+              paddingTop: Platform.OS == "ios" ? 124 : 48,
               paddingBottom: 124,
             },
           ]}
@@ -72,6 +73,7 @@ const PurchaseModal: FunctionComponent<{
             <View
               style={{
                 width: "100%",
+                height: "95%",
                 paddingTop: 48,
               }}
             >
